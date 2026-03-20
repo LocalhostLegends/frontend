@@ -90,3 +90,41 @@ Inside the project folder, you can run:
 - `ng build` — **Prepare for production**. It creates a `dist/` folder with optimized files for the web server.
 - `ng test` — **Run tests**. It checks if your code works as expected (using Karma runner).
 
+##  Project Structure
+Inside `src/app/`, we use the following organization:
+
+```text
+src/app/
+├── core/         # Global stuff (auth guards, interceptors, singleton services)
+├── shared/       # Reusable UI (buttons, inputs), pipes, directives
+├── features/     # Application pages (auth, dashboard, users)
+│   └── home/
+│       ├── components/
+│       └── home.component.ts
+├── models/       # TypeScript interfaces and types (e.g., user.model.ts)
+└── services/     # Global API services for data fetching
+```
+### 💡 Note on Empty Folders (`.gitkeep`)
+Git does not track empty folders. To keep our project structure visible on GitHub, you might see small files called `.gitkeep` inside some folders.
+
+- **Why are they there?** Just to make sure the folder exists in the repository.
+- **When to delete?** Once you create a real file (component, service, etc.) inside that folder, you can safely **delete** the `.gitkeep` file.
+
+
+**Example: Creating your first component**
+1. Pick a folder (e.g., `src/app/shared/`).
+2. Generate your component:
+
+   ```bash
+   ng generate component shared/components/header
+   ```
+
+3. Once the new files (header.component.ts, etc.) are created, delete the .gitkeep file from the shared folder.
+4. Commit your changes:
+
+```bash
+git add .
+git commit -m "feat: add header component and remove placeholder"
+```
+
+Note: If a folder contains at least one real file, it doesn't need a .gitkeep anymore!
