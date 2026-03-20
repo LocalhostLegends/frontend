@@ -1,59 +1,92 @@
-# Frontend
+# HR Tech Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.3.
+This is the frontend application for the **HR Tech** project, built with **Angular 19** and **Angular Material**.
 
-## Development server
+## 🛠 Tech Stack
+- **Framework:** [Angular 15+](https://angular.dev) (Current: v19.x)
+- **UI Library:** [Angular Material](https://material.angular.io) 
+- **Environment:** Node.js v20.x (LTS)
+- **Package Manager:** npm
 
-To start a local development server, run:
+##  Getting Started
 
+### 1. Clone the repository
 ```bash
-ng serve
+git clone https://github.com/LocalhostLegends/frontend.git
+cd frontend
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
+### 2. Install dependencies
 ```bash
-ng generate component component-name
+npm install
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
+### 3. Run the development server
 ```bash
-ng generate --help
+npm start
 ```
 
-## Building
+Navigate to http://localhost:4200/. The app will automatically reload if you change any of the source files.
 
-To build the project run:
 
+## Project Structure
+* src/app/ — Application components, services, and modules.
+* src/assets/ — Static assets (images, fonts, etc.).
+* src/styles.scss — Global styles and Angular Material theme configuration.
+
+##  Development Workflow (Git Flow)
+To keep the main branch stable, please follow these steps:
+
+### 1. Create a feature branch from main:
 ```bash
-ng build
+git checkout -b feature/your-feature-name
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
+### 2. Commit your changes with clear messages:
 ```bash
-ng test
-```
+git add .
+git commit -m "feat: your-feature-description"
+``` 
 
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
+### 3. Push to GitHub and create a Pull Request:
 ```bash
-ng e2e
+git push -u origin feature/your-feature-name
 ```
+### 4. Create a Pull Request (PR)
+Go to the GitHub repository page and click the green "Compare & pull request" button. Describe your changes and wait for a code review from the team.
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+## Commit Message Guidelines
+We follow the [Conventional Commits](https://www.conventionalcommits.org) specification:
 
-## Additional Resources
+- `feat:` — A new feature (e.g., `feat: add user profile sidebar`)
+- `fix:` — A bug fix (e.g., `fix: navigation menu layout on mobile`)
+- `docs:` — Documentation changes only (e.g., `docs: update readme`)
+- `style:` — Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)
+- `refactor:` — A code change that neither fixes a bug nor adds a feature
+- `perf:` — A code change that improves performance
+- `chore:` — Updating build tasks, package manager configs, etc. (e.g., `chore: install material icons`)
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+**Example:**
+`git commit -m "feat: integrate material data table for users list"`
+
+##  Branch Naming Convention
+To keep our repository organized, please use the following prefixes for branch names:
+
+- `feature/` — New features or UI components (e.g., `feature/login-form`)
+- `bugfix/` — Fixing a bug (e.g., `bugfix/header-mobile-view`)
+- `hotfix/` — Critical fixes for the production (e.g., `hotfix/api-url-error`)
+- `refactor/` — Code cleanup or structural changes (e.g., `refactor/api-services`)
+- `docs/` — Documentation updates only (e.g., `docs/update-readme`)
+
+**How to create a new branch:**
+`git checkout -b feature/short-description`
+
+## 🛠 Useful Commands
+Inside the project folder, you can run:
+
+- `npm start` — **Run the app** in development mode. Open [http://localhost:4200](http://localhost:4200) to view it in the browser.
+- `ng generate component name` — **Create a new UI part**. It automatically creates 4 files (HTML, CSS, TS, Spec) and links them.
+- `ng generate service name` — **Create a data service**. Use this for API calls or shared logic between components.
+- `ng build` — **Prepare for production**. It creates a `dist/` folder with optimized files for the web server.
+- `ng test` — **Run tests**. It checks if your code works as expected (using Karma runner).
+
