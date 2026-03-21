@@ -1,9 +1,9 @@
 # HR Tech Frontend
 
-This is the frontend application for the **HR Tech** project, built with **Angular 19** and **Angular Material**.
+This is the frontend application for the **HR Tech** project, built with **Angular 21** and **Angular Material**.
 
 ## 🛠 Tech Stack
-- **Framework:** [Angular 15+](https://angular.dev) (Current: v19.x)
+- **Framework:** [Angular 15+](https://angular.dev) (Current: v21.x)
 - **UI Library:** [Angular Material](https://material.angular.io) 
 - **Environment:** Node.js v20.x (LTS)
 - **Package Manager:** npm
