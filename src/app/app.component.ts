@@ -1,5 +1,6 @@
-import { Component, signal } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { ApiService } from './services/api.service';
 
 @Component({
   selector: 'app-root',
@@ -8,6 +9,16 @@ import { RouterOutlet } from '@angular/router';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
-export class App {
-  protected readonly title = signal('frontend');
+export class App implements OnInit {
+  constructor(private api: ApiService) {}
+
+  ngOnInit() {
+    this.api.getUsers().subscribe({
+      next: (data) => console.log('USERS:', data),
+      error: (err) => console.error('ERROR:', err),
+    });
+  }
 }
+
+
+
