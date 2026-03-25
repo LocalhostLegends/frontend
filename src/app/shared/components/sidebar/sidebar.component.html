@@ -1,0 +1,46 @@
+<mat-sidenav-container [class.collapsed]="isSidebarCollapsed" class="sidenav-container">
+  <mat-sidenav
+    mode="side"
+    [opened]="true"
+    [style.width.px]="isSidebarCollapsed ? 80 : 240"
+    class="sidenav"
+  >
+    <div class="sidebar-content" [class.collapsed]="isSidebarCollapsed">
+      <div class="logo-container" routerLink="/">
+        <img src="assets/logo-dark.svg" alt="HR Tech" class="logo-img" />
+      </div>
+
+      @for (item of menuItems(); track item.route) {
+        <a
+          class="navText"
+          mat-button
+          [routerLink]="item.route"
+          routerLinkActive="active-link"
+          [routerLinkActiveOptions]="{ exact: item.exact }"
+        >
+          <div class="icon-text">
+            <img
+              [src]="'assets/icons/sideBar/' + item.icon"
+              [alt]="item.label"
+              width="24"
+              height="24"
+            />
+            <span>{{ item.label }}</span>
+          </div>
+        </a>
+      }
+
+      <div class="sidebar-header">
+        <span></span>
+        <button
+          mat-button
+          class="icon-button"
+          [class.rotated]="isSidebarCollapsed"
+          (click)="onToggleClick()"
+        >
+          <img src="assets/icons/sideBar/clouse.svg" alt="close" />
+        </button>
+      </div>
+    </div>
+  </mat-sidenav>
+</mat-sidenav-container>

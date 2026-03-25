@@ -1,0 +1,19 @@
+<mat-toolbar class="landing-toolbar">
+  <div class="left">
+    <div class="logo-container" routerLink="/">
+      <img src="assets/logo.svg" alt="HR Tech" class="logo-img" />
+      <span class="brand-name">HR Tech</span>
+    </div>
+  </div>
+
+  <div class="center">
+    <button mat-button routerLink="/about">About</button>
+    <button mat-button routerLink="/product">Product</button>
+    <button mat-button routerLink="/contact">Contact</button>
+  </div>
+
+  <div class="right auth-buttons">
+    <a mat-button routerLink="/auth/login" class="login-btn">Sign In</a>
+    <a mat-flat-button routerLink="/auth/register" class="register-btn"> Sign Up </a>
+  </div>
+</mat-toolbar>

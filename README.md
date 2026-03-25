@@ -28,12 +28,6 @@ npm start
 
 Navigate to http://localhost:4200/. The app will automatically reload if you change any of the source files.
 
-
-## Project Structure
-* src/app/ — Application components, services, and modules.
-* src/assets/ — Static assets (images, fonts, etc.).
-* src/styles.scss — Global styles and Angular Material theme configuration.
-
 ##  Development Workflow (Git Flow)
 To keep the main branch stable, please follow these steps:
 
@@ -85,24 +79,40 @@ To keep our repository organized, please use the following prefixes for branch n
 Inside the project folder, you can run:
 
 - `npm start` — **Run the app** in development mode. Open [http://localhost:4200](http://localhost:4200) to view it in the browser.
-- `ng generate component name` — **Create a new UI part**. It automatically creates 4 files (HTML, CSS, TS, Spec) and links them.
-- `ng generate service name` — **Create a data service**. Use this for API calls or shared logic between components.
-- `ng build` — **Prepare for production**. It creates a `dist/` folder with optimized files for the web server.
-- `ng test` — **Run tests**. It checks if your code works as expected (using Karma runner).
+- `npx ng generate component name --type=component` — **Create a new UI part**. It automatically creates 4 files (HTML, CSS, TS, Spec) and links them.
+(ex: npx ng g c shared/components/component-name --type=component)
+- `npx ng generate service name` — **Create a data service**. Use this for API calls or shared logic between components.
+- `npx ng build` — **Prepare for production**. It creates a `dist/` folder with optimized files for the web server.
+- `npx ng test` — **Run tests**. It checks if your code works as expected (using Karma runner).
 
 ##  Project Structure
 Inside `src/app/`, we use the following organization:
 
 ```text
 src/app/
-├── core/         # Global stuff (auth guards, interceptors, singleton services)
-├── shared/       # Reusable UI (buttons, inputs), pipes, directives
-├── features/     # Application pages (auth, dashboard, users)
-│   └── home/
-│       ├── components/
-│       └── home.component.ts
-├── models/       # TypeScript interfaces and types (e.g., user.model.ts)
-└── services/     # Global API services for data fetching
+├── core/                   # Singleton services, global configurations, and guards
+│   ├── guards/             # Route guards (e.g., AuthGuard, RoleGuard)
+│   ├── interceptors/       # HTTP Interceptors (e.g., AuthToken, ErrorHandler)
+│   ├── services/           # Global services (e.g., AuthService, ApiService, ThemeService)
+│   ├── layouts/            # Main layout wrappers (e.g., MainLayout, AuthLayout)
+│   └── models/             # Global TypeScript interfaces (e.g., User, Config)
+├── shared/                 # Reusable UI elements, pipes, and directives
+│   ├── components/         # "Dumb" components (e.g., CustomButton, InputField, Modal)
+│   ├── directives/         # Custom attribute/structural directives
+│   ├── pipes/              # Formatting utilities (e.g., DateFormat, Currency)
+│   └── models/             # Shared UI models (e.g., TableColumn, SelectOption)
+├── features/               # Business logic modules (Lazy-loaded modules)
+│   ├── landing/            # Public Landing Page (Home, About, Hero section)
+│   │   ├── components/     # Landing-specific UI (PricingTable, Testimonials)
+│   │   └── landing.component.ts
+│   ├── auth/               # Authentication pages (Login, Register, Password Reset)
+│   ├── candidates/         # Candidates management feature
+│   │   ├── components/     # Internal UI (CandidateCard, CandidateFilter)
+│   │   ├── services/       # Local services specific to candidates data
+│   │   ├── models/         # Domain-specific interfaces (Candidate)
+│   │   └── candidates.component.ts
+│   └── dashboard/          # Internal application dashboard
+└── app-routing.module.ts   # Main routing configuration
 ```
 ### 💡 Note on Empty Folders (`.gitkeep`)
 Git does not track empty folders. To keep our project structure visible on GitHub, you might see small files called `.gitkeep` inside some folders.
