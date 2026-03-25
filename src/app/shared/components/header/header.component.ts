@@ -28,8 +28,18 @@ export class HeaderComponent {
   isAuth = computed(() => this.auth.isAuthenticated());
   userName = computed(() => {
     const user = this.auth.currentUser();
-    return user ? `${user.firstname} ${user.lastname}` : '';
+    return user ? `${user.firstName} ${user.lastName}` : '';
   });
+  email = computed(() => {
+    const user = this.auth.currentUser();
+    return user ? user.email : '';
+  });
+
+  avatarUrl = computed(() => {
+    const user = this.auth.currentUser();
+    return user && user.avatar ? user.avatar : 'assets/avatar.svg';
+  });
+
   userRole = computed(() => this.auth.userRole());
 
   logout(): void {

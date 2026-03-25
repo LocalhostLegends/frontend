@@ -1,10 +1,10 @@
-import { Component, inject, signal } from '@angular/core'; // Добавили signal
+import { Component, inject, signal } from '@angular/core'; 
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon'; // Добавили иконки
+import { MatIconModule } from '@angular/material/icon'; 
 import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
@@ -27,7 +27,6 @@ export class LoginComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
 
-  // Signal для скрытия пароля
   hidePassword = signal(true);
 
   loginForm = this.fb.group({
@@ -36,32 +35,34 @@ export class LoginComponent {
   });
 
   errorMessage = signal<string | null>(null);
-onLogin() {
-  if (this.loginForm.valid) {
+  onLogin() {
     const { email, password } = this.loginForm.getRawValue();
-    const success = this.authService.login(email, password);
 
-    if (success) {
-      this.errorMessage.set(null);
+    this.authService.login(email, password).subscribe({
+      next: () => {
+        const user = this.authService.currentUser();
 
-      // 1. Получаем роль (вызываем сигнал как функцию)
-      const role = this.authService.userRole(); 
-      console.log('Login success! User role is:', role);
+        if (!user) {
+          this.errorMessage.set('Error: User data not loaded');
+          console.error('User data is not available');
+          return;
+        }
 
-      // 2. Определяем ОДИН правильный путь
-      const targetUrl = role === 'employee' 
-        ? '/app/dashboard-employee' 
-        : '/app/dashboard';
+        // console.log('User logged in successfully:', user);
 
-      console.log('Navigating to:', targetUrl);
-
-      // 3. Выполняем переход
-      this.router.navigate([targetUrl]);
-
-    } else {
-      this.errorMessage.set('Invalid email or password');
-    }
+        const role = user.role;
+        if (role === 'hr') {
+          this.router.navigate(['/app/dashboard']);
+        } else if (role === 'employee' || role === 'admin') {
+          this.router.navigate(['/app/dashboard-employee']);
+        } else {
+          this.router.navigate(['/app/dashboard-employee']);
+        }
+      },
+      error: (err) => {
+        this.errorMessage.set(err?.error?.message || 'Error during login');
+        console.error('Login error:', err);
+      },
+    });
   }
-}
-
 }

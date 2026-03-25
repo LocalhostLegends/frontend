@@ -11,8 +11,9 @@
 
     <button mat-button [matMenuTriggerFor]="menu" class="user-profile">
       <div class="profile-info">
-        <img src="assets/avatar.png" class="avatar" />
-        <span>{{ userName() }}</span>
+        <img [src]="avatarUrl()" class="avatar" />
+        <!-- <span>{{ userName() }}</span> -->
+         <span>{{ email() }}</span>
       </div>
       <mat-icon>expand_more</mat-icon>
     </button>

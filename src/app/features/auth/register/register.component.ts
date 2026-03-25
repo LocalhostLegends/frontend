@@ -8,6 +8,7 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+import { RegisterResponse } from '../../../services/api.service';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
@@ -44,12 +45,11 @@ export class RegisterComponent {
 
   registerForm = this.fb.group(
     {
-      firstname: ['', [Validators.required]],
-      lastname: ['', [Validators.required]],
+      firstName: ['', [Validators.required]],
+      lastName: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', [Validators.required]],
-      role: ['employee' as UserRole, [Validators.required]],
     },
     { validators: this.passwordMatchValidator },
   );
@@ -61,29 +61,19 @@ export class RegisterComponent {
   }
 
   onSubmit() {
-  if (this.registerForm.valid) {
-    const { firstname, lastname, email, password, role } = this.registerForm.getRawValue();
+    if (this.registerForm.valid) {
+      const { firstName, lastName, email, password } = this.registerForm.getRawValue();
 
-    try {
-      // Регистрируем пользователя
-      this.authService.register(firstname, lastname, email, password, role);
-      this.errorMessage.set(null);
-
-      // Проверяем роль и направляем на нужный роут
-      if (role === 'employee') {
-        this.router.navigate(['/app/dashboard/employee']);
-      } else {
-        // Админы и HR могут идти на общий дашборд или специфический для них
-        this.router.navigate(['/app/dashboard']);
-      }
-
-    } catch (err) {
-      if (err instanceof Error) {
-        this.errorMessage.set(err.message);
-      } else {
-        this.errorMessage.set('An unexpected error occurred');
-      }
+      this.authService.register(firstName, lastName, email, password).subscribe({
+        next: (res: RegisterResponse) => {
+          // console.log('Registered user:', res.data);
+          this.router.navigate(['/auth/login']);
+        },
+        error: (err) => {
+          this.errorMessage.set(err?.error?.message || 'Error during registration');
+          console.error(err);
+        },
+      });
     }
   }
-}
 }

@@ -43,7 +43,7 @@ $light-bg: #ffffff;
   .profile-info {
     display: flex;
     flex-direction: row;
-    align-items: flex-start;
+    align-items: center;
     justify-content: center;
     gap: 8px;
   }
@@ -63,8 +63,8 @@ $light-bg: #ffffff;
 }
 
 .avatar {
-  width: 32px;
-  height: 32px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
 }
 

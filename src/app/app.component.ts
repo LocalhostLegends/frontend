@@ -13,12 +13,10 @@ export class App implements OnInit {
   constructor(private api: ApiService) {}
 
   ngOnInit() {
-    this.api.getUsers().subscribe({
-      next: (data) => console.log('USERS:', data),
-      error: (err) => console.error('ERROR:', err),
-    });
+    // Test call removed - was causing 401 errors
+    // this.api.getUsers().subscribe({
+    //   next: (data) => console.log('USERS:', data),
+    //   error: (err) => console.error('ERROR:', err),
+    // });
   }
 }
-
-
-

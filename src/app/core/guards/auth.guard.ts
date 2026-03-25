@@ -8,11 +8,11 @@ export const authGuard: CanActivateFn = (route) => {
   const router = inject(Router);
 
   if (!authService.isAuthenticated()) {
-    return router.createUrlTree(['/auth/login']); 
+    return router.createUrlTree(['/auth/login']);
   }
 
   const allowedRoles = route.data['roles'] as UserRole[];
-  const userRole = authService.userRole(); 
+  const userRole = authService.userRole();
 
   if (!allowedRoles || allowedRoles.length === 0) {
     return true;
@@ -22,6 +22,6 @@ export const authGuard: CanActivateFn = (route) => {
     return true;
   }
 
-  const redirectPath = userRole === 'employee' ? '/app/dashboard-employee' : '/app/dashboard';
+  const redirectPath = userRole === 'hr' ? '/app/dashboard' : '/app/dashboard-employee';
   return router.createUrlTree([redirectPath]);
 };
