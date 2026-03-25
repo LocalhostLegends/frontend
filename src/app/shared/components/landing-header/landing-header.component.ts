@@ -6,13 +6,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
-  selector: 'app-header',
+  selector: 'app-landing-header',
   standalone: true,
   imports: [MatToolbarModule, MatIconModule, MatButtonModule, RouterLink],
-  templateUrl: './header.component.html',
-  styleUrl: './header.component.scss',
+  templateUrl: './landing-header.component.html',
+  styleUrl: './landing-header.component.scss',
 })
-export class HeaderComponent {
+export class LandingHeaderComponent {
   public auth = inject(AuthService);
   private router = inject(Router);
 

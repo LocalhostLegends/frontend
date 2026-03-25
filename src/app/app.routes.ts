@@ -2,11 +2,11 @@ import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard'; 
 
 export const routes: Routes = [
-  // 1. Auth Group (public)
+  // 1. Landing (public)
 {
   path: 'auth',
   loadComponent: () => 
-    import('./core/layouts/landing-layout/landing-layout.component').then(m => m.AuthLayoutComponent),
+    import('./core/layouts/landing-layout/landing-layout.component').then(m => m.LandingLayoutComponent),
   children: [
     {
       path: 'login',
@@ -22,23 +22,27 @@ export const routes: Routes = [
   ]
 },
 
-  // 2. App Group (Protected part)
-  {
+  // 2. App (private)
+ {
     path: 'app',
-    loadComponent: () => import('./core/layouts/app-layout/app-layout.component').then(m => m.MainLayoutComponent),
+    loadComponent: () => 
+      import('./core/layouts/app-layout/app-layout.component').then(m => m.AppLayoutComponent),
     canActivate: [authGuard], 
     children: [
-      
-      /* {
+      {
         path: 'dashboard',
-        loadComponent: () => import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent)
+        loadComponent: () => 
+          import('./features/dashboard/dashboard/dashboard.component').then(m => m.DashboardComponent)
       },
-      */
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
+      {
+        path: 'dashboard-employee',
+        loadComponent: () => 
+          import('./features/dashboard/dashboard-employee/dashboard-employee.component').then(m => m.DashboardEmployeeComponent)
+      },
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ]
   },
 
-  
   { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
   { path: '**', redirectTo: 'auth/login' }
 ];

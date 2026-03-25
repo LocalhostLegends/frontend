@@ -14,6 +14,6 @@ export const roleGuard: CanActivateFn = (route) => {
     return true;
   }
 
-    // Если нет прав — на главную или страницу "Доступ запрещен"
+  
   return router.parseUrl('/');
 };

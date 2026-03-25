@@ -1,28 +1,39 @@
-<mat-toolbar color="primary" class="header-toolbar">
-  <span class="logo" routerLink="/">HR Tech</span>
-  <span class="spacer"></span>
+<mat-toolbar class="header-toolbar">
+  <div class="left">
+    <span class="page-title">Dashboard</span>
+  </div>
 
-  @if (isAuth()) {
-    <a mat-button routerLink="/profile">Profile</a>
 
-    @if (userRole() === 'admin' || userRole() === 'hr') {
-      <a mat-button routerLink="/candidates">Candidates</a>
-    }
-
-    @if (userRole() === 'admin') {
-      <a mat-button routerLink="/admin/settings">
-        <mat-icon>settings</mat-icon> Settings
-      </a>
-    }
-
-    <span class="user-greeting">Hi, {{ userName() }}!</span>
-    <button mat-icon-button (click)="logout()">
-      <mat-icon>logout</mat-icon>
+  <div class="right">
+    <button mat-icon-button>
+      <mat-icon>notifications</mat-icon>
     </button>
 
-  } @else {
-    <a mat-button routerLink="/auth/login">Sign In</a>
-    <a mat-button routerLink="/auth/register">Register</a>
-  }
-</mat-toolbar>
+    <button mat-button [matMenuTriggerFor]="menu" class="user-profile">
+      <div class="profile-info">
+        <img src="assets/avatar.png" class="avatar" />
+        <span>{{ userName() }}</span>
+      </div>
+      <mat-icon>expand_more</mat-icon>
+    </button>
 
+    <mat-menu #menu="matMenu" class="profile-menu">
+      <button mat-menu-item routerLink="/profile">
+        <mat-icon>person</mat-icon>
+        <span>Profile</span>
+      </button>
+
+      <button mat-menu-item routerLink="/settings">
+        <mat-icon>settings</mat-icon>
+        <span>Settings</span>
+      </button>
+
+      <mat-divider></mat-divider>
+
+      <button mat-menu-item (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        <span>Logout</span>
+      </button>
+    </mat-menu>
+  </div>
+</mat-toolbar>

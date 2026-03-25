@@ -61,20 +61,29 @@ export class RegisterComponent {
   }
 
   onSubmit() {
-    if (this.registerForm.valid) {
-      const { firstname, lastname, email, password, role } = this.registerForm.getRawValue();
+  if (this.registerForm.valid) {
+    const { firstname, lastname, email, password, role } = this.registerForm.getRawValue();
 
-      try {
-        this.authService.register(firstname, lastname, email, password, role);
-        this.errorMessage.set(null);
-        this.router.navigate(['/dashboard']);
-      } catch (err) {
-        if (err instanceof Error) {
-          this.errorMessage.set(err.message);
-        } else {
-          this.errorMessage.set('An unexpected error occurred');
-        }
+    try {
+      // Регистрируем пользователя
+      this.authService.register(firstname, lastname, email, password, role);
+      this.errorMessage.set(null);
+
+      // Проверяем роль и направляем на нужный роут
+      if (role === 'employee') {
+        this.router.navigate(['/app/dashboard/employee']);
+      } else {
+        // Админы и HR могут идти на общий дашборд или специфический для них
+        this.router.navigate(['/app/dashboard']);
+      }
+
+    } catch (err) {
+      if (err instanceof Error) {
+        this.errorMessage.set(err.message);
+      } else {
+        this.errorMessage.set('An unexpected error occurred');
       }
     }
   }
+}
 }

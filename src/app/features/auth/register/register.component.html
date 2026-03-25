@@ -26,14 +26,14 @@
       }
     </mat-form-field>
 
-    <mat-form-field appearance="outline">
+    <!-- <mat-form-field appearance="outline">
       <mat-label>Role</mat-label>
       <mat-select formControlName="role">
         @for (role of roles; track role) {
           <mat-option [value]="role">{{ role }}</mat-option>
         }
       </mat-select>
-    </mat-form-field>
+    </mat-form-field> -->
 
     <mat-form-field appearance="outline">
       <mat-label>Password</mat-label>
@@ -64,10 +64,10 @@
       </div>
     }
 
-    <button mat-raised-button color="primary" type="submit" [disabled]="registerForm.invalid">
+    <button mat-raised-button class="btn" type="submit" [disabled]="registerForm.invalid">
       Register
     </button>
     
-    <p>Already have an account? <a routerLink="/auth/login">Sign In</a></p>
+    <p>Already have an account?  <a routerLink="/auth/login">Sign In</a></p>
   </form>
 </div>

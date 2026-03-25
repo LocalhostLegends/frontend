@@ -12,16 +12,16 @@ export const authGuard: CanActivateFn = (route) => {
   }
 
   const allowedRoles = route.data['roles'] as UserRole[];
+  const userRole = authService.userRole(); 
 
   if (!allowedRoles || allowedRoles.length === 0) {
     return true;
   }
 
-  const userRole = authService.userRole(); 
-
   if (userRole && allowedRoles.includes(userRole)) {
     return true;
   }
 
-  return router.createUrlTree(['/auth/login']);
+  const redirectPath = userRole === 'employee' ? '/app/dashboard-employee' : '/app/dashboard';
+  return router.createUrlTree([redirectPath]);
 };

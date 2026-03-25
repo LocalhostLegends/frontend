@@ -11,17 +11,19 @@
 
     <mat-form-field appearance="outline">
       <mat-label>Password</mat-label>
-      <input matInput formControlName="password" type="password">
-       @if (loginForm.controls.password.invalid && loginForm.controls.password.touched) {
+      <input matInput [type]="hidePassword() ? 'password' : 'text'" formControlName="password">
+      <button mat-icon-button matSuffix type="button" (click)="hidePassword.set(!hidePassword())">
+        <mat-icon>{{hidePassword() ? 'visibility_off' : 'visibility'}}</mat-icon>
+      </button>
+      @if (loginForm.controls.password.invalid && loginForm.controls.password.touched) {
         <mat-error>Minimum 8 characters</mat-error>
       }
     </mat-form-field>
-
-    @if (errorMessage) {
-      <p class="error-text">{{ errorMessage }}</p>
+    @if (errorMessage()) {
+      <p class="error-text">{{ errorMessage() }}</p>
     }
 
-    <button mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid">
+    <button mat-raised-button class="btn" type="submit" [disabled]="loginForm.invalid">
       Sign In
     </button>
 
