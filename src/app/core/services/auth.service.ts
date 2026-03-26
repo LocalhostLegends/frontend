@@ -4,6 +4,7 @@ import { User, UserRole } from '../../models/user.model';
 import { tap, map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
+
 interface JWTPayload {
   sub: string;
   email: string;
@@ -20,26 +21,21 @@ export class AuthService {
   isAuthenticated = computed(() => !!this.currentUser() && !!this.accessToken());
   userRole = computed(() => this.currentUser()?.role || null);
 
-  constructor(
-    private api: ApiService,
-    private router: Router,
-  ) {
+  constructor(private api: ApiService, private router: Router) {
     this.restoreSession();
   }
 
   private restoreSession() {
-  const token = localStorage.getItem('token');
+    const token = localStorage.getItem('token');
+    if (!token) return;
 
-  if (!token) return;
-
-  this.accessToken.set(token);
-
-  const user = this.userFromToken(token);
-  if (user) {
-    this.currentUser.set(user);
-    localStorage.setItem('user', JSON.stringify(user));
+    this.accessToken.set(token);
+    const user = this.userFromToken(token);
+    if (user) {
+      this.currentUser.set(user);
+      localStorage.setItem('user', JSON.stringify(user));
+    }
   }
-}
 
   private decodeJWT(token: string): JWTPayload | null {
     try {
@@ -65,46 +61,35 @@ export class AuthService {
 
   register(firstName: string, lastName: string, email: string, password: string) {
     return this.api.register({ firstName, lastName, email, password }).pipe(
-      tap(() => {
-        console.log('User registered');
-      }),
+      tap(() => console.log('User registered successfully'))
     );
   }
 
   login(email: string, password: string) {
     return this.api.login({ email, password }).pipe(
       map((res: LoginResponse) => {
-        console.log('Login response:', res);
-
-        const token = res.data?.accessToken ?? null;
-
-        if (!token) {
-          throw new Error('No access token');
-        }
+        const token = res.data?.accessToken ?? res.accessToken ?? null;
+        if (!token) throw new Error('No access token received');
 
         this.accessToken.set(token);
         localStorage.setItem('token', token);
 
         const user = this.userFromToken(token);
-        if (!user) {
-          throw new Error('Invalid token');
-        }
+        if (!user) throw new Error('Invalid token');
 
         this.currentUser.set(user);
         localStorage.setItem('user', JSON.stringify(user));
 
         return user;
-      }),
+      })
     );
   }
 
   logout() {
     this.accessToken.set(null);
     this.currentUser.set(null);
-
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-
     this.router.navigate(['/auth/login']);
   }
 }
