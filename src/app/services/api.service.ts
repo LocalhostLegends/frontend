@@ -12,8 +12,6 @@ interface LoginResponse {
     accessToken?: string;
     user?: User;
   };
-  timestamp?: string;
-  path?: string;
 }
 
 interface RegisterResponse {
@@ -35,8 +33,9 @@ export class ApiService {
 
   constructor(private http: HttpClient) {}
 
+  // Users
   getUsers(): Observable<User[]> {
-    return this.http.get<User[]>(`${this.baseUrl}/users`);
+    return this.http.get<User[]>(`${this.baseUrl}/users`, { withCredentials: true });
   }
 
   createUser(data: {
@@ -47,43 +46,52 @@ export class ApiService {
     role?: string;
     phone?: string;
   }): Observable<User> {
-    return this.http.post<User>(`${this.baseUrl}/users`, data);
+    return this.http.post<User>(`${this.baseUrl}/users`, data, { withCredentials: true });
   }
 
   getUserById(id: string): Observable<User> {
-    return this.http.get<User>(`${this.baseUrl}/users/${id}`);
+    return this.http.get<User>(`${this.baseUrl}/users/${id}`, { withCredentials: true });
   }
 
   updateUser(id: string, data: Partial<User>): Observable<User> {
-    return this.http.patch<User>(`${this.baseUrl}/users/${id}`, data);
+    return this.http.patch<User>(`${this.baseUrl}/users/${id}`, data, { withCredentials: true });
   }
 
+  // Auth
   register(data: {
     firstName: string;
     lastName: string;
     email: string;
     password: string;
   }): Observable<RegisterResponse> {
-    return this.http.post<RegisterResponse>(`${this.baseUrl}/auth/register`, data);
+    return this.http.post<RegisterResponse>(
+      `${this.baseUrl}/auth/register`,
+      data,
+      { withCredentials: true }
+    );
   }
 
   login(data: { email: string; password: string }): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.baseUrl}/auth/login`, data);
+    return this.http.post<LoginResponse>(
+      `${this.baseUrl}/auth/login`,
+      data,
+      { withCredentials: true }
+    );
   }
 
   refresh(data: {} = {}): Observable<User> {
-    return this.http.post<User>(`${this.baseUrl}/auth/refresh`, data);
+    return this.http.post<User>(`${this.baseUrl}/auth/refresh`, data, { withCredentials: true });
   }
 
   getProfile(): Observable<User> {
-    return this.http.get<User>(`${this.baseUrl}/profile`);
+    return this.http.get<User>(`${this.baseUrl}/profile`, { withCredentials: true });
   }
 
   updateProfile(data: Partial<User>): Observable<User> {
-    return this.http.put<User>(`${this.baseUrl}/profile`, data);
+    return this.http.put<User>(`${this.baseUrl}/profile`, data, { withCredentials: true });
   }
 
   deleteUser(id: string): Observable<DeleteResponse> {
-    return this.http.delete<DeleteResponse>(`${this.baseUrl}/users/${id}`);
+    return this.http.delete<DeleteResponse>(`${this.baseUrl}/users/${id}`, { withCredentials: true });
   }
 }
