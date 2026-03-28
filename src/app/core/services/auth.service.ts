@@ -18,7 +18,7 @@ export class AuthService {
   currentUser = signal<User | null>(null);
   accessToken = signal<string | null>(null);
 
-  isAuthenticated = computed(() => !!this.currentUser() && !!this.accessToken());
+  isAuthenticated = computed(() => !!this.accessToken());
   userRole = computed(() => this.currentUser()?.role || null);
 
   constructor(private api: ApiService, private router: Router) {
@@ -67,9 +67,14 @@ export class AuthService {
 
   login(email: string, password: string) {
     return this.api.login({ email, password }).pipe(
-      map((res: LoginResponse) => {
-        const token = res.data?.accessToken ?? res.accessToken ?? null;
-        if (!token) throw new Error('No access token received');
+      map((res: any) => {
+        console.log('Login response:', res);
+
+        const token = res.data?.accessToken;
+
+        if (!token) {
+          throw new Error('No access token');
+        }
 
         this.accessToken.set(token);
         localStorage.setItem('token', token);

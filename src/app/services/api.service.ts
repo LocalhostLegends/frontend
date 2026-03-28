@@ -72,15 +72,16 @@ export class ApiService {
   }
 
   login(data: { email: string; password: string }): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(
-      `${this.baseUrl}/auth/login`,
-      data,
-      { withCredentials: true }
-    );
+    return this.http.post<LoginResponse>(`${this.baseUrl}/auth/login`, data, {
+      withCredentials: true,
+    });
+
   }
 
   refresh(data: {} = {}): Observable<User> {
-    return this.http.post<User>(`${this.baseUrl}/auth/refresh`, data, { withCredentials: true });
+    return this.http.post<User>(`${this.baseUrl}/auth/refresh`, data, {
+      withCredentials: true,
+    });
   }
 
   getProfile(): Observable<User> {

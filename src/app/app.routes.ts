@@ -28,38 +28,10 @@ export const routes: Routes = [
   {
     path: 'app',
     loadComponent: () =>
-      import('./core/layouts/app-layout/app-layout.component').then((m) => m.AppLayoutComponent),
-    canActivate: [authGuard],
-    children: [
-      {
-        path: 'dashboard',
-        loadComponent: () =>
-          import('./features/dashboard/dashboard/dashboard.component').then(
-            (m) => m.DashboardComponent,
-          ),
-      },
-      {
-        path: 'dashboard-employee',
-        loadComponent: () =>
-          import('./features/dashboard/dashboard-employee/dashboard-employee.component').then(
-            (m) => m.DashboardEmployeeComponent,
-          ),
-      },
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-      {
-        path: 'profile',
-        loadComponent: () =>
-          import('./features/profile/profile.component').then((m) => m.ProfileComponent),
-      },
-
-
-
-
-      
-    ],
+      import('./features/auth/register/register.component').then(m => m.RegisterComponent),
   },
-  
-
-  { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
-  { path: '**', redirectTo: 'auth/login' },
+  {
+    path: '**',
+    redirectTo: 'auth/login',
+  },
 ];

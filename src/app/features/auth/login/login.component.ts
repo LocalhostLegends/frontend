@@ -43,8 +43,7 @@ export class LoginComponent {
         const user = this.authService.currentUser();
 
         if (!user) {
-          this.errorMessage.set('Error: User data not loaded');
-          console.error('User data is not available');
+          this.router.navigate(['/app/dashboard']);
           return;
         }
 
