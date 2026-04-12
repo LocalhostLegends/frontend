@@ -1,10 +1,10 @@
-import { Component, inject, signal } from '@angular/core'; 
+import { Component, inject, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon'; 
+import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { finalize } from 'rxjs';
@@ -42,20 +42,14 @@ export class LoginComponent {
   onLogin() {
     if (this.loginForm.invalid) return;
 
-    this.authService.login(email, password).subscribe({
-      next: () => {
-        const user = this.authService.currentUser();
+    const { email, password } = this.loginForm.getRawValue();
 
-        if (!user) {
-          this.router.navigate(['/app/dashboard']);
-          return;
-        }
+    this.isLoading.set(true);
+    this.errorMessage.set(null);
 
-    this.authService.login(email, password)
-      .pipe(
-        // finalize выполнится И при успехе, И при ошибке — идеально для выключения спиннера
-        finalize(() => this.isLoading.set(false))
-      )
+    this.authService
+      .login(email, password)
+      .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: () => {
           const user = this.authService.currentUser();
@@ -71,7 +65,7 @@ export class LoginComponent {
         error: (err) => {
           this.errorMessage.set(err?.error?.message || 'Error during login');
           console.error('Login error:', err);
-        }
+        },
       });
   }
 }
