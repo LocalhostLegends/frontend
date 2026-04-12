@@ -17,7 +17,7 @@ export class AuthService {
   currentUser = signal<User | null>(null);
   accessToken = signal<string | null>(null);
 
-  isAuthenticated = computed(() => !!this.currentUser() && !!this.accessToken());
+  isAuthenticated = computed(() => !!this.accessToken());
   userRole = computed(() => this.currentUser()?.role || null);
 
   constructor(
