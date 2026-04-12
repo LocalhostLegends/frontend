@@ -42,10 +42,14 @@ export class LoginComponent {
   onLogin() {
     if (this.loginForm.invalid) return;
 
-    const { email, password } = this.loginForm.getRawValue();
-    
-    this.isLoading.set(true); 
-    this.errorMessage.set(null); 
+    this.authService.login(email, password).subscribe({
+      next: () => {
+        const user = this.authService.currentUser();
+
+        if (!user) {
+          this.router.navigate(['/app/dashboard']);
+          return;
+        }
 
     this.authService.login(email, password)
       .pipe(

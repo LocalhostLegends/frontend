@@ -96,24 +96,17 @@ export class ApiService {
     });
   }
 
-  login(data: { email: string; password: string; ipAddress: string }): Observable<LoginResponse> {
+  login(data: { email: string; password: string }): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this.baseUrl}/auth/login`, data, {
       withCredentials: true,
     });
-  }
 
-  activate(data: { token: string; password: string }): Observable<ActivateResponse> {
-    return this.http.post<ActivateResponse>(`${this.baseUrl}/auth/activate`, data, {
-      withCredentials: true,
-    });
-  }
-
-  getIP(): Observable<IPResponse> {
-    return this.http.get<IPResponse>('https://api.ipify.org?format=json');
   }
 
   refresh(data: {} = {}): Observable<User> {
-    return this.http.post<User>(`${this.baseUrl}/auth/refresh`, data, { withCredentials: true });
+    return this.http.post<User>(`${this.baseUrl}/auth/refresh`, data, {
+      withCredentials: true,
+    });
   }
 
   createHR(data: {
