@@ -57,6 +57,7 @@ export class SidebarComponent {
       baseItems.push(
         { label: 'Projects', icon: 'folder.svg', route: '/app/projects', exact: false },
         { label: 'Users', icon: 'people.svg', route: '/app/users', exact: false },
+        { label: 'Invites', icon: 'people.svg', route: '/app/invites', exact: false },
         { label: 'Settings', icon: 'settings.svg', route: '/app/settings', exact: false },
       );
     }

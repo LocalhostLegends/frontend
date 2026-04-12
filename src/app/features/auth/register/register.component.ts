@@ -5,8 +5,9 @@ import {
   Validators,
   AbstractControl,
   ValidationErrors,
+  ValidatorFn // Импортируем тип для чистоты кода
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { RegisterResponse } from '../../../services/api.service';
 import { MatInputModule } from '@angular/material/input';
@@ -15,7 +16,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { UserRole } from '../../../models/user.model';
-import { RouterLink } from '@angular/router';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { finalize } from 'rxjs'; // Не забудь импорт!
 
 @Component({
   selector: 'app-register',
@@ -28,9 +30,10 @@ import { RouterLink } from '@angular/router';
     MatIconModule,
     MatSelectModule,
     RouterLink,
+    MatProgressSpinnerModule,
   ],
   templateUrl: './register.component.html',
-  styleUrl: './register.component.scss',
+  styleUrls: ['./register.component.scss'],
 })
 export class RegisterComponent {
   private fb = inject(NonNullableFormBuilder);
@@ -40,33 +43,45 @@ export class RegisterComponent {
   hidePassword = signal(true);
   hideConfirmPassword = signal(true);
   errorMessage = signal<string | null>(null);
+  isLoading = signal(false);
 
+  // Список ролей, если он нужен в шаблоне
   roles: Exclude<UserRole, null>[] = ['admin', 'hr', 'employee'];
 
   registerForm = this.fb.group(
     {
+      companyName: ['', [Validators.required]],
       firstName: ['', [Validators.required]],
       lastName: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', [Validators.required]],
     },
-    { validators: this.passwordMatchValidator },
+    { validators: this.passwordMatchValidator }
   );
 
-  passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
+  // Валидатор совпадения паролей
+  private passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
     const password = control.get('password')?.value;
     const confirmPassword = control.get('confirmPassword')?.value;
     return password === confirmPassword ? null : { mismatch: true };
   }
 
   onSubmit() {
-    if (this.registerForm.valid) {
-      const { firstName, lastName, email, password } = this.registerForm.getRawValue();
+    if (this.registerForm.invalid) {
+      this.registerForm.markAllAsTouched(); 
+      return;
+    }
 
-      this.authService.register(firstName, lastName, email, password).subscribe({
-        next: (res: RegisterResponse) => {
-          // console.log('Registered user:', res.data);
+    const { companyName, firstName, lastName, email, password } = this.registerForm.getRawValue();
+    
+    this.isLoading.set(true);
+    this.errorMessage.set(null);
+
+    this.authService.register(companyName, firstName, lastName, email, password)
+      .pipe(finalize(() => this.isLoading.set(false))) 
+      .subscribe({
+        next: () => {
           this.router.navigate(['/auth/login']);
         },
         error: (err) => {
@@ -74,6 +89,5 @@ export class RegisterComponent {
           console.error(err);
         },
       });
-    }
   }
 }

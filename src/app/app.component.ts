@@ -13,10 +13,10 @@ export class App implements OnInit {
   constructor(private api: ApiService) {}
 
   ngOnInit() {
-    // Test call removed - was causing 401 errors
-    // this.api.getUsers().subscribe({
-    //   next: (data) => console.log('USERS:', data),
-    //   error: (err) => console.error('ERROR:', err),
-    // });
+  const theme = localStorage.getItem('theme');
+
+  if (theme === 'dark') {
+    document.body.classList.add('dark-theme');
   }
+}
 }

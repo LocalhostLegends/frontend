@@ -6,9 +6,10 @@
 
 .sidenav-container {
   height: 100vh;
-  background-color: #09144c;
+  background: linear-gradient(135deg, #041133, #092265, #1c49c0);
   transition: width 0.3s ease-in-out;
   display: flex;
+  border-radius: none;
 
   &.collapsed {
     width: 80px;
@@ -16,7 +17,7 @@
 }
 
 .sidenav {
-  background-color: #09144c;
+  background: linear-gradient(135deg, #041133, #092265, #1c49c0);
   border: none;
   width: 100%;
 }

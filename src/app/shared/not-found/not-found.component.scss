@@ -1,0 +1,24 @@
+.not-found {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+
+  h1 {
+    font-size: 120px;
+    margin: 0;
+    line-height: 1.1;
+
+    background: linear-gradient(90deg, #092265, #1C49C0);
+    -webkit-background-clip: text; // Chrome, Safari
+    background-clip: text;         // стандарт
+    -webkit-text-fill-color: transparent;
+  }
+
+  p {
+    font-size: 20px;
+    color: #666;
+  }
+}

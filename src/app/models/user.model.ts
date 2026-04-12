@@ -2,6 +2,7 @@ export type UserRole = 'admin' | 'hr' | 'employee' | null;
 
 export interface User {
   id: string;
+  companyName: string;
   firstName: string;
   lastName: string;
   email: string;
