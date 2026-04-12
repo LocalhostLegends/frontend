@@ -1,0 +1,100 @@
+.invite-management {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.create-invite-card {
+  margin-bottom: 24px;
+}
+
+.create-form {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+
+  mat-form-field {
+    min-width: 200px;
+    flex: 1;
+  }
+
+  .create-button {
+    height: 56px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+}
+
+.invites-list-card {
+  .table-container {
+    overflow-x: auto;
+  }
+
+  .invites-table {
+    width: 100%;
+    min-width: 600px;
+  }
+
+  .no-invites {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px;
+    color: #666;
+
+    mat-icon {
+      font-size: 48px;
+      width: 48px;
+      height: 48px;
+      margin-bottom: 16px;
+    }
+
+    p {
+      margin: 0;
+      font-size: 16px;
+    }
+  }
+
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px;
+
+    mat-spinner {
+      margin-bottom: 16px;
+    }
+
+    p {
+      margin: 0;
+      color: #666;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .invite-management {
+    padding: 16px;
+  }
+
+  .create-form {
+    flex-direction: column;
+
+    mat-form-field {
+      min-width: auto;
+      width: 100%;
+    }
+
+    .create-button {
+      width: 100%;
+      height: 48px;
+    }
+  }
+}

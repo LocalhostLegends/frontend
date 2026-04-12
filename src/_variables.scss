@@ -1,0 +1,72 @@
+$primary: #092265;
+$primary-dark: #041133;
+$primary-hover: #1c49c0;
+$accent-blue: #3f51b5;
+$accent-hover: #1628a1;
+$text-main: #0b102a;
+$text-secondary: #6b7280;
+$light-bg: #fefeff;
+$error: #f44336;
+
+$gradient: linear-gradient(90deg, #041133, #092265, #1c49c0);
+$border: 2px solid $accent-blue;
+
+// ==============================
+// Button variables
+// ==============================
+$btn-radius: 8px;
+$btn-font-weight: 500;
+$btn-transition: all 0.3s ease;
+
+// ==============================
+// Global variables
+// ==============================
+.btn {
+  border: none;
+  border-radius: $btn-radius;
+  font-weight: $btn-font-weight;
+  cursor: pointer;
+  transition: $btn-transition;
+  font-family: Roboto, sans-serif;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+// Primary
+.btn-primary {
+  background: $gradient;
+  color: #fff;
+
+  &:hover {
+    background: $primary-hover;
+    transform: translateY(-2px);
+  }
+}
+
+// Secondary
+.btn-secondary {
+  background: transparent;
+  color: $text-main;
+  border: $border;
+
+  &:hover {
+    background: $primary-hover;
+    color: #fff;
+    transform: translateY(-2px);
+  }
+}
+
+// Gradient text
+.btn-gradient-text {
+  background: $gradient;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 500;
+
+  &:hover {
+    opacity: 0.85;
+  }
+}

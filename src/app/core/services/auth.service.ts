@@ -1,9 +1,8 @@
 import { Injectable, signal, computed } from '@angular/core';
 import { ApiService, LoginResponse } from '../../services/api.service';
 import { User, UserRole } from '../../models/user.model';
-import { tap, map } from 'rxjs/operators';
+import { tap, map, switchMap } from 'rxjs/operators';
 import { Router } from '@angular/router';
-
 
 interface JWTPayload {
   sub: string;
@@ -21,7 +20,10 @@ export class AuthService {
   isAuthenticated = computed(() => !!this.currentUser() && !!this.accessToken());
   userRole = computed(() => this.currentUser()?.role || null);
 
-  constructor(private api: ApiService, private router: Router) {
+  constructor(
+    private api: ApiService,
+    private router: Router,
+  ) {
     this.restoreSession();
   }
 
@@ -56,17 +58,26 @@ export class AuthService {
       role: payload.role as UserRole,
       firstName: payload.email.split('@')[0],
       lastName: '',
+      companyName: '',
     };
   }
 
-  register(firstName: string, lastName: string, email: string, password: string) {
-    return this.api.register({ firstName, lastName, email, password }).pipe(
-      tap(() => console.log('User registered successfully'))
-    );
+  register(
+    companyName: string,
+    firstName: string,
+    lastName: string,
+    email: string,
+    password: string,
+  ) {
+    return this.api
+      .registerCompany({ companyName, firstName, lastName, email, password })
+      .pipe(tap(() => console.log('User registered successfully')));
   }
 
   login(email: string, password: string) {
-    return this.api.login({ email, password }).pipe(
+    return this.api.getIP().pipe(
+      map((ipRes) => ipRes.ip),
+      switchMap((ipAddress) => this.api.login({ email, password, ipAddress })),
       map((res: LoginResponse) => {
         const token = res.data?.accessToken ?? res.accessToken ?? null;
         if (!token) throw new Error('No access token received');
@@ -81,15 +92,37 @@ export class AuthService {
         localStorage.setItem('user', JSON.stringify(user));
 
         return user;
-      })
+      }),
     );
   }
 
+  activate(token: string, password: string) {
+    return this.api
+      .activate({ token, password })
+      .pipe(tap(() => console.log('Account activated successfully')));
+  }
+
+  createHR(firstName: string, lastName: string, email: string, password: string) {
+    return this.api
+      .createHR({ firstName, lastName, email, password })
+      .pipe(tap(() => console.log('HR user created successfully')));
+  }
+
+  createEmployee(firstName: string, lastName: string, email: string, password: string) {
+    return this.api
+      .createEmployee({ firstName, lastName, email, password })
+      .pipe(tap(() => console.log('Employee user created successfully')));
+  }
+
   logout() {
-    this.accessToken.set(null);
-    this.currentUser.set(null);
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    this.router.navigate(['/auth/login']);
+    return this.api.logout().pipe(
+      tap(() => {
+        this.accessToken.set(null);
+        this.currentUser.set(null);
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        this.router.navigate(['/auth/login']);
+      }),
+    );
   }
 }

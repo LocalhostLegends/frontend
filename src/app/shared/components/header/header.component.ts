@@ -7,6 +7,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
 import { AuthService } from '../../../core/services/auth.service';
 
+
 @Component({
   selector: 'app-header',
   standalone: true,
@@ -17,6 +18,7 @@ import { AuthService } from '../../../core/services/auth.service';
     MatMenuModule,
     MatDividerModule,
     RouterLink,
+   
   ],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
@@ -46,4 +48,20 @@ export class HeaderComponent {
     this.auth.logout();
     this.router.navigate(['/']);
   }
+
+//   navigateToProfile() {
+//   const role = this.auth.userRole();
+
+//   switch (role) {
+//     case 'HR':
+//       this.router.navigate(['/dashboard']);
+//       break;
+//     case 'Manager':
+//       this.router.navigate(['/manager-panel']);
+//       break;
+//     default:
+//       this.router.navigate(['/profile']); // Базовый путь для обычных сотрудников
+//   }
+// }
+ 
 }

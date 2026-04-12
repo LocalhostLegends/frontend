@@ -3,8 +3,8 @@
     <span class="page-title">Dashboard</span>
   </div>
 
-
   <div class="right">
+    
     <button mat-icon-button>
       <mat-icon>notifications</mat-icon>
     </button>
@@ -13,13 +13,14 @@
       <div class="profile-info">
         <img [src]="avatarUrl()" class="avatar" />
         <!-- <span>{{ userName() }}</span> -->
-         <span>{{ email() }}</span>
+        <span>{{ email() }}</span>
       </div>
       <mat-icon>expand_more</mat-icon>
     </button>
 
     <mat-menu #menu="matMenu" class="profile-menu">
-      <button mat-menu-item routerLink="/profile">
+      <!-- <button mat-menu-item (click)="navigateToProfile()"> -->
+        <button mat-menu-item>
         <mat-icon>person</mat-icon>
         <span>Profile</span>
       </button>

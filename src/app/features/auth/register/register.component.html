@@ -1,6 +1,14 @@
 <div class="register-wrapper">
   <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-    <h2>Create Account</h2>
+    <h2>Register Company</h2>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Company Name</mat-label>
+      <input matInput formControlName="companyName" />
+      @if (registerForm.controls.companyName.invalid && registerForm.controls.companyName.touched) {
+        <mat-error>Company name is required</mat-error>
+      }
+    </mat-form-field>
 
     <mat-form-field appearance="outline">
       <mat-label>First Name</mat-label>
@@ -19,7 +27,7 @@
     </mat-form-field>
 
     <mat-form-field appearance="outline">
-      <mat-label>Email</mat-label>
+      <mat-label>Email Company</mat-label>
       <input matInput formControlName="email" type="email" />
       @if (registerForm.controls.email.invalid && registerForm.controls.email.touched) {
         <mat-error>Please enter a valid email</mat-error>
@@ -44,6 +52,7 @@
         [type]="hideConfirmPassword() ? 'password' : 'text'"
         formControlName="confirmPassword"
       />
+
       <button
         mat-icon-button
         matSuffix
@@ -58,15 +67,24 @@
       }
     </mat-form-field>
 
+    <button
+      mat-raised-button
+      class="btn btn-primary"
+      type="submit"
+      [disabled]="registerForm.invalid || isLoading()"
+    >
+      @if (isLoading()) {
+        <mat-spinner diameter="24"></mat-spinner>
+      } @else {
+        Register
+      }
+    </button>
+
     @if (errorMessage()) {
       <div class="server-error">
         {{ errorMessage() }}
       </div>
     }
-
-    <button mat-raised-button class="btn" type="submit" [disabled]="registerForm.invalid">
-      Register
-    </button>
 
     <p>Already have an account? <a routerLink="/auth/login">Sign In</a></p>
   </form>

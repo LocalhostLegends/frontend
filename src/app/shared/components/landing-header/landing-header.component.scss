@@ -1,10 +1,4 @@
-$primary-dark: #09144C;
-$primary-hover: #0F1E6B;
-$accent-blue: #3f51b5;
-$accent-hover: #1628a1;
-$text-main: #0B102A;
-$text-secondary: #6B7280;
-$light-bg: #ffffff;
+@use '../../../../variables' as *;
 
 .landing-toolbar {
   background-color: $light-bg;
@@ -26,21 +20,12 @@ $light-bg: #ffffff;
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  white-space: nowrap; 
-
+  white-space: nowrap;
 
   button {
-    color: $text-main;
-    font-weight: 500;
-    height: 40px; 
-    line-height: 40px;
-    padding: 0 16px !important;
-    border-radius: 8px !important;
-
-    &:hover {
-      background: rgba($accent-blue, 0.1);
-      color: $accent-blue;
-    }
+    height: 40px;        
+    line-height: 40px; 
+    padding: 0 16px;     
   }
 }
 
@@ -48,6 +33,13 @@ $light-bg: #ffffff;
   display: flex;
   align-items: center;
   gap: 12px;
+
+  .btn {
+    height: 40px;      
+    line-height: 40px; 
+    padding: 0 16px; 
+     font-size: 14px;
+  }
 }
 
 .logo-container {
@@ -73,67 +65,3 @@ $light-bg: #ffffff;
   }
 }
 
-.nav-links, .auth-buttons {
-  display: flex;
-  gap: 12px; 
-
-  a[mat-button], .login-btn, .register-btn {
-    height: 40px; 
-    line-height: 40px;
-    padding: 0 16px !important;
-    border-radius: 8px !important; 
-    font-weight: 500;
-    transition: all 0.3s ease;
-  }
-}
-
-.nav-links {
-  a[mat-button] {
-    color: $text-main; 
-
-    &:hover {
-      background-color: rgba($accent-blue, 0.1); 
-      color: $accent-blue;
-    }
-
-    &.active-link {
-      color: $accent-blue;
-      background: rgba($accent-blue, 0.05);
-    }
-  }
-}
-
-.auth-buttons {
-  .login-btn {
-    color: $text-main;
-
-    &:hover {
-      background-color: rgba($accent-blue, 0.1);
-      color: $accent-blue;
-    }
-  }
-
-  .register-btn {
-    background-color: $accent-blue;
-    color: #ffffff;
-    
-    &:hover {
-      background-color: $accent-hover;
-      box-shadow: 0 4px 8px rgba($accent-blue, 0.2);
-    }
-  }
-}
-
-.user-block {
-  border-left: 1px solid #e2e8f0; 
-  
-  .user-greeting {
-    color: $text-secondary;
-    strong { color: $primary-dark; }
-  }
-  
-  .logout-btn {
-    color: $text-secondary;
-    &:hover { color: #ef4444; }
-  }
-}

@@ -1,0 +1,116 @@
+<div class="invite-management">
+  <mat-card class="create-invite-card">
+    <mat-card-header>
+      <mat-card-title>Create New Invite</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="createForm" (ngSubmit)="onCreateInvite()" class="create-form">
+        <mat-form-field appearance="outline">
+          <mat-label>Email Address</mat-label>
+          <input matInput formControlName="email" type="email" placeholder="user@example.com" />
+          @if (createForm.controls.email.invalid && createForm.controls.email.touched) {
+            <mat-error> Please enter a valid email address </mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Role</mat-label>
+          <mat-select formControlName="role">
+            <mat-option value="employee">Employee</mat-option>
+            <mat-option value="hr">HR</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          [disabled]="createForm.invalid || isCreating()"
+          class="create-button"
+        >
+          @if (isCreating()) {
+            <mat-spinner diameter="20"></mat-spinner>
+          }
+          @if (!isCreating()) {
+            <span>Send Invite</span>
+          }
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="invites-list-card">
+    <mat-card-header>
+      <mat-card-title>Company Invites</mat-card-title>
+      <mat-card-subtitle>Manage pending and sent invites</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      @if (!isLoading()) {
+        <div class="table-container">
+          <table mat-table [dataSource]="invites()" class="invites-table">
+            <ng-container matColumnDef="email">
+              <th mat-header-cell *matHeaderCellDef>Email</th>
+              <td mat-cell *matCellDef="let invite">{{ invite.email }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="role">
+              <th mat-header-cell *matHeaderCellDef>Role</th>
+              <td mat-cell *matCellDef="let invite">{{ invite.role | titlecase }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>Status</th>
+              <td mat-cell *matCellDef="let invite">
+                <span [style.color]="getStatusColor(invite.status)">
+                  {{ invite.status | titlecase }}
+                </span>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="createdAt">
+              <th mat-header-cell *matHeaderCellDef>Created</th>
+              <td mat-cell *matCellDef="let invite">{{ invite.createdAt | date: 'short' }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Actions</th>
+              <td mat-cell *matCellDef="let invite">
+                @if (invite.status === 'pending') {
+                  <button
+                    mat-icon-button
+                    [matTooltip]="'Resend invite'"
+                    (click)="onResendInvite(invite)"
+                  >
+                    <mat-icon>refresh</mat-icon>
+                  </button>
+                  <button
+                    mat-icon-button
+                    [matTooltip]="'Cancel invite'"
+                    (click)="onCancelInvite(invite)"
+                  >
+                    <mat-icon>cancel</mat-icon>
+                  </button>
+                }
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+          </table>
+
+          @if (invites().length === 0) {
+            <div class="no-invites">
+              <mat-icon>person_add</mat-icon>
+              <p>No invites found. Create your first invite above!</p>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="loading-container">
+          <mat-spinner diameter="40"></mat-spinner>
+          <p>Loading invites...</p>
+        </div>
+      }
+    </mat-card-content>
+  </mat-card>
+</div>

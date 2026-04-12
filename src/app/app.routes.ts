@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
+import { roleGuard } from './core/guards/role.guard';
 
 export const routes: Routes = [
   // 1. Landing (public)
@@ -21,6 +22,18 @@ export const routes: Routes = [
           import('./features/auth/register/register.component').then((m) => m.RegisterComponent),
       },
       { path: '', redirectTo: 'login', pathMatch: 'full' },
+    ],
+  },
+
+  // Invite acceptance (public)
+  {
+    path: 'invite',
+    children: [
+      {
+        path: 'accept',
+        loadComponent: () =>
+          import('./features/invites/invite-accept.component').then((m) => m.InviteAcceptComponent),
+      },
     ],
   },
 
@@ -47,19 +60,28 @@ export const routes: Routes = [
       },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       {
-        path: 'profile',
+        path: 'profile-employee',
         loadComponent: () =>
-          import('./features/profile/profile.component').then((m) => m.ProfileComponent),
+          import('./features/profile/profile-employee/profile-employee.component').then(
+            (m) => m.ProfileEmployeeComponent,
+          ),
       },
-
-
-
-
-      
+      {
+        path: 'invites',
+        loadComponent: () =>
+          import('./features/invites/invite-management.component').then(
+            (m) => m.InviteManagementComponent,
+          ),
+        canActivate: [roleGuard],
+        data: { roles: ['admin'] },
+      },
     ],
   },
-  
 
   { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
-  { path: '**', redirectTo: 'auth/login' },
+  {
+    path: '**',
+    loadComponent: () =>
+      import('./shared/not-found/not-found.component').then((m) => m.NotFoundComponent),
+  },
 ];
