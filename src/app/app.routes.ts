@@ -1,6 +1,8 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
+import { LandingLayoutComponent } from './core/layouts/landing-layout/landing-layout.component';
+import { AppLayoutComponent } from './core/layouts/app-layout/app-layout.component';
 
 export const routes: Routes = [
   {
@@ -8,38 +10,34 @@ export const routes: Routes = [
     redirectTo: 'auth/login',
     pathMatch: 'full',
   },
-  {
-    path: 'auth/login',
-    loadComponent: () =>
-      import('./features/auth/login/login.component').then(m => m.LoginComponent),
-  },
-  {
-    path: 'auth/register',
-    loadComponent: () =>
-      import('./features/auth/register/register.component').then(m => m.RegisterComponent),
-  },
 
-  // Invite acceptance (public)
+  // Public routes with landing layout (including header)
   {
-    path: 'invite',
+    path: '',
+    component: LandingLayoutComponent,
     children: [
       {
-        path: 'accept',
+        path: 'auth/login',
+        loadComponent: () =>
+          import('./features/auth/login/login.component').then((m) => m.LoginComponent),
+      },
+      {
+        path: 'auth/register',
+        loadComponent: () =>
+          import('./features/auth/register/register.component').then((m) => m.RegisterComponent),
+      },
+      {
+        path: 'invite/accept',
         loadComponent: () =>
           import('./features/invites/invite-accept.component').then((m) => m.InviteAcceptComponent),
       },
     ],
   },
 
-  // 2. App (private)
+  // Protected routes with app layout
   {
-    path: 'app/dashboard',
-    canActivate: [authGuard],
-    loadComponent: () =>
-      import('./features/dashboard/dashboard/dashboard.component').then(m => m.DashboardComponent),
-  },
-  {
-    path: 'app/dashboard-employee',
+    path: 'app',
+    component: AppLayoutComponent,
     canActivate: [authGuard],
     children: [
       {
@@ -56,7 +54,6 @@ export const routes: Routes = [
             (m) => m.DashboardEmployeeComponent,
           ),
       },
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       {
         path: 'profile-employee',
         loadComponent: () =>
@@ -76,7 +73,6 @@ export const routes: Routes = [
     ],
   },
 
-  { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
   {
     path: '**',
     loadComponent: () =>
