@@ -1,6 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+﻿import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { ApiService } from './services/api.service';
 
 @Component({
   selector: 'app-root',
@@ -10,13 +9,11 @@ import { ApiService } from './services/api.service';
   styleUrl: './app.component.scss',
 })
 export class App implements OnInit {
-  constructor(private api: ApiService) {}
-
   ngOnInit() {
-  const theme = localStorage.getItem('theme');
+    const theme = localStorage.getItem('theme');
 
-  if (theme === 'dark') {
-    document.body.classList.add('dark-theme');
+    if (theme === 'dark') {
+      document.body.classList.add('dark-theme');
+    }
   }
-}
 }

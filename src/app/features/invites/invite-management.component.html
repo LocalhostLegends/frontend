@@ -1,7 +1,23 @@
 <div class="invite-management">
   <mat-card class="create-invite-card">
     <mat-card-header>
-      <mat-card-title>Create New Invite</mat-card-title>
+      <mat-card-title>
+        @switch (userRole()) {
+          @case ('admin') {
+            Invite HR
+          }
+          @case ('hr') {
+            Invite employee
+          }
+          @default {
+            Invite user
+          }
+        }
+      </mat-card-title>
+      <mat-card-subtitle>
+        Обери відділ і посаду зі списків (дані з API). Якщо списки порожні — спочатку створи відділи та посади
+        на бекенді.
+      </mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
       <form [formGroup]="createForm" (ngSubmit)="onCreateInvite()" class="create-form">
@@ -14,18 +30,44 @@
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Role</mat-label>
-          <mat-select formControlName="role">
-            <mat-option value="employee">Employee</mat-option>
-            <mat-option value="hr">HR</mat-option>
+          <mat-label>Відділ</mat-label>
+          <mat-select formControlName="departmentId" [disabled]="isMetaLoading()">
+            @for (d of departments(); track d.id) {
+              <mat-option [value]="d.id">{{ departmentLabel(d) }}</mat-option>
+            }
           </mat-select>
+          @if (isMetaLoading()) {
+            <mat-hint>Завантаження…</mat-hint>
+          } @else if (departments().length === 0) {
+            <mat-hint>Немає відділів — перевір API або створи записи</mat-hint>
+          }
+          @if (createForm.controls.departmentId.hasError('required') && createForm.controls.departmentId.touched) {
+            <mat-error> Обовʼязково </mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Посада</mat-label>
+          <mat-select formControlName="positionId" [disabled]="isMetaLoading()">
+            @for (p of positions(); track p.id) {
+              <mat-option [value]="p.id">{{ positionLabel(p) }}</mat-option>
+            }
+          </mat-select>
+          @if (isMetaLoading()) {
+            <mat-hint>Завантаження…</mat-hint>
+          } @else if (positions().length === 0) {
+            <mat-hint>Немає посад — перевір API або створи записи</mat-hint>
+          }
+          @if (createForm.controls.positionId.hasError('required') && createForm.controls.positionId.touched) {
+            <mat-error> Обовʼязково </mat-error>
+          }
         </mat-form-field>
 
         <button
           mat-raised-button
           color="primary"
           type="submit"
-          [disabled]="createForm.invalid || isCreating()"
+          [disabled]="createForm.invalid || isCreating() || isMetaLoading()"
           class="create-button"
         >
           @if (isCreating()) {

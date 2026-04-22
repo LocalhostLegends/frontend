@@ -1,0 +1,73 @@
+@use '../../../../../variables' as *;
+
+.header-toolbar {
+  background: #fff;
+  height: 64px;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.page-title {
+  font-size: 18px;
+  font-weight: 500;
+  color: $text-main;
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 4px 16px !important;
+  border-radius: 8px !important;
+  cursor: pointer;
+  transition: 0.2s;
+  border: $border;
+
+  .profile-info {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  &:hover {
+    background: #f3f4f6;
+  }
+
+  span {
+    font-size: 14px;
+    font-weight: 400;
+  }
+}
+
+.user-profile mat-icon {
+  order: 2;
+  margin-left: 8px;
+}
+
+.avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+}
+
+.profile-menu {
+  .mat-mdc-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: $text-main;
+  }
+}

@@ -15,8 +15,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
-import { InviteService } from '../../services/invite.service';
-import { ValidateInviteResponse, AcceptInviteResponse } from '../../services/api.service';
+import { InviteService } from './services/invite.service';
+import { ValidateInviteResponse } from '../../core/api/invite-api.service';
+import { AuthService } from '../../core/services/auth.service';
 import { finalize } from 'rxjs';
 
 @Component({
@@ -41,6 +42,7 @@ export class InviteAcceptComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private inviteService = inject(InviteService);
+  private authService = inject(AuthService);
   private snackBar = inject(MatSnackBar);
 
   token = signal<string>('');
@@ -51,8 +53,6 @@ export class InviteAcceptComponent implements OnInit {
 
   acceptForm = this.fb.group(
     {
-      firstName: ['', [Validators.required]],
-      lastName: ['', [Validators.required]],
       password: ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', [Validators.required]],
     },
@@ -89,7 +89,7 @@ export class InviteAcceptComponent implements OnInit {
             this.isInvalid.set(true);
           }
         },
-        error: (err) => {
+        error: (err: any) => {
           console.error('Error validating invite:', err);
           this.isInvalid.set(true);
         },
@@ -102,28 +102,29 @@ export class InviteAcceptComponent implements OnInit {
       return;
     }
 
-    const { firstName, lastName, password } = this.acceptForm.getRawValue();
+    const { password } = this.acceptForm.getRawValue();
 
     this.isAccepting.set(true);
-    this.inviteService
-      .acceptInvite(this.token(), firstName, lastName, password)
+    this.authService
+      .activate(this.token(), password)
       .pipe(finalize(() => this.isAccepting.set(false)))
       .subscribe({
-        next: (response: AcceptInviteResponse) => {
-          if (response.success) {
-            this.snackBar.open('Account created successfully! Please login.', 'Close', {
-              duration: 5000,
-            });
-            this.router.navigate(['/auth/login']);
-          } else {
-            this.snackBar.open(response.message || 'Error accepting invite', 'Close', {
-              duration: 3000,
-            });
+        next: (user) => {
+          if (user) {
+            this.router.navigate(['/app/dashboard']);
+            return;
           }
+          this.snackBar.open('Обліковий запис активовано. Увійдіть через email та пароль.', 'Закрити', {
+            duration: 5000,
+          });
+          this.router.navigate(['/auth/login']);
         },
-        error: (err) => {
-          console.error('Error accepting invite:', err);
-          this.snackBar.open('Error accepting invite', 'Close', { duration: 3000 });
+        error: (err: unknown) => {
+          console.error('Error activating account:', err);
+          this.snackBar.open('Activation failed. Try logging in manually.', 'Close', {
+            duration: 4000,
+          });
+          this.router.navigate(['/auth/login']);
         },
       });
   }

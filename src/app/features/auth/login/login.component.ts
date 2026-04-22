@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { finalize } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
@@ -52,19 +53,11 @@ export class LoginComponent {
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: () => {
-          const user = this.authService.currentUser();
-          if (!user) return;
-
-          const role = user.role;
-          if (role === 'hr') {
-            this.router.navigate(['/app/dashboard']);
-          } else {
-            this.router.navigate(['/app/dashboard-employee']);
-          }
+          this.router.navigate(['/app/dashboard']);
         },
-        error: (err) => {
-          this.errorMessage.set(err?.error?.message || 'Error during login');
-          console.error('Login error:', err);
+        error: (error: HttpErrorResponse) => {
+          this.errorMessage.set(error?.error?.message || 'Error during login');
+          console.error('Login error:', error);
         },
       });
   }

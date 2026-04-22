@@ -1,6 +1,8 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
+import { LandingLayoutComponent } from './features/landing/layouts/landing-layout/landing-layout.component';
+import { AppLayoutComponent } from './core/layouts/app-layout/app-layout.component';
 
 export const routes: Routes = [
   {
@@ -8,61 +10,59 @@ export const routes: Routes = [
     redirectTo: 'auth/login',
     pathMatch: 'full',
   },
-  {
-    path: 'auth/login',
-    loadComponent: () =>
-      import('./features/auth/login/login.component').then(m => m.LoginComponent),
-  },
-  {
-    path: 'auth/register',
-    loadComponent: () =>
-      import('./features/auth/register/register.component').then(m => m.RegisterComponent),
-  },
 
-  // Invite acceptance (public)
+  // Public routes with landing layout (including header)
   {
-    path: 'invite',
+    path: '',
+    component: LandingLayoutComponent,
     children: [
       {
-        path: 'accept',
+        path: 'auth/login',
+        loadComponent: () =>
+          import('./features/auth/login/login.component').then((m) => m.LoginComponent),
+      },
+      {
+        path: 'auth/register',
+        loadComponent: () =>
+          import('./features/auth/register/register.component').then((m) => m.RegisterComponent),
+      },
+      {
+        path: 'activate',
+        loadComponent: () =>
+          import('./features/auth/activate-account/activate-account.component').then(
+            (m) => m.ActivateAccountComponent,
+          ),
+      },
+      {
+        path: 'invite/accept',
         loadComponent: () =>
           import('./features/invites/invite-accept.component').then((m) => m.InviteAcceptComponent),
       },
     ],
   },
 
-  // 2. App (private)
+  // Protected routes with app layout
   {
-    path: 'app/dashboard',
-    canActivate: [authGuard],
-    loadComponent: () =>
-      import('./features/dashboard/dashboard/dashboard.component').then(m => m.DashboardComponent),
-  },
-  {
-    path: 'app/dashboard-employee',
+    path: 'app',
+    component: AppLayoutComponent,
     canActivate: [authGuard],
     children: [
       {
         path: 'dashboard',
         loadComponent: () =>
-          import('./features/dashboard/dashboard/dashboard.component').then(
+          import('./features/dashboard/containers/dashboard.component').then(
             (m) => m.DashboardComponent,
           ),
       },
       {
-        path: 'dashboard-employee',
+        path: 'profile',
         loadComponent: () =>
-          import('./features/dashboard/dashboard-employee/dashboard-employee.component').then(
-            (m) => m.DashboardEmployeeComponent,
-          ),
+          import('./features/profile/profile/profile.component').then((m) => m.ProfileComponent),
       },
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       {
-        path: 'profile-employee',
+        path: 'settings',
         loadComponent: () =>
-          import('./features/profile/profile-employee/profile-employee.component').then(
-            (m) => m.ProfileEmployeeComponent,
-          ),
+          import('./features/settings/settings.component').then((m) => m.SettingsComponent),
       },
       {
         path: 'invites',
@@ -71,15 +71,14 @@ export const routes: Routes = [
             (m) => m.InviteManagementComponent,
           ),
         canActivate: [roleGuard],
-        data: { roles: ['admin'] },
+        data: { roles: ['admin', 'hr'] },
       },
     ],
   },
 
-  { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
   {
     path: '**',
     loadComponent: () =>
-      import('./shared/not-found/not-found.component').then((m) => m.NotFoundComponent),
+      import('./core/pages/not-found/not-found.component').then((m) => m.NotFoundComponent),
   },
 ];

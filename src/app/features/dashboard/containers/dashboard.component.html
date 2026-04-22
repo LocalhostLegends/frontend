@@ -1,0 +1,213 @@
+<div class="dashboard-page">
+  <div class="dashboard-header">
+    <div class="header-copy">
+      <h1>
+        {{
+          userRole() === 'admin'
+            ? 'Admin Dashboard'
+            : userRole() === 'hr'
+              ? 'HR Dashboard'
+              : 'Employee Dashboard'
+        }}
+      </h1>
+      <p>Company control center for {{ companyName() }}</p>
+    </div>
+    @if (userRole() === 'admin') {
+      <div class="dashboard-actions">
+        <button mat-flat-button color="primary" (click)="onInviteHr()">Invite HR</button>
+      </div>
+    }
+    @if (userRole() === 'hr') {
+      <div class="dashboard-actions">
+        <button mat-flat-button color="primary" (click)="onInviteEmployee()">
+          Invite Employee
+        </button>
+      </div>
+    }
+  </div>
+
+  <div class="widgets-grid">
+    @for (widget of widgets(); track widget.type) {
+      <mat-card class="widget-card">
+        <mat-card-header>
+          <mat-card-title>{{ widget.title }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          @if (widget.type === 'headcount') {
+            <div class="headcount">
+              <p>Total employees: {{ widget.data.total }}</p>
+              <p>Turnover: {{ widget.data.turnover }}%</p>
+            </div>
+          }
+          @if (widget.type === 'financial') {
+            <div class="financial">
+              <p>Salary expenses: ${{ widget.data.salaryExpenses }}</p>
+              <!-- Placeholder for charts -->
+            </div>
+          }
+          @if (widget.type === 'settings') {
+            <div class="settings">
+              <p>Company name: {{ widget.data.name }}</p>
+              <img [src]="widget.data.logo" alt="Logo" width="50" />
+            </div>
+          }
+          @if (widget.type === 'activity') {
+            <div class="activity">
+              <ul>
+                @for (item of widget.data; track item.time) {
+                  <li>{{ item.action }} - {{ item.time }}</li>
+                }
+              </ul>
+            </div>
+          }
+          @if (widget.type === 'invites') {
+            <div class="invites">
+              <p>Pending invites: {{ widget.data.length }}</p>
+            </div>
+          }
+          @if (widget.type === 'pipeline') {
+            <div class="pipeline">
+              <p>Candidates: {{ widget.data.candidates }}</p>
+              <p>Responses: {{ widget.data.responses }}</p>
+            </div>
+          }
+          @if (widget.type === 'leaves') {
+            <div class="leaves">
+              <p>Employees on leave: {{ widget.data.employees.join(', ') }}</p>
+            </div>
+          }
+          @if (widget.type === 'birthdays') {
+            <div class="birthdays">
+              <p>Birthdays today: {{ widget.data.employees.join(', ') }}</p>
+            </div>
+          }
+          @if (widget.type === 'vacation') {
+            <div class="vacation">
+              <p>Vacation balance: {{ widget.data.balance }} days</p>
+              <p>Used: {{ widget.data.used }} days</p>
+            </div>
+          }
+          @if (widget.type === 'requests') {
+            <div class="requests">
+              @for (request of widget.data; track request.type) {
+                <div class="request-item">
+                  <h3>{{ request.type }}</h3>
+                  <p>{{ request.details }}</p>
+                  <div class="request-count">{{ request.count }}</div>
+                </div>
+              }
+            </div>
+          }
+          @if (widget.type === 'courses') {
+            <div class="courses">
+              <p>Completed courses: {{ widget.data.completed }}</p>
+              <p>In progress: {{ widget.data.inProgress }}</p>
+            </div>
+          }
+          @if (widget.type === 'team') {
+            <div class="team">
+              <p>Team online: {{ widget.data.online }} / {{ widget.data.total }}</p>
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+    }
+  </div>
+
+  @if (userRole() === 'admin') {
+    <div class="dashboard-main">
+      <mat-card class="team-card">
+        <mat-card-header>
+          <mat-card-title>Team</mat-card-title>
+          <mat-card-subtitle>Employees and HR users</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          @if (isLoading()) {
+            <div class="loading-center">
+              <mat-spinner diameter="40"></mat-spinner>
+            </div>
+          }
+
+          @if (!isLoading() && teamMembers().length > 0) {
+            <table mat-table [dataSource]="teamMembers()" class="team-table mat-elevation-z2">
+              <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef>Name</th>
+                <td mat-cell *matCellDef="let user">{{ user.firstName }} {{ user.lastName }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="email">
+                <th mat-header-cell *matHeaderCellDef>Email</th>
+                <td mat-cell *matCellDef="let user">{{ user.email }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="role">
+                <th mat-header-cell *matHeaderCellDef>Role</th>
+                <td mat-cell *matCellDef="let user">{{ user.role }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef>Actions</th>
+                <td mat-cell *matCellDef="let user">
+                  <button
+                    mat-icon-button
+                    color="primary"
+                    matTooltip="Invite again"
+                    (click)="onInviteEmployee()"
+                  >
+                    <mat-icon>person_add</mat-icon>
+                  </button>
+                  <button
+                    mat-icon-button
+                    color="warn"
+                    matTooltip="Block user"
+                    (click)="onBlockUser(user)"
+                  >
+                    <mat-icon>block</mat-icon>
+                  </button>
+                  <button
+                    mat-icon-button
+                    color="accent"
+                    matTooltip="Delete user"
+                    (click)="onDeleteUser(user.id)"
+                  >
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+            </table>
+          }
+
+          @if (!isLoading() && teamMembers().length === 0) {
+            <div class="empty-state">
+              <h3>You don't have any employees yet..</h3>
+              <p>Invite HR or employees to start working with your team.</p>
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="requests-card">
+        <mat-card-header>
+          <mat-card-title>Requests</mat-card-title>
+          <mat-card-subtitle>Leave requests and offers</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="request-list">
+            @for (request of requests; track request.type) {
+              <div class="request-item">
+                <div>
+                  <h3>{{ request.type }}</h3>
+                  <p>{{ request.details }}</p>
+                </div>
+                <div class="request-count">{{ request.count }}</div>
+              </div>
+            }
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  }
+</div>

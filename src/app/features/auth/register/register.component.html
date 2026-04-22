@@ -88,4 +88,14 @@
 
     <p>Already have an account? <a routerLink="/auth/login">Sign In</a></p>
   </form>
+
+  <ng-template #successDialog>
+    <div class="success-dialog">
+      <h2>Check your email</h2>
+      <p>The activation link has been sent.</p>
+      <div class="success-actions">
+        <button mat-raised-button color="primary" (click)="closeDialog()">Go to Login</button>
+      </div>
+    </div>
+  </ng-template>
 </div>

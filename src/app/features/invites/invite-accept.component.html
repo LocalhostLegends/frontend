@@ -24,29 +24,17 @@
         <div class="accept-form">
           <div class="header">
             <mat-icon color="primary">person_add</mat-icon>
-            <h2>Welcome!</h2>
+            <h2>Create Your Account</h2>
             <p>
-              You've been invited to join
-              <strong>{{ inviteData()?.invite?.companyName }}</strong> as a
-              <strong>{{ inviteData()?.invite?.role | titlecase }}</strong>
+              Continue setup for
+              <strong>{{ inviteData()?.invite?.companyName }}</strong>
             </p>
           </div>
 
           <form [formGroup]="acceptForm" (ngSubmit)="onAcceptInvite()" class="form">
             <mat-form-field appearance="outline">
-              <mat-label>First Name</mat-label>
-              <input matInput formControlName="firstName" placeholder="Enter your first name" />
-              @if (acceptForm.controls.firstName.invalid && acceptForm.controls.firstName.touched) {
-                <mat-error> First name is required </mat-error>
-              }
-            </mat-form-field>
-
-            <mat-form-field appearance="outline">
-              <mat-label>Last Name</mat-label>
-              <input matInput formControlName="lastName" placeholder="Enter your last name" />
-              @if (acceptForm.controls.lastName.invalid && acceptForm.controls.lastName.touched) {
-                <mat-error> Last name is required </mat-error>
-              }
+              <mat-label>Email</mat-label>
+              <input matInput [value]="inviteData()?.invite?.email" readonly />
             </mat-form-field>
 
             <mat-form-field appearance="outline">

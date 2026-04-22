@@ -1,0 +1,66 @@
+@use '../../../../../variables' as *;
+
+.landing-toolbar {
+  background-color: $light-bg;
+  height: 70px;
+  padding: 0 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.left {
+  display: flex;
+  align-items: center;
+}
+
+.center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+
+  button {
+    height: 40px;
+    line-height: 40px;
+    padding: 0 16px;
+  }
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  .btn {
+    height: 40px;
+    line-height: 40px;
+    padding: 0 16px;
+    font-size: 14px;
+  }
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.8;
+  }
+
+  .logo-img {
+    width: 38px;
+    height: 38px;
+  }
+
+  .brand-name {
+    font-weight: 700;
+    font-size: 22px;
+    letter-spacing: 0.5px;
+    color: $primary-dark;
+  }
+}

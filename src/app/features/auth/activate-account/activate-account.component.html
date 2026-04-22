@@ -1,0 +1,79 @@
+<div class="activate-account">
+  <mat-card class="activate-card">
+    <mat-card-content>
+      @if (isInvalid()) {
+        <div class="invalid-state">
+          <mat-icon color="warn">error</mat-icon>
+          <h2>Invalid link</h2>
+          <p>The activation link is missing or invalid. Open the link from your email.</p>
+          <button mat-raised-button color="primary" type="button" (click)="goToLogin()">
+            Go to login
+          </button>
+        </div>
+      }
+
+      @if (!isInvalid()) {
+        <div class="activate-form">
+          <div class="header">
+            <mat-icon color="primary">person_add</mat-icon>
+            <h2>Create your account</h2>
+            <p>Set a password to finish activation.</p>
+          </div>
+
+          <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form">
+            <mat-form-field appearance="outline">
+              <mat-label>Password</mat-label>
+              <input
+                matInput
+                formControlName="password"
+                type="password"
+                autocomplete="new-password"
+                placeholder="At least 8 characters"
+              />
+              @if (form.controls.password.invalid && form.controls.password.touched) {
+                <mat-error> Password must be at least 8 characters </mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Confirm password</mat-label>
+              <input
+                matInput
+                formControlName="confirmPassword"
+                type="password"
+                autocomplete="new-password"
+              />
+              @if (form.hasError('mismatch') && form.controls.confirmPassword.touched) {
+                <mat-error> Passwords do not match </mat-error>
+              }
+            </mat-form-field>
+
+            <button
+              mat-raised-button
+              color="primary"
+              type="submit"
+              [disabled]="form.invalid || isSubmitting()"
+              class="submit-button"
+            >
+              @if (isSubmitting()) {
+                <mat-spinner diameter="20"></mat-spinner>
+              }
+              @if (!isSubmitting()) {
+                <span>Activate account</span>
+              }
+            </button>
+          </form>
+
+          <div class="login-link">
+            <p>
+              Already have an account?
+              <button mat-button color="primary" type="button" (click)="goToLogin()">
+                Sign in
+              </button>
+            </p>
+          </div>
+        </div>
+      }
+    </mat-card-content>
+  </mat-card>
+</div>
