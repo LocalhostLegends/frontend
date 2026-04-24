@@ -1,0 +1,92 @@
+@switch (variant) {
+  @case ('icon') {
+    <button
+      mat-icon-button
+      [type]="type"
+      [color]="color"
+      [disabled]="isDisabled"
+      [class]="buttonClass"
+      [matTooltip]="tooltip"
+      [attr.aria-label]="ariaLabel"
+      (click)="onClick($event)"
+    >
+      @if (loading) {
+        <mat-spinner [diameter]="spinnerDiameter"></mat-spinner>
+      } @else {
+        <ng-content></ng-content>
+      }
+    </button>
+  }
+  @case ('flat') {
+    <button
+      mat-flat-button
+      [type]="type"
+      [color]="color"
+      [disabled]="isDisabled"
+      [class]="buttonClass"
+      [matTooltip]="tooltip"
+      [attr.aria-label]="ariaLabel"
+      (click)="onClick($event)"
+    >
+      @if (loading) {
+        <mat-spinner [diameter]="spinnerDiameter"></mat-spinner>
+      } @else {
+        <ng-content></ng-content>
+      }
+    </button>
+  }
+  @case ('stroked') {
+    <button
+      mat-stroked-button
+      [type]="type"
+      [color]="color"
+      [disabled]="isDisabled"
+      [class]="buttonClass"
+      [matTooltip]="tooltip"
+      [attr.aria-label]="ariaLabel"
+      (click)="onClick($event)"
+    >
+      @if (loading) {
+        <mat-spinner [diameter]="spinnerDiameter"></mat-spinner>
+      } @else {
+        <ng-content></ng-content>
+      }
+    </button>
+  }
+  @case ('basic') {
+    <button
+      mat-button
+      [type]="type"
+      [color]="color"
+      [disabled]="isDisabled"
+      [class]="buttonClass"
+      [matTooltip]="tooltip"
+      [attr.aria-label]="ariaLabel"
+      (click)="onClick($event)"
+    >
+      @if (loading) {
+        <mat-spinner [diameter]="spinnerDiameter"></mat-spinner>
+      } @else {
+        <ng-content></ng-content>
+      }
+    </button>
+  }
+  @default {
+    <button
+      mat-raised-button
+      [type]="type"
+      [color]="color"
+      [disabled]="isDisabled"
+      [class]="buttonClass"
+      [matTooltip]="tooltip"
+      [attr.aria-label]="ariaLabel"
+      (click)="onClick($event)"
+    >
+      @if (loading) {
+        <mat-spinner [diameter]="spinnerDiameter"></mat-spinner>
+      } @else {
+        <ng-content></ng-content>
+      }
+    </button>
+  }
+}

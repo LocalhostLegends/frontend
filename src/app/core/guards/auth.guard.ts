@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
-import { UserRole } from '../../models/user.model';
+import { UserRole } from '../models/user.model';
 
 export const authGuard: CanActivateFn = (route) => {
   const authService = inject(AuthService);
@@ -22,6 +22,5 @@ export const authGuard: CanActivateFn = (route) => {
     return true;
   }
 
-  const redirectPath = userRole === 'hr' ? '/app/dashboard' : '/app/dashboard-employee';
-  return router.createUrlTree([redirectPath]);
+  return router.createUrlTree(['/app/dashboard']);
 };

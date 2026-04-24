@@ -1,6 +1,9 @@
 $primary: #092265;
 $primary-dark: #041133;
 $primary-hover: #1c49c0;
+$sidebar-start: #041133;
+$sidebar-mid: #092265;
+$sidebar-end: #1c49c0;
 $accent-blue: #3f51b5;
 $accent-hover: #1628a1;
 $text-main: #0b102a;
@@ -8,15 +11,17 @@ $text-secondary: #6b7280;
 $light-bg: #fefeff;
 $error: #f44336;
 
-$gradient: linear-gradient(90deg, #041133, #092265, #1c49c0);
+$gradient: linear-gradient(135deg, $sidebar-start, $sidebar-mid, $sidebar-end);
 $border: 2px solid $accent-blue;
 
 // ==============================
 // Button variables
 // ==============================
-$btn-radius: 8px;
+// Match auth forms: tall rectangular buttons, subtle corner radius (read as "square")
+$btn-radius: 4px;
 $btn-font-weight: 500;
-$btn-transition: all 0.3s ease;
+$btn-transition: all 0.2s ease;
+$btn-height: 48px;
 
 // ==============================
 // Global variables
@@ -32,6 +37,12 @@ $btn-transition: all 0.3s ease;
   align-items: center;
   justify-content: center;
   text-decoration: none;
+  min-height: $btn-height;
+  height: $btn-height;
+  padding: 0 20px;
+  font-size: 1rem;
+  line-height: 1;
+  box-sizing: border-box;
 }
 
 // Primary
@@ -41,7 +52,6 @@ $btn-transition: all 0.3s ease;
 
   &:hover {
     background: $primary-hover;
-    transform: translateY(-2px);
   }
 }
 
@@ -54,7 +64,6 @@ $btn-transition: all 0.3s ease;
   &:hover {
     background: $primary-hover;
     color: #fff;
-    transform: translateY(-2px);
   }
 }
 

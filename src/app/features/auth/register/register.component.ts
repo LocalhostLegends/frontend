@@ -5,19 +5,19 @@ import {
   Validators,
   AbstractControl,
   ValidationErrors,
-  ValidatorFn // Импортируем тип для чистоты кода
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
-import { RegisterResponse } from '../../../services/api.service';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
-import { UserRole } from '../../../models/user.model';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { finalize } from 'rxjs'; // Не забудь импорт!
+import { UserRole } from '../../../core/models/user.model';
+import { finalize } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
+import { LoadingButtonComponent } from '../../../core/ui/loading-button/loading-button.component';
 
 @Component({
   selector: 'app-register',
@@ -31,6 +31,7 @@ import { finalize } from 'rxjs'; // Не забудь импорт!
     MatSelectModule,
     RouterLink,
     MatProgressSpinnerModule,
+    LoadingButtonComponent,
   ],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss'],
@@ -44,8 +45,6 @@ export class RegisterComponent {
   hideConfirmPassword = signal(true);
   errorMessage = signal<string | null>(null);
   isLoading = signal(false);
-
-  // Список ролей, если он нужен в шаблоне
   roles: Exclude<UserRole, null>[] = ['admin', 'hr', 'employee'];
 
   registerForm = this.fb.group(
@@ -57,36 +56,56 @@ export class RegisterComponent {
       password: ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', [Validators.required]],
     },
-    { validators: this.passwordMatchValidator }
+    { validators: this.passwordMatchValidator },
   );
 
-  // Валидатор совпадения паролей
   private passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
     const password = control.get('password')?.value;
-    const confirmPassword = control.get('confirmPassword')?.value;
-    return password === confirmPassword ? null : { mismatch: true };
+    const confirmPasswordControl = control.get('confirmPassword');
+    const confirmPassword = confirmPasswordControl?.value;
+
+    if (!confirmPasswordControl) {
+      return null;
+    }
+
+    const isMismatch = Boolean(password) && Boolean(confirmPassword) && password !== confirmPassword;
+    const currentErrors = confirmPasswordControl.errors ?? {};
+
+    if (isMismatch) {
+      if (!currentErrors['mismatch']) {
+        confirmPasswordControl.setErrors({ ...currentErrors, mismatch: true });
+      }
+      return { mismatch: true };
+    }
+
+    if (currentErrors['mismatch']) {
+      const { mismatch, ...rest } = currentErrors;
+      void mismatch;
+      confirmPasswordControl.setErrors(Object.keys(rest).length ? rest : null);
+    }
+
+    return null;
   }
 
   onSubmit() {
     if (this.registerForm.invalid) {
-      this.registerForm.markAllAsTouched(); 
+      this.registerForm.markAllAsTouched();
       return;
     }
 
     const { companyName, firstName, lastName, email, password } = this.registerForm.getRawValue();
-    
     this.isLoading.set(true);
     this.errorMessage.set(null);
 
-    this.authService.register(companyName, firstName, lastName, email, password)
-      .pipe(finalize(() => this.isLoading.set(false))) 
+    this.authService
+      .register(companyName, firstName, lastName, email, password)
+      .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: () => {
-          this.router.navigate(['/auth/login']);
+          this.router.navigate(['/app/dashboard']);
         },
-        error: (err) => {
-          this.errorMessage.set(err?.error?.message || 'Error during registration');
-          console.error(err);
+        error: (error: HttpErrorResponse) => {
+          this.errorMessage.set(error?.error?.message || 'Error during registration');
         },
       });
   }

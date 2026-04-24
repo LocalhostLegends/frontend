@@ -1,0 +1,72 @@
+<div class="dashboard-shell">
+  <div class="welcome">
+    <h1>Welcome to {{ companyName() }}!</h1>
+    <p class="status">Your status: {{ statusLabel() }}</p>
+    <h2>You are just a few steps away from setting up your space</h2>
+  </div>
+
+  @if (isLoading()) {
+    <div class="loading-center">
+      <mat-spinner diameter="42"></mat-spinner>
+    </div>
+  } @else {
+    <div class="content-grid">
+      <div class="main-column">
+        <div class="stats-grid">
+          <mat-card class="stat-card">
+            <h3>Total Employees</h3>
+            <div class="value">{{ totalEmployees() }}</div>
+          </mat-card>
+
+          <mat-card class="stat-card">
+            <h3>Active Vacancies</h3>
+            <div class="value">{{ activeVacancies() }}</div>
+          </mat-card>
+
+          <mat-card class="stat-card">
+            <h3>Departments</h3>
+            <div class="value">{{ departmentsCount() }}</div>
+          </mat-card>
+        </div>
+
+        <mat-card class="action-card">
+          <h3>Create First Department</h3>
+          <p>Structure your team and simplify management.</p>
+          <button mat-raised-button class="action-btn btn btn-primary" (click)="onCreateDepartment()">
+            CREATE DEPARTMENT
+          </button>
+        </mat-card>
+
+        <mat-card class="action-card">
+          <h3>Invite Team</h3>
+          <p>
+            @if (isAdmin()) {
+              Invite HR Managers or your first employees to start collaboration.
+            } @else {
+              Invite your first employees to start collaboration.
+            }
+          </p>
+          <button mat-stroked-button class="action-btn btn btn-secondary" (click)="onInviteTeam()">
+            INVITE TEAM
+          </button>
+        </mat-card>
+      </div>
+
+      <mat-card class="news-panel">
+        <h3>What's New</h3>
+        @if (recentActivities().length === 0) {
+          <p class="empty-news">No recent events. Actions from other users will appear here.</p>
+        } @else {
+          <div class="news-list">
+            @for (item of recentActivities(); track item.text + item.date) {
+              <div class="news-item">
+                <div class="text">{{ item.text }}</div>
+                <div class="date">{{ item.date | date: 'dd.MM.yyyy' }}</div>
+              </div>
+            }
+          </div>
+        }
+      </mat-card>
+    </div>
+  }
+</div>

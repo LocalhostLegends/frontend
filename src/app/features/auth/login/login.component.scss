@@ -34,6 +34,19 @@
       margin-bottom: 0.5rem;
     }
 
+    .forgot-password-link {
+      align-self: flex-end;
+      margin-bottom: 0.75rem;
+      color: $accent-blue;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
     .error-text {
       color: #f44336;
       background: #ffebee;
