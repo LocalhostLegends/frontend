@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
+import { pendingChangesGuard } from './core/guards/pending-changes.guard';
 import { LandingLayoutComponent } from './features/landing/layouts/landing-layout/landing-layout.component';
 import { AppLayoutComponent } from './core/layouts/app-layout/app-layout.component';
 
@@ -34,9 +35,11 @@ export const routes: Routes = [
           ),
       },
       {
-        path: 'invite/accept',
+        path: 'auth/forgot-password',
         loadComponent: () =>
-          import('./features/invites/invite-accept.component').then((m) => m.InviteAcceptComponent),
+          import('./features/auth/forgot-password/forgot-password.component').then(
+            (m) => m.ForgotPasswordComponent,
+          ),
       },
     ],
   },
@@ -58,6 +61,7 @@ export const routes: Routes = [
         path: 'profile',
         loadComponent: () =>
           import('./features/profile/profile/profile.component').then((m) => m.ProfileComponent),
+        canDeactivate: [pendingChangesGuard],
       },
       {
         path: 'settings',

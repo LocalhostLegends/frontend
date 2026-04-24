@@ -17,6 +17,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { AuthService } from '../../../core/services/auth.service';
 import { finalize } from 'rxjs';
+import { LoadingButtonComponent } from '../../../core/ui/loading-button/loading-button.component';
 
 /**
  * Лист із посиланням /activate?token=… після створення HR/Employee на бекенді.
@@ -35,6 +36,7 @@ import { finalize } from 'rxjs';
     MatIconModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
+    LoadingButtonComponent,
   ],
   templateUrl: './activate-account.component.html',
   styleUrls: ['./activate-account.component.scss'],
@@ -85,23 +87,14 @@ export class ActivateAccountComponent implements OnInit {
       .activate(this.token(), password)
       .pipe(finalize(() => this.isSubmitting.set(false)))
       .subscribe({
-        next: (user) => {
-          if (user) {
-            this.snackBar.open('Account activated. Redirecting to dashboard…', 'Close', {
-              duration: 3000,
-            });
-            this.router.navigate(['/app/dashboard']);
-            return;
-          }
-          this.snackBar.open('Account activated. Sign in with your email and password.', 'Close', {
-            duration: 5000,
+        next: () => {
+          this.snackBar.open('Account activated. Redirecting to dashboard…', 'Close', {
+            duration: 3000,
           });
-          this.router.navigate(['/auth/login']);
+          this.router.navigate(['/app/dashboard']);
         },
         error: () => {
-          this.snackBar.open('Activation failed. Check the link or request a new invite.', 'Close', {
-            duration: 5000,
-          });
+          this.snackBar.open('Activation failed. Check the link or request a new invite.', 'Close', { duration: 5000 });
         },
       });
   }

@@ -75,9 +75,9 @@ export class CompanyApiService {
 
   private unwrapOne(body: Company | ApiResponse<Company> | unknown): Company {
     if (body && typeof body === 'object' && 'data' in body) {
-      return (body as ApiResponse<Company>).data;
+      return this.normalizeCompany((body as ApiResponse<unknown>).data);
     }
-    return body as Company;
+    return this.normalizeCompany(body);
   }
 
   private unwrapStats(body: CompanyStats | ApiResponse<CompanyStats> | unknown): CompanyStats {
@@ -85,5 +85,43 @@ export class CompanyApiService {
       return (body as ApiResponse<CompanyStats>).data as CompanyStats;
     }
     return body as CompanyStats;
+  }
+
+  /**
+   * Backend може повертати компанію як:
+   * - Company
+   * - { company: Company }
+   * - { currentCompany: Company }
+   * - ApiResponse<Company> або ApiResponse<{ company: Company }>
+   */
+  private normalizeCompany(raw: unknown): Company {
+    if (!raw || typeof raw !== 'object') {
+      return { id: '', name: '' } as Company;
+    }
+
+    const record = raw as Record<string, unknown>;
+    const nestedCandidate =
+      (record['company'] as unknown) ??
+      (record['currentCompany'] as unknown) ??
+      (record['item'] as unknown);
+
+    if (nestedCandidate && typeof nestedCandidate === 'object') {
+      return this.normalizeCompany(nestedCandidate);
+    }
+
+    const nameRaw =
+      (typeof record['name'] === 'string' && record['name']) ||
+      (typeof record['companyName'] === 'string' && record['companyName']) ||
+      '';
+    const idRaw =
+      (typeof record['id'] === 'string' && record['id']) ||
+      (typeof record['companyId'] === 'string' && record['companyId']) ||
+      '';
+
+    return {
+      ...(record as Partial<Company>),
+      id: idRaw,
+      name: nameRaw,
+    } as Company;
   }
 }

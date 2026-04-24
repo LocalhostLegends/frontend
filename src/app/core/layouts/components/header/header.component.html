@@ -3,6 +3,25 @@
     <div class="company-name">{{ companyName() }}</div>
   </div>
 
+  <form class="header-search" (ngSubmit)="submitSearch()">
+    <div class="search-input-wrap">
+      <mat-icon class="search-icon">search</mat-icon>
+      <input
+        type="text"
+        name="headerSearch"
+        [(ngModel)]="searchQuery"
+        placeholder="Search"
+        autocomplete="off"
+      />
+      @if (searchQuery.trim()) {
+        <button mat-icon-button type="button" (click)="clearSearch()" aria-label="Clear search">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </div>
+    <button mat-stroked-button type="submit" class="search-submit btn btn-secondary">SEARCH</button>
+  </form>
+
   <div class="right">
     <button mat-icon-button>
       <mat-icon>notifications</mat-icon>
@@ -10,8 +29,14 @@
 
     <button mat-button [matMenuTriggerFor]="menu" class="user-profile">
       <div class="profile-info">
-        <img [src]="avatarUrl()" class="avatar" />
-        <span>{{ email() }}</span>
+        @if (avatarUrl()) {
+          <img [src]="avatarUrl()" class="avatar" />
+        } @else {
+          <div class="avatar avatar-fallback">{{ avatarText() }}</div>
+        }
+        <div class="user-meta">
+          <span class="name">{{ userName() }}</span>
+        </div>
       </div>
       <mat-icon>expand_more</mat-icon>
     </button>

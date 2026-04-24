@@ -67,19 +67,41 @@ export class InviteApiService {
 
   private unwrapInviteArray(body: Invite[] | ApiResponse<Invite[]> | unknown): Invite[] {
     if (Array.isArray(body)) {
-      return body;
+      return body.map((item) => this.normalizeInvite(item));
     }
     if (body && typeof body === 'object' && 'data' in body) {
       const data = (body as ApiResponse<Invite[]>).data;
-      return Array.isArray(data) ? data : [];
+      return Array.isArray(data) ? data.map((item) => this.normalizeInvite(item)) : [];
     }
     return [];
   }
 
   private unwrapInvite(body: Invite | ApiResponse<Invite> | unknown): Invite {
     if (body && typeof body === 'object' && 'data' in body) {
-      return (body as ApiResponse<Invite>).data;
+      return this.normalizeInvite((body as ApiResponse<Invite>).data);
     }
-    return body as Invite;
+    return this.normalizeInvite(body);
+  }
+
+  /**
+   * Backend може повертати дату створення під різними ключами (`createdAt`, `created_at`, `invitedAt`, `sentAt`).
+   * Приводимо відповідь до форми, з якою працює UI-таблиця (`invite.createdAt`).
+   */
+  private normalizeInvite(raw: unknown): Invite {
+    const invite = (raw ?? {}) as Invite & Record<string, unknown>;
+    const createdAtCandidate =
+      (typeof invite.createdAt === 'string' && invite.createdAt) ||
+      (typeof invite['created_at'] === 'string' && invite['created_at']) ||
+      (typeof invite['invitedAt'] === 'string' && invite['invitedAt']) ||
+      (typeof invite['sentAt'] === 'string' && invite['sentAt']) ||
+      (typeof invite.acceptedAt === 'string' && invite.acceptedAt) ||
+      (typeof invite.expiresAt === 'string' && invite.expiresAt) ||
+      (typeof invite['updatedAt'] === 'string' && invite['updatedAt']) ||
+      '';
+
+    return {
+      ...invite,
+      createdAt: createdAtCandidate,
+    } as Invite;
   }
 }

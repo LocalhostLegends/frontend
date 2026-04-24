@@ -1,4 +1,4 @@
-import { Component, inject, signal, TemplateRef, ViewChild } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import {
   NonNullableFormBuilder,
   ReactiveFormsModule,
@@ -14,10 +14,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { UserRole } from '../../../core/models/user.model';
 import { finalize } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
+import { LoadingButtonComponent } from '../../../core/ui/loading-button/loading-button.component';
 
 @Component({
   selector: 'app-register',
@@ -31,24 +31,20 @@ import { HttpErrorResponse } from '@angular/common/http';
     MatSelectModule,
     RouterLink,
     MatProgressSpinnerModule,
-    MatDialogModule,
+    LoadingButtonComponent,
   ],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss'],
 })
 export class RegisterComponent {
-  @ViewChild('successDialog') successDialog!: TemplateRef<unknown>;
-
   private fb = inject(NonNullableFormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
-  private dialog = inject(MatDialog);
 
   hidePassword = signal(true);
   hideConfirmPassword = signal(true);
   errorMessage = signal<string | null>(null);
   isLoading = signal(false);
-  dialogRef: MatDialogRef<unknown> | null = null;
   roles: Exclude<UserRole, null>[] = ['admin', 'hr', 'employee'];
 
   registerForm = this.fb.group(
@@ -65,8 +61,30 @@ export class RegisterComponent {
 
   private passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
     const password = control.get('password')?.value;
-    const confirmPassword = control.get('confirmPassword')?.value;
-    return password === confirmPassword ? null : { mismatch: true };
+    const confirmPasswordControl = control.get('confirmPassword');
+    const confirmPassword = confirmPasswordControl?.value;
+
+    if (!confirmPasswordControl) {
+      return null;
+    }
+
+    const isMismatch = Boolean(password) && Boolean(confirmPassword) && password !== confirmPassword;
+    const currentErrors = confirmPasswordControl.errors ?? {};
+
+    if (isMismatch) {
+      if (!currentErrors['mismatch']) {
+        confirmPasswordControl.setErrors({ ...currentErrors, mismatch: true });
+      }
+      return { mismatch: true };
+    }
+
+    if (currentErrors['mismatch']) {
+      const { mismatch, ...rest } = currentErrors;
+      void mismatch;
+      confirmPasswordControl.setErrors(Object.keys(rest).length ? rest : null);
+    }
+
+    return null;
   }
 
   onSubmit() {
@@ -84,22 +102,11 @@ export class RegisterComponent {
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: () => {
-          this.dialogRef = this.dialog.open(this.successDialog, {
-            width: '380px',
-            disableClose: true,
-          });
-
-          this.dialogRef.afterClosed().subscribe(() => {
-            this.router.navigate(['/auth/login']);
-          });
+          this.router.navigate(['/app/dashboard']);
         },
         error: (error: HttpErrorResponse) => {
           this.errorMessage.set(error?.error?.message || 'Error during registration');
         },
       });
-  }
-
-  closeDialog() {
-    this.dialogRef?.close();
   }
 }

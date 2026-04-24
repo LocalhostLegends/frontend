@@ -1,1 +1,148 @@
-<p>profile works!</p>
+<div class="profile-page">
+  @if (isLoading()) {
+    <div class="state-box">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Loading profile...</p>
+    </div>
+  } @else if (loadError()) {
+    <div class="state-box">
+      <mat-icon color="warn">error</mat-icon>
+      <p>{{ loadError() }}</p>
+      <button mat-stroked-button class="btn btn-secondary" (click)="loadProfile()">Retry</button>
+    </div>
+  } @else if (profile(); as user) {
+    <mat-card class="profile-card">
+      <div class="header">
+        <div class="avatar-wrap">
+          <input
+            #avatarInput
+            type="file"
+            accept="image/*"
+            class="hidden-input"
+            [disabled]="isUploadingAvatar() || isDeletingAvatar()"
+            (change)="onAvatarFileSelected($event)"
+          />
+          <button
+            mat-mini-fab
+            type="button"
+            class="avatar-edit-btn"
+            [disabled]="isUploadingAvatar() || isDeletingAvatar()"
+            (click)="avatarInput.click()"
+          >
+            @if (isUploadingAvatar()) {
+              <mat-spinner diameter="16"></mat-spinner>
+            } @else {
+              <mat-icon>edit</mat-icon>
+            }
+          </button>
+          <div class="avatar">
+            @if (user.avatar) {
+              <img [src]="user.avatar" alt="Avatar" />
+            } @else {
+              <span>{{ avatarText() }}</span>
+            }
+          </div>
+        </div>
+        <div class="avatar-actions">
+          <app-loading-button
+            variant="basic"
+            [loading]="isDeletingAvatar()"
+            [disabled]="!user.avatar || isUploadingAvatar()"
+            [spinnerDiameter]="16"
+            (pressed)="removeAvatar()"
+          >
+            Remove
+          </app-loading-button>
+        </div>
+        <div class="meta">
+          <h2>{{ displayName() }}</h2>
+          <p class="email">{{ user.email }}</p>
+          <p class="role">{{ user.role | uppercase }} · {{ user.status || 'active' }}</p>
+        </div>
+      </div>
+    </mat-card>
+
+    <div class="grid">
+      <mat-card>
+        <h3>Personal Info</h3>
+        @if (!isEditing()) {
+          <div class="row"><span>First Name</span><strong>{{ user.firstName || '—' }}</strong></div>
+          <div class="row"><span>Last Name</span><strong>{{ user.lastName || '—' }}</strong></div>
+          <div class="row"><span>Phone</span><strong>{{ user.phone || '—' }}</strong></div>
+        } @else {
+          <form [formGroup]="editForm" class="edit-form">
+            <mat-form-field appearance="outline">
+              <mat-label>First Name</mat-label>
+              <input matInput formControlName="firstName" />
+              @if (editForm.controls.firstName.invalid && editForm.controls.firstName.touched) {
+                <mat-error>Required</mat-error>
+              }
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Last Name</mat-label>
+              <input matInput formControlName="lastName" />
+              @if (editForm.controls.lastName.invalid && editForm.controls.lastName.touched) {
+                <mat-error>Required</mat-error>
+              }
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Phone</mat-label>
+              <input matInput formControlName="phone" (input)="onPhoneInput($event)" />
+              @if (
+                editForm.controls.phone.hasError('pattern') &&
+                (editForm.controls.phone.touched || editForm.controls.phone.dirty)
+              ) {
+                <mat-error>Phone must start with + and use digits/symbols ( ) -</mat-error>
+              }
+              @if (
+                editForm.controls.phone.hasError('phoneDigitsRange') &&
+                (editForm.controls.phone.touched || editForm.controls.phone.dirty)
+              ) {
+                <mat-error>Phone must contain 7 to 12 digits</mat-error>
+              }
+            </mat-form-field>
+          </form>
+        }
+        <div class="row"><span>Last Login</span><strong>{{ user.lastLoginAt ? (user.lastLoginAt | date: 'dd.MM.yyyy HH:mm') : '—' }}</strong></div>
+
+        <div class="edit-actions">
+          @if (!isEditing()) {
+            <button mat-stroked-button class="btn btn-secondary" type="button" (click)="startEdit()">Edit profile</button>
+          } @else {
+            <app-loading-button
+              [loading]="isSaving()"
+              [disabled]="editForm.invalid"
+              [spinnerDiameter]="16"
+              (pressed)="saveProfile()"
+            >
+              Save
+            </app-loading-button>
+            <button mat-button class="btn btn-secondary" type="button" [disabled]="isSaving()" (click)="cancelEdit()">Cancel</button>
+          }
+        </div>
+      </mat-card>
+
+      <mat-card>
+        <h3>Work Info</h3>
+        <div class="row"><span>Role</span><strong>{{ user.role | uppercase }}</strong></div>
+        <div class="row">
+          <span>Department</span>
+          <strong>{{ user.department?.name || '—' }}</strong>
+        </div>
+        <div class="row">
+          <span>Position</span>
+          <strong>{{ user.position?.name || '—' }}</strong>
+        </div>
+        <div class="row"><span>Status</span><strong>{{ user.status || 'active' }}</strong></div>
+      </mat-card>
+
+      <mat-card>
+        <h3>Company</h3>
+        <div class="row"><span>Name</span><strong>{{ companyName() }}</strong></div>
+        <div class="row"><span>Plan</span><strong>{{ user.company?.subscriptionPlan || '—' }}</strong></div>
+        <div class="row"><span>Timezone</span><strong>{{ user.company?.timezone || '—' }}</strong></div>
+        <div class="row"><span>Company ID</span><strong>{{ user.company?.id || user.companyId || '—' }}</strong></div>
+      </mat-card>
+    </div>
+  }
+</div>

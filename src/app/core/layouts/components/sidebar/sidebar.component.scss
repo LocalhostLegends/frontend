@@ -1,3 +1,5 @@
+@use '../../../../../variables' as *;
+
 *,
 *::before,
 *::after {
@@ -6,7 +8,7 @@
 
 .sidenav-container {
   height: 100vh;
-  background: linear-gradient(135deg, #041133, #092265, #1c49c0);
+  background: $gradient;
   transition: width 0.3s ease-in-out;
   display: flex;
   border-radius: none;
@@ -17,7 +19,7 @@
 }
 
 .sidenav {
-  background: linear-gradient(135deg, #041133, #092265, #1c49c0);
+  background: $gradient;
   border: none;
   width: 100%;
 }

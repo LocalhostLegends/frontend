@@ -10,7 +10,7 @@ export interface Invite {
   departmentId?: string | null;
   positionId?: string | null;
   expiresAt: string;
-  createdAt: string;
+  createdAt?: string;
   acceptedAt?: string | null;
 }
 

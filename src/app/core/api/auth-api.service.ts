@@ -47,10 +47,7 @@ export class AuthApiService {
       .pipe(map((res) => res.data));
   }
 
-  /**
-   * Якщо бекенд повертає сесію після активації — як при login (accessToken + user).
-   * Якщо відповідь порожня — фронт покаже логін (зворотна сумісність).
-   */
+  /** Hybrid flow: /auth/activate returns session (accessToken + user). */
   activate(data: { token: string; password: string }): Observable<LoginResponse | null> {
     return this.http.post<unknown>(`${this.baseUrl}/auth/activate`, data).pipe(
       map((body) => this.unwrapActivateResponse(body)),

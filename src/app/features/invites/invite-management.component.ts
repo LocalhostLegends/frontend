@@ -20,6 +20,7 @@ import { PositionApiService } from '../../core/api/position-api.service';
 import { finalize, forkJoin } from 'rxjs';
 import { AuthService } from '../../core/services/auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { LoadingButtonComponent } from '../../core/ui/loading-button/loading-button.component';
 
 @Component({
   selector: 'app-invite-management',
@@ -37,6 +38,7 @@ import { HttpErrorResponse } from '@angular/common/http';
     MatCardModule,
     MatTooltipModule,
     MatSelectModule,
+    LoadingButtonComponent,
   ],
   templateUrl: './invite-management.component.html',
   styleUrls: ['./invite-management.component.scss'],
@@ -55,21 +57,27 @@ export class InviteManagementComponent implements OnInit {
   isLoading = signal(false);
   isMetaLoading = signal(false);
   isCreating = signal(false);
+  resendingIds = signal<Set<string>>(new Set());
+  cancellingIds = signal<Set<string>>(new Set());
 
   userRole = computed(() => this.auth.userRole());
+  shouldUseDepartmentAndPosition = computed(() => this.userRole() === 'hr');
 
   displayedColumns: string[] = ['email', 'role', 'status', 'createdAt', 'actions'];
 
   /** POST /invites — departmentId / positionId з GET /departments та GET /positions. */
   createForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
-    departmentId: ['', Validators.required],
-    positionId: ['', Validators.required],
+    departmentId: [''],
+    positionId: [''],
   });
 
   ngOnInit() {
+    this.configureFormByRole();
     this.loadInvites();
-    this.loadDepartmentsAndPositions();
+    if (this.shouldUseDepartmentAndPosition()) {
+      this.loadDepartmentsAndPositions();
+    }
   }
 
   departmentLabel(d: Department): string {
@@ -97,9 +105,29 @@ export class InviteManagementComponent implements OnInit {
           this.positions.set(positions);
         },
         error: () => {
-          this.snackBar.open('Не вдалося завантажити відділи або посади', 'Закрити', { duration: 5000 });
+          this.snackBar.open('Failed to load departments or positions', 'Close', { duration: 5000 });
         },
       });
+  }
+
+  private configureFormByRole() {
+    const departmentControl = this.createForm.controls.departmentId;
+    const positionControl = this.createForm.controls.positionId;
+
+    if (this.shouldUseDepartmentAndPosition()) {
+      departmentControl.setValidators([Validators.required]);
+      positionControl.setValidators([Validators.required]);
+      departmentControl.updateValueAndValidity({ emitEvent: false });
+      positionControl.updateValueAndValidity({ emitEvent: false });
+      return;
+    }
+
+    departmentControl.clearValidators();
+    positionControl.clearValidators();
+    departmentControl.setValue('', { emitEvent: false });
+    positionControl.setValue('', { emitEvent: false });
+    departmentControl.updateValueAndValidity({ emitEvent: false });
+    positionControl.updateValueAndValidity({ emitEvent: false });
   }
 
   loadInvites() {
@@ -126,13 +154,15 @@ export class InviteManagementComponent implements OnInit {
 
     const raw = this.createForm.getRawValue();
     const email = raw.email.trim();
-    const departmentId = raw.departmentId.trim();
-    const positionId = raw.positionId.trim();
     const role = this.auth.userRole() === 'admin' ? 'hr' : this.auth.userRole() === 'hr' ? 'employee' : null;
+    const options = this.shouldUseDepartmentAndPosition()
+      ? {
+          departmentId: raw.departmentId.trim(),
+          positionId: raw.positionId.trim(),
+        }
+      : undefined;
 
-    const invite$ = role
-      ? this.inviteService.createInvite(email, role, { departmentId, positionId })
-      : null;
+    const invite$ = role ? this.inviteService.createInvite(email, role, options) : null;
 
     if (!invite$) {
       this.snackBar.open('Access denied', 'Close', { duration: 3000 });
@@ -160,7 +190,7 @@ export class InviteManagementComponent implements OnInit {
           message = e;
         }
         if (err.status === 500 && message === 'Internal server error') {
-          message += '. Перевірте відділ і посаду та повторіть спробу.';
+          message += '. Please check your department and position and try again..';
         }
         this.snackBar.open(message, 'Close', { duration: 10000 });
       },
@@ -168,29 +198,69 @@ export class InviteManagementComponent implements OnInit {
   }
 
   onResendInvite(invite: Invite) {
-    this.inviteService.resendInvite(invite.id).subscribe({
-      next: () => {
-        this.snackBar.open('Invite resent successfully', 'Close', { duration: 3000 });
-      },
-      error: () => {
-        this.snackBar.open('Error resending invite', 'Close', { duration: 3000 });
-      },
-    });
+    if (this.isResending(invite.id) || this.isCancelling(invite.id)) return;
+
+    this.resendingIds.update((ids) => new Set(ids).add(invite.id));
+    this.inviteService
+      .resendInvite(invite.id)
+      .pipe(
+        finalize(() =>
+          this.resendingIds.update((ids) => {
+            const next = new Set(ids);
+            next.delete(invite.id);
+            return next;
+          }),
+        ),
+      )
+      .subscribe({
+        next: () => {
+          this.snackBar.open('Invite resent successfully', 'Close', { duration: 3000 });
+        },
+        error: () => {
+          this.snackBar.open('Error resending invite', 'Close', { duration: 3000 });
+        },
+      });
   }
 
   onCancelInvite(invite: Invite) {
+    if (this.isCancelling(invite.id) || this.isResending(invite.id)) return;
+
     const confirmed = confirm(`Are you sure you want to cancel the invite for ${invite.email}?`);
     if (!confirmed) return;
 
-    this.inviteService.cancelInvite(invite.id).subscribe({
-      next: () => {
-        this.snackBar.open('Invite cancelled successfully', 'Close', { duration: 3000 });
-        this.loadInvites();
-      },
-      error: () => {
-        this.snackBar.open('Error cancelling invite', 'Close', { duration: 3000 });
-      },
-    });
+    this.cancellingIds.update((ids) => new Set(ids).add(invite.id));
+    this.inviteService
+      .cancelInvite(invite.id)
+      .pipe(
+        finalize(() =>
+          this.cancellingIds.update((ids) => {
+            const next = new Set(ids);
+            next.delete(invite.id);
+            return next;
+          }),
+        ),
+      )
+      .subscribe({
+        next: () => {
+          this.snackBar.open('Invite cancelled successfully', 'Close', { duration: 3000 });
+          this.loadInvites();
+        },
+        error: () => {
+          this.snackBar.open('Error cancelling invite', 'Close', { duration: 3000 });
+        },
+      });
+  }
+
+  getInviteDisplayDate(invite: Invite): string | null {
+    return invite.createdAt || invite.acceptedAt || invite.expiresAt || null;
+  }
+
+  isResending(id: string): boolean {
+    return this.resendingIds().has(id);
+  }
+
+  isCancelling(id: string): boolean {
+    return this.cancellingIds().has(id);
   }
 
   getStatusColor(status: string): string {

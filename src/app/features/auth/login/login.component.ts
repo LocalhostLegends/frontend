@@ -7,6 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { LoadingButtonComponent } from '../../../core/ui/loading-button/loading-button.component';
 import { finalize } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 
@@ -22,6 +23,7 @@ import { HttpErrorResponse } from '@angular/common/http';
     RouterModule,
     RouterLink,
     MatProgressSpinnerModule,
+    LoadingButtonComponent,
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',

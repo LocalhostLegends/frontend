@@ -37,12 +37,64 @@ body {
 
   --app-bg: #{$light-bg};
   --app-text: #{$text-main};
+  --app-sidebar-start: #{$sidebar-start};
+  --app-sidebar-mid: #{$sidebar-mid};
+  --app-sidebar-end: #{$sidebar-end};
+  --app-btn-gradient: linear-gradient(
+    135deg,
+    var(--app-sidebar-start),
+    var(--app-sidebar-mid),
+    var(--app-sidebar-end)
+  );
+  --app-btn-radius: #{$btn-radius};
+  --app-btn-height: #{$btn-height};
 }
 
 .dark-theme {
   @include mat.all-component-colors($dark-theme);
   --app-bg: #0b102a;
   --app-text: #ffffff;
+}
+
+/* Unified button styles for plain and Angular Material buttons (auth/register shape) */
+.btn,
+.mat-mdc-button-base.btn {
+  border-radius: var(--app-btn-radius) !important;
+  min-height: var(--app-btn-height) !important;
+  height: var(--app-btn-height) !important;
+  padding-left: 20px !important;
+  padding-right: 20px !important;
+  font-size: 1rem !important;
+  font-weight: 500 !important;
+  line-height: 1 !important;
+  box-shadow: none !important;
+  --mdc-protected-button-container-elevation-shadow: none;
+  --mdc-protected-button-focus-container-elevation-shadow: none;
+  --mdc-protected-button-hover-container-elevation-shadow: none;
+}
+
+.btn.btn-primary,
+.mat-mdc-button-base.btn.btn-primary {
+  background: var(--app-btn-gradient) !important;
+  color: #fff !important;
+  border: none !important;
+}
+
+.btn.btn-primary:hover,
+.mat-mdc-button-base.btn.btn-primary:hover {
+  filter: brightness(1.06);
+}
+
+.btn.btn-secondary,
+.mat-mdc-button-base.btn.btn-secondary {
+  background: #fff !important;
+  color: #092265 !important;
+  border: 1px solid #092265 !important;
+}
+
+.btn.btn-secondary:hover,
+.mat-mdc-button-base.btn.btn-secondary:hover {
+  background: #f3f6ff !important;
 }
 
 
