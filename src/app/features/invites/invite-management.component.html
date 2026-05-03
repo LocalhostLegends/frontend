@@ -81,12 +81,16 @@
                     [matTooltip]="'Resend invite'"
                     (click)="onResendInvite(invite)"
                   >
-                    <mat-icon>refresh</mat-icon>
-                  </button>
-                  <button
-                    mat-icon-button
-                    [matTooltip]="'Cancel invite'"
-                    (click)="onCancelInvite(invite)"
+                    <mat-icon color="primary">refresh</mat-icon>
+                  </app-loading-button>
+                  <app-loading-button
+                    variant="icon"
+                    [tooltip]="'Cancel invite'"
+                    [loading]="isCancelling(invite.id)"
+                    [disabled]="isResending(invite.id)"
+                    [spinnerDiameter]="18"
+                    ariaLabel="Cancel invite"
+                    (pressed)="onCancelInvite(invite)"
                   >
                     <mat-icon>cancel</mat-icon>
                   </button>
