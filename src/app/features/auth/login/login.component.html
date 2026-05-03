@@ -16,9 +16,12 @@
         <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
       </button>
       @if (loginForm.controls.password.invalid && loginForm.controls.password.touched) {
-        <mat-error>Minimum 8 characters</mat-error>
+        <mat-error>Minimum 6 characters</mat-error>
       }
     </mat-form-field>
+
+    <a class="forgot-password-link" routerLink="/auth/forgot-password">Forgot password?</a>
+
     @if (errorMessage()) {
       <p class="error-text">{{ errorMessage() }}</p>
     }
@@ -28,18 +31,15 @@
       </div>
     }
 
-    <button
-      mat-raised-button
-      class="btn btn-primary"
+    <app-loading-button
       type="submit"
-      [disabled]="loginForm.invalid || isLoading()"
+      [loading]="isLoading()"
+      [disabled]="loginForm.invalid"
+      [spinnerDiameter]="24"
+      buttonClass="btn btn-primary auth-submit-btn"
     >
-      @if (isLoading()) {
-        <mat-spinner diameter="24"></mat-spinner>
-      } @else {
-        Sign In
-      }
-    </button>
+      Sign In
+    </app-loading-button>
 
     <p>Don't have an account? <a class="" routerLink="/auth/register">Register</a></p>
   </form>

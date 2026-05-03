@@ -1,0 +1,210 @@
+<div class="employees-page">
+  <mat-card class="filters-card">
+    <mat-card-header>
+      <mat-card-title>Employees</mat-card-title>
+      <mat-card-subtitle>Search and filter the list below.</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <form class="filters-form" [formGroup]="filtersForm" (ngSubmit)="applyFilters()">
+        <mat-form-field appearance="outline">
+          <mat-label>Search</mat-label>
+          <input matInput formControlName="search" placeholder="Name or email" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Role</mat-label>
+          <mat-select formControlName="role">
+            <mat-option value="">All</mat-option>
+            @for (role of filterRoles; track role) {
+              <mat-option [value]="role">{{ role | titlecase }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Status</mat-label>
+          <mat-select formControlName="status">
+            <mat-option value="">All</mat-option>
+            @for (status of filterStatuses; track status) {
+              <mat-option [value]="status">{{ status | titlecase }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <div class="filter-actions">
+          <button mat-raised-button type="submit" class="btn btn-primary">Apply</button>
+          <button mat-stroked-button type="button" class="btn btn-secondary" (click)="resetFilters()">
+            Reset
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="table-card table-card--primary">
+    <mat-card-header>
+      <mat-card-title>Team members</mat-card-title>
+      <mat-card-subtitle>Everyone in your company (paginated).</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      @if (isLoading()) {
+        <div class="loading-state">
+          <mat-spinner diameter="40"></mat-spinner>
+          <span>Loading users...</span>
+        </div>
+      } @else {
+        <table mat-table [dataSource]="users()" class="users-table">
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>Name</th>
+            <td mat-cell *matCellDef="let user">{{ displayName(user) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="email">
+            <th mat-header-cell *matHeaderCellDef>Email</th>
+            <td mat-cell *matCellDef="let user">{{ user.email }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="role">
+            <th mat-header-cell *matHeaderCellDef>Role</th>
+            <td mat-cell *matCellDef="let user">{{ user.role | titlecase }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="department">
+            <th mat-header-cell *matHeaderCellDef>Department</th>
+            <td mat-cell *matCellDef="let user">{{ departmentLabel(user) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Status</th>
+            <td mat-cell *matCellDef="let user">{{ (user.status || 'active') | titlecase }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="lastLogin">
+            <th mat-header-cell *matHeaderCellDef>Last login</th>
+            <td mat-cell *matCellDef="let user">
+              {{ user.lastLoginAt ? (user.lastLoginAt | date: 'dd.MM.yyyy HH:mm') : '—' }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Actions</th>
+            <td mat-cell *matCellDef="let user">
+              <app-table-actions-menu
+                [actions]="getActions(user)"
+                [triggerDisabled]="isBusy(user.id)"
+                triggerAriaLabel="User actions"
+                (actionClick)="onAction($event, user)"
+              />
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+
+        <app-pagination-controls
+          [page]="page()"
+          [limit]="limit()"
+          [total]="total()"
+          [itemsCount]="users().length"
+          (prev)="prevPage()"
+          (next)="nextPage()"
+        />
+      }
+    </mat-card-content>
+  </mat-card>
+
+  <div class="employees-detail-row">
+    <mat-card class="edit-card">
+      <mat-card-header>
+        <mat-card-title>Edit User</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        @if (!editingUserId()) {
+          <div class="empty-edit">Select user action "Edit" to load details.</div>
+        } @else if (isEditLoading()) {
+          <div class="loading-inline">
+            <mat-spinner diameter="32"></mat-spinner>
+            <span>Loading user...</span>
+          </div>
+        } @else {
+          <form class="edit-form" [formGroup]="editForm" (ngSubmit)="saveEdit()">
+            <mat-form-field appearance="outline">
+              <mat-label>First name</mat-label>
+              <input matInput formControlName="firstName" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Last name</mat-label>
+              <input matInput formControlName="lastName" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Phone</mat-label>
+              <input matInput formControlName="phone" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Role</mat-label>
+              <mat-select formControlName="role">
+                @for (role of editRoleOptions(); track role) {
+                  <mat-option [value]="role">{{ role | titlecase }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Status</mat-label>
+              <mat-select formControlName="status">
+                @for (status of editStatuses; track status) {
+                  <mat-option [value]="status">{{ status | titlecase }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+
+            <div class="edit-actions">
+              <app-loading-button
+                type="submit"
+                [loading]="isSaving()"
+                [disabled]="editForm.invalid"
+                buttonClass="btn btn-primary"
+              >
+                Save
+              </app-loading-button>
+              <button mat-stroked-button type="button" class="btn btn-secondary" (click)="cancelEdit()">
+                Cancel
+              </button>
+            </div>
+          </form>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="view-card">
+      <mat-card-header>
+        <mat-card-title>View User</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        @if (isViewLoading()) {
+          <div class="loading-inline">
+            <mat-spinner diameter="32"></mat-spinner>
+            <span>Loading details...</span>
+          </div>
+        } @else if (!viewedUser()) {
+          <div class="empty-edit">Select user action "View details" to preview profile data.</div>
+        } @else if (viewedUser(); as user) {
+          <div class="view-grid">
+            <div><span class="k">Name</span><strong>{{ displayName(user) }}</strong></div>
+            <div><span class="k">Email</span><strong>{{ user.email }}</strong></div>
+            <div><span class="k">Role</span><strong>{{ user.role | titlecase }}</strong></div>
+            <div><span class="k">Status</span><strong>{{ (user.status || 'active') | titlecase }}</strong></div>
+            <div><span class="k">Phone</span><strong>{{ user.phone || '—' }}</strong></div>
+            <div><span class="k">Department</span><strong>{{ user.department?.name || '—' }}</strong></div>
+            <div><span class="k">Position</span><strong>{{ user.position?.name || '—' }}</strong></div>
+            <div><span class="k">Company</span><strong>{{ user.company?.name || user.companyName || '—' }}</strong></div>
+          </div>
+        }
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

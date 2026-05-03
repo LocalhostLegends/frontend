@@ -1,25 +1,64 @@
-.layout {
-  display: flex;
-  height: 100vh;
+@use 'variables' as *;
+
+:host {
+  display: block;
+  height: 100%;
 }
 
-.main {
+.layout-shell.mat-drawer-container {
+  height: 100vh;
+  height: 100dvh;
+}
 
-  flex: 1;
+.layout-shell .mat-drawer-content.main-shell {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  min-height: 100%;
 }
 
-app-header {
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+::ng-deep .layout-shell .mat-drawer-backdrop.mat-drawer-shown {
+  background-color: rgba(15, 23, 42, 0.45);
+}
+
+// Material sets .mat-drawer to 360px (--mat-sidenav-container-width). Our nav is narrower,
+// so the extra width shows as a gap between the gradient and main content.
+.layout-shell .app-drawer.mat-drawer {
+  width: fit-content;
+  max-width: 100%;
+  min-width: 0;
+  --mat-sidenav-container-shape: 0;
+  border-radius: 0;
+}
+
+.app-drawer {
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.main-shell {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: $surface;
 }
 
 .content {
   flex: 1;
+  overflow-x: hidden;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   padding: 30px;
-  background-color: #fff;
+  background-color: $surface;
+}
+
+@media (max-width: 959px) {
+  .content {
+    padding: 16px 14px 24px;
+  }
+}
+
+@media (max-width: 399px) {
+  .content {
+    padding: 12px 12px 20px;
+  }
 }

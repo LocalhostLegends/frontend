@@ -1,4 +1,4 @@
-@use '../../../../variables' as *;
+@use 'variables' as *;
 
 .register-wrapper {
   display: flex;
@@ -9,7 +9,7 @@
   padding: 20px;
 
   mat-icon {
-    color: $primary !important; /* Или любой контрастный цвет */
+    color: $primary !important; 
   }
 
   form {
@@ -36,7 +36,7 @@
 
     .error-text {
       color: $error;
-      background: #ffebee;
+      background: $error-bg;
       padding: 10px;
       border-radius: 4px;
       margin-bottom: 1rem;
@@ -45,7 +45,7 @@
     }
     .server-error {
       color: $error;
-      background: #ffebee;
+      background: $error-bg;
       padding: 10px;
       border-radius: 4px;
       margin-bottom: 1rem;
@@ -53,22 +53,21 @@
       text-align: center;
     }
 
-    button {
+    ::ng-deep .auth-submit-btn {
       margin-top: 1rem;
-      padding: 0.5rem;
-      font-size: 1rem;
       height: 48px;
-      color: #fff;
-      ::ng-deep .mat-mdc-progress-spinner {
-        --mdc-circular-progress-active-indicator-color: #ffffff;
-        display: inline-block;
-      }
+      color: $white;
+    }
+
+    ::ng-deep .auth-submit-btn .mat-mdc-progress-spinner {
+      --mdc-circular-progress-active-indicator-color: #{$white};
+      display: inline-block;
     }
 
     p {
       margin-top: 1.5rem;
       text-align: center;
-      color: #666;
+      color: $text-placeholder;
       font-size: 0.9rem;
 
       a {

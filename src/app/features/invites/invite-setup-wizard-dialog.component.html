@@ -1,0 +1,204 @@
+<h2 mat-dialog-title class="dlg-title">{{ dialogTitle() }}</h2>
+
+<mat-dialog-content class="wizard-body">
+  <div class="stepper-row" aria-hidden="true">
+    @for (idx of stepIndexes; track idx) {
+      <div
+        class="circle"
+        [class.active]="step() === idx"
+        [class.done]="step() > idx"
+        [class.pending]="step() < idx"
+      >
+        @if (step() > idx) {
+          <mat-icon>check</mat-icon>
+        } @else {
+          <span>{{ idx + 1 }}</span>
+        }
+      </div>
+      @if (idx < 2) {
+        <div class="connector" [class.filled]="step() > idx"></div>
+      }
+    }
+  </div>
+
+  <p class="step-caption">{{ stepCaption() }}</p>
+
+  @switch (step()) {
+    @case (0) {
+      @if (listsLoading()) {
+        <div class="meta-loading">
+          <mat-spinner diameter="36"></mat-spinner>
+          <span>Loading departments…</span>
+        </div>
+      } @else {
+        <form [formGroup]="deptForm" class="fields" id="dept-form">
+          @if (departments().length > 0) {
+            <div class="mode-toggle">
+              <span class="mode-label">Department</span>
+              <mat-button-toggle-group
+                [value]="deptMode()"
+                (change)="setDeptMode($event.value)"
+                aria-label="Department source"
+              >
+                <mat-button-toggle value="existing">From list</mat-button-toggle>
+                <mat-button-toggle value="new">Create new</mat-button-toggle>
+              </mat-button-toggle-group>
+            </div>
+          }
+
+          @if (deptMode() === 'existing' && departments().length > 0) {
+            <mat-form-field appearance="outline">
+              <mat-label>Select department</mat-label>
+              <mat-select formControlName="existingDepartmentId">
+                @for (d of departments(); track d.id) {
+                  <mat-option [value]="d.id">{{ departmentLabel(d) }}</mat-option>
+                }
+              </mat-select>
+              @if (
+                deptForm.controls.existingDepartmentId.invalid &&
+                deptForm.controls.existingDepartmentId.touched
+              ) {
+                <mat-error>Required</mat-error>
+              }
+            </mat-form-field>
+          } @else {
+            <mat-form-field appearance="outline">
+              <mat-label>Department name</mat-label>
+              <input matInput formControlName="name" autocomplete="organization" />
+              @if (deptForm.controls.name.invalid && deptForm.controls.name.touched) {
+                <mat-error>Name is required (min 2 characters)</mat-error>
+              }
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Description (optional)</mat-label>
+              <textarea matInput formControlName="description" rows="2"></textarea>
+            </mat-form-field>
+          }
+        </form>
+      }
+    }
+    @case (1) {
+      <form [formGroup]="posForm" class="fields" id="pos-form">
+          @if (positions().length > 0) {
+            <div class="mode-toggle">
+              <span class="mode-label">Position</span>
+              <mat-button-toggle-group
+                [value]="posMode()"
+                (change)="setPosMode($event.value)"
+                aria-label="Position source"
+              >
+                <mat-button-toggle value="existing">From list</mat-button-toggle>
+                <mat-button-toggle value="new">Create new</mat-button-toggle>
+              </mat-button-toggle-group>
+            </div>
+          }
+
+          @if (posMode() === 'existing' && positions().length > 0) {
+            <mat-form-field appearance="outline">
+              <mat-label>Select position</mat-label>
+              <mat-select formControlName="existingPositionId">
+                @for (p of positions(); track p.id) {
+                  <mat-option [value]="p.id">{{ positionLabel(p) }}</mat-option>
+                }
+              </mat-select>
+              @if (
+                posForm.controls.existingPositionId.invalid &&
+                posForm.controls.existingPositionId.touched
+              ) {
+                <mat-error>Required</mat-error>
+              }
+            </mat-form-field>
+          } @else {
+            <mat-form-field appearance="outline">
+              <mat-label>Position title</mat-label>
+              <input matInput formControlName="title" autocomplete="organization-title" />
+              @if (posForm.controls.title.invalid && posForm.controls.title.touched) {
+                <mat-error>Title is required (min 2 characters)</mat-error>
+              }
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Description (optional)</mat-label>
+              <textarea matInput formControlName="description" rows="2"></textarea>
+            </mat-form-field>
+          }
+      </form>
+    }
+    @case (2) {
+      @if (deptSummaryName() || posSummaryTitle()) {
+        <div class="summary">
+          @if (deptSummaryName()) {
+            <div><span class="lbl">Department:</span> {{ deptSummaryName() }}</div>
+          }
+          @if (posSummaryTitle()) {
+            <div><span class="lbl">Position:</span> {{ posSummaryTitle() }}</div>
+          }
+        </div>
+      }
+      <form [formGroup]="inviteForm" class="fields" id="invite-form">
+        <mat-form-field appearance="outline">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" formControlName="email" autocomplete="email" />
+          @if (inviteForm.controls.email.invalid && inviteForm.controls.email.touched) {
+            <mat-error>Valid email is required</mat-error>
+          }
+        </mat-form-field>
+        @if (showRolePicker()) {
+          <mat-form-field appearance="outline">
+            <mat-label>Role</mat-label>
+            <mat-select formControlName="role">
+              @for (r of invitableRoles(); track r) {
+                <mat-option [value]="r">{{ r | titlecase }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        } @else {
+          <p class="single-role-hint">
+            Role: <strong>{{ invitableRoles()[0] | titlecase }}</strong>
+          </p>
+        }
+      </form>
+    }
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="dlg-actions">
+  <button mat-button type="button" (click)="onCancel()" [disabled]="isBusy()">Cancel</button>
+  @switch (step()) {
+    @case (0) {
+      <app-loading-button
+        type="button"
+        color="primary"
+        [loading]="isDeptSubmitting()"
+        [disabled]="deptForm.invalid || listsLoading()"
+        (pressed)="onDeptNext()"
+        buttonClass="btn btn-primary"
+      >
+        Next: Create position
+      </app-loading-button>
+    }
+    @case (1) {
+      <app-loading-button
+        type="button"
+        color="primary"
+        [loading]="isPosSubmitting()"
+        [disabled]="posForm.invalid"
+        (pressed)="onPosNext()"
+        buttonClass="btn btn-primary"
+      >
+        Next: Send invite
+      </app-loading-button>
+    }
+    @case (2) {
+      <app-loading-button
+        type="button"
+        color="primary"
+        [loading]="isInviteSubmitting()"
+        [disabled]="inviteForm.invalid"
+        (pressed)="onSendInvite()"
+        buttonClass="btn btn-primary"
+      >
+        Confirm and send invite
+      </app-loading-button>
+    }
+  }
+</mat-dialog-actions>

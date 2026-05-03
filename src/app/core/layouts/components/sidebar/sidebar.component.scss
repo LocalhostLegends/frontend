@@ -1,0 +1,166 @@
+@use 'variables' as *;
+
+// Custom elements default to inline; without block, host width from HostBinding is ignored
+// and mat-drawer can grow to content width (looks “huge”).
+:host {
+  display: block;
+  box-sizing: border-box;
+  height: 100%;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+.sidebar-root {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  background: $gradient;
+  box-sizing: border-box;
+}
+
+.sidebar-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    width: 0;
+  }
+
+  &.collapsed .navText span {
+    display: none;
+  }
+}
+
+.sidebar-root.collapsed .navText span {
+  display: none;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  gap: 12px;
+  margin-bottom: 32px;
+  cursor: pointer;
+
+  .logo-img {
+    width: 38px;
+    height: 38px;
+  }
+}
+
+@media (max-width: 959px) {
+  .logo-container {
+    padding: 20px 12px;
+    margin-bottom: 24px;
+  }
+}
+
+.navText {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  color: $white;
+  cursor: pointer;
+  text-decoration: none;
+  position: relative;
+  transition: background-color 0.2s;
+  min-height: 48px;
+  line-height: 1.25;
+  border-radius: 0 !important;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 4px;
+    background-color: $white;
+    opacity: 0;
+    transition: opacity 0.3s;
+    border-radius: 0 !important;
+  }
+
+  &:hover::before,
+  &.active-link::before {
+    opacity: 1;
+  }
+
+  &:hover,
+  &.active-link {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 0 !important;
+  }
+}
+
+// Keep MDC text button height stable (default 40px) so hover/focus doesn’t resize the row.
+a.navText.mat-mdc-button {
+  --mat-button-text-container-height: 48px;
+  height: 48px;
+  min-height: 48px;
+  padding-inline: 0;
+}
+
+.icon-text {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  width: 100%;
+
+  img {
+    min-width: 24px;
+    height: 24px;
+    filter: brightness(0) invert(1);
+  }
+
+  span {
+    font-size: 14px;
+    font-weight: 400;
+    color: $white;
+    white-space: nowrap;
+  }
+}
+
+.sidebar-header {
+  margin-top: auto;
+  padding: 24px;
+  display: flex;
+  justify-content: center;
+
+  .icon-button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    min-width: 44px;
+    min-height: 44px;
+
+    img {
+      width: 24px;
+      filter: brightness(0) invert(1);
+      transition: transform 0.3s ease;
+    }
+
+    &:hover {
+      border-radius: 8px !important;
+    }
+
+    &.rotated img {
+      transform: rotate(180deg);
+    }
+  }
+}

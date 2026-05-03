@@ -1,0 +1,115 @@
+@use 'variables' as *;
+
+.activate-account {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 24px;
+  background: $gradient-activate;
+}
+
+.activate-card {
+  max-width: 500px;
+  width: 100%;
+
+  mat-card-content {
+    padding: 32px;
+  }
+}
+
+.invalid-state,
+.activate-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.invalid-state {
+  gap: 16px;
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    color: $error;
+  }
+
+  h2 {
+    margin: 16px 0 8px;
+    color: $error;
+  }
+
+  p {
+    color: $text-placeholder;
+    margin: 0 0 24px;
+  }
+}
+
+.activate-form {
+  gap: 24px;
+
+  .header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+
+    mat-icon {
+      font-size: 64px;
+      width: 64px;
+      height: 64px;
+    }
+
+    h2 {
+      margin: 0;
+      color: $text-strong;
+    }
+
+    p {
+      margin: 0;
+      color: $text-placeholder;
+      font-size: 16px;
+    }
+  }
+
+  .form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    mat-form-field {
+      width: 100%;
+    }
+
+    .submit-button {
+      height: 48px;
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+  }
+
+  .login-link {
+    text-align: center;
+
+    p {
+      margin: 0;
+      color: $text-placeholder;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .activate-account {
+    padding: 16px;
+  }
+
+  .activate-card mat-card-content {
+    padding: 24px 16px;
+  }
+}

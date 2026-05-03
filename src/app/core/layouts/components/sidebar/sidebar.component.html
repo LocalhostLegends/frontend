@@ -1,0 +1,43 @@
+<div class="sidebar-root" [class.collapsed]="isCollapsed() && !shell.isMobile()">
+  <div class="sidebar-content">
+    <div class="logo-container" routerLink="/" (click)="onNavigate()">
+      <img src="assets/logo-dark.svg" alt="HR Tech" class="logo-img" />
+    </div>
+
+    @for (item of menuItems(); track item.route + item.label) {
+      <a
+        class="navText"
+        mat-button
+        [routerLink]="item.route"
+        routerLinkActive="active-link"
+        [routerLinkActiveOptions]="{ exact: item.exact }"
+        (click)="onNavigate()"
+      >
+        <div class="icon-text">
+          <img
+            [src]="'assets/icons/sideBar/' + item.icon"
+            [alt]="item.label"
+            width="24"
+            height="24"
+          />
+          <span>{{ item.label }}</span>
+        </div>
+      </a>
+    }
+
+    @if (!shell.isMobile()) {
+      <div class="sidebar-header">
+        <span></span>
+        <button
+          mat-button
+          type="button"
+          class="icon-button"
+          [class.rotated]="isCollapsed()"
+          (click)="onToggleClick()"
+        >
+          <img src="assets/icons/sideBar/clouse.svg" alt="" />
+        </button>
+      </div>
+    }
+  </div>
+</div>

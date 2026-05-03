@@ -1,0 +1,140 @@
+@use 'variables' as *;
+
+.meta-loading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 1rem 0;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.mode-toggle {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 4px;
+
+  .mode-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.55);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  mat-button-toggle-group {
+    flex-wrap: wrap;
+  }
+}
+
+.dlg-title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.wizard-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-height: 220px;
+  padding-top: 0.25rem;
+}
+
+.stepper-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: 0.25rem;
+}
+
+.circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+  flex-shrink: 0;
+  border: 2px solid rgba(0, 0, 0, 0.26);
+  color: rgba(0, 0, 0, 0.45);
+  background: $surface-muted;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    color: $success;
+  }
+
+  &.active {
+    border-color: $link-blue;
+    color: $link-blue;
+    background: $link-blue-bg;
+  }
+
+  &.done {
+    border-color: $success;
+    background: $success-bg;
+    color: $success;
+  }
+
+  &.pending {
+    opacity: 0.65;
+  }
+}
+
+.connector {
+  width: 48px;
+  height: 2px;
+  background: rgba(0, 0, 0, 0.12);
+  margin: 0 6px;
+  flex-shrink: 0;
+
+  &.filled {
+    background: $success;
+  }
+}
+
+.step-caption {
+  margin: 0;
+  font-size: 0.9rem;
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.single-role-hint {
+  margin: 0 0 0.25rem;
+  font-size: 0.9rem;
+  color: rgba(0, 0, 0, 0.75);
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  mat-form-field {
+    width: 100%;
+  }
+}
+
+.summary {
+  font-size: 0.875rem;
+  padding: 0.75rem 0.85rem;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.04);
+  margin-bottom: 0.25rem;
+
+  .lbl {
+    color: rgba(0, 0, 0, 0.55);
+    margin-right: 0.35rem;
+  }
+}
+
+.dlg-actions {
+  padding: 8px 24px 16px;
+  gap: 8px;
+}

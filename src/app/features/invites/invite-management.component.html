@@ -1,55 +1,32 @@
 <div class="invite-management">
   <mat-card class="create-invite-card">
     <mat-card-header>
-      <mat-card-title>Create New Invite</mat-card-title>
+      <mat-card-title>New invite</mat-card-title>
+      <mat-card-subtitle>
+        Same 3 steps for everyone who can invite: create department → create position → send invite (Admin invites HR;
+        HR invites managers and employees).
+      </mat-card-subtitle>
     </mat-card-header>
-    <mat-card-content>
-      <form [formGroup]="createForm" (ngSubmit)="onCreateInvite()" class="create-form">
-        <mat-form-field appearance="outline">
-          <mat-label>Email Address</mat-label>
-          <input matInput formControlName="email" type="email" placeholder="user@example.com" />
-          @if (createForm.controls.email.invalid && createForm.controls.email.touched) {
-            <mat-error> Please enter a valid email address </mat-error>
-          }
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>Role</mat-label>
-          <mat-select formControlName="role">
-            <mat-option value="employee">Employee</mat-option>
-            <mat-option value="hr">HR</mat-option>
-          </mat-select>
-        </mat-form-field>
-
-        <button
-          mat-raised-button
-          color="primary"
-          type="submit"
-          [disabled]="createForm.invalid || isCreating()"
-          class="create-button"
-        >
-          @if (isCreating()) {
-            <mat-spinner diameter="20"></mat-spinner>
-          }
-          @if (!isCreating()) {
-            <span>Send Invite</span>
-          }
-        </button>
-      </form>
+    <mat-card-content class="create-actions">
+      <button mat-flat-button color="primary" class="btn btn-primary" type="button" (click)="openInviteWizard()">
+        Start invite setup
+      </button>
     </mat-card-content>
   </mat-card>
 
   <mat-card class="invites-list-card">
     <mat-card-header>
-      <mat-card-title>Company Invites</mat-card-title>
-      <mat-card-subtitle>Manage pending and sent invites</mat-card-subtitle>
+      <mat-card-title>Invitation list</mat-card-title>
+      <mat-card-subtitle>
+        Who was invited, whether they accepted, and actions (resend email or delete the invitation).
+      </mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
       @if (!isLoading()) {
         <div class="table-container">
           <table mat-table [dataSource]="invites()" class="invites-table">
             <ng-container matColumnDef="email">
-              <th mat-header-cell *matHeaderCellDef>Email</th>
+              <th mat-header-cell *matHeaderCellDef>Invitee (email)</th>
               <td mat-cell *matCellDef="let invite">{{ invite.email }}</td>
             </ng-container>
 
@@ -61,39 +38,56 @@
             <ng-container matColumnDef="status">
               <th mat-header-cell *matHeaderCellDef>Status</th>
               <td mat-cell *matCellDef="let invite">
-                <span [style.color]="getStatusColor(invite.status)">
-                  {{ invite.status | titlecase }}
+                <span class="status-text" [style.color]="getStatusColor(invite)">
+                  {{ statusLabel(invite) }}
                 </span>
               </td>
             </ng-container>
 
-            <ng-container matColumnDef="createdAt">
-              <th mat-header-cell *matHeaderCellDef>Created</th>
-              <td mat-cell *matCellDef="let invite">{{ invite.createdAt | date: 'short' }}</td>
+            <ng-container matColumnDef="invitedAt">
+              <th mat-header-cell *matHeaderCellDef>Sent</th>
+              <td mat-cell *matCellDef="let invite">
+                @if (invitedOn(invite); as d) {
+                  {{ d | date: 'dd.MM.yyyy, HH:mm' }}
+                } @else {
+                  —
+                }
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="acceptedAt">
+              <th mat-header-cell *matHeaderCellDef>Accepted</th>
+              <td mat-cell *matCellDef="let invite">
+                @if (acceptedOn(invite); as ad) {
+                  <span class="accepted-cell">
+                    @if (isAccepted(invite)) {
+                      <mat-icon class="accepted-icon" inline aria-hidden="true">check_circle</mat-icon>
+                    }
+                    {{ ad | date: 'dd.MM.yyyy, HH:mm' }}
+                  </span>
+                } @else if (isAccepted(invite)) {
+                  <span class="accepted-cell">
+                    <mat-icon class="accepted-icon" inline aria-hidden="true">check_circle</mat-icon>
+                    Yes
+                  </span>
+                } @else {
+                  <span class="muted">—</span>
+                }
+              </td>
             </ng-container>
 
             <ng-container matColumnDef="actions">
               <th mat-header-cell *matHeaderCellDef>Actions</th>
               <td mat-cell *matCellDef="let invite">
-                @if (invite.status === 'pending') {
-                  <button
-                    mat-icon-button
-                    [matTooltip]="'Resend invite'"
-                    (click)="onResendInvite(invite)"
-                  >
-                    <mat-icon color="primary">refresh</mat-icon>
-                  </app-loading-button>
-                  <app-loading-button
-                    variant="icon"
-                    [tooltip]="'Cancel invite'"
-                    [loading]="isCancelling(invite.id)"
-                    [disabled]="isResending(invite.id)"
-                    [spinnerDiameter]="18"
-                    ariaLabel="Cancel invite"
-                    (pressed)="onCancelInvite(invite)"
-                  >
-                    <mat-icon>cancel</mat-icon>
-                  </button>
+                @if (canShowInviteActions(invite)) {
+                  <app-table-actions-menu
+                    [actions]="getActionsForInvite(invite)"
+                    triggerAriaLabel="Invite actions"
+                    [triggerDisabled]="isResending(invite.id) || isCancelling(invite.id)"
+                    (actionClick)="onInviteAction($event, invite)"
+                  />
+                } @else {
+                  <span class="muted no-actions">—</span>
                 }
               </td>
             </ng-container>
@@ -105,7 +99,7 @@
           @if (invites().length === 0) {
             <div class="no-invites">
               <mat-icon>person_add</mat-icon>
-              <p>No invites found. Create your first invite above!</p>
+              <p>No invites yet. Create one above.</p>
             </div>
           }
         </div>

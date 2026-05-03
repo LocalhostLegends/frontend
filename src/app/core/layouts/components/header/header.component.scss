@@ -1,0 +1,291 @@
+@use 'variables' as *;
+
+.header-toolbar {
+  background: $surface;
+  height: 64px;
+  padding: 0 24px;
+  display: grid;
+  grid-template-columns: minmax(120px, 1fr) auto minmax(220px, 1fr);
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid $border-light;
+}
+
+.left {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+}
+
+.menu-button {
+  flex-shrink: 0;
+  margin-left: -4px;
+}
+
+.company-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.header-search {
+  justify-self: center;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  .search-input-wrap {
+    height: 40px;
+    border: 1px solid $border-light;
+    border-radius: $btn-radius;
+    background: $surface-slate;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 6px 0 10px;
+
+    .search-icon {
+      color: $text-secondary;
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+
+    input {
+      width: 180px;
+      border: 0;
+      outline: none;
+      background: transparent;
+      font-size: 14px;
+      color: $text-main;
+    }
+
+    button {
+      width: 30px;
+      height: 30px;
+      min-width: 30px;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+
+      mat-icon {
+        margin: 0;
+        width: 20px;
+        height: 20px;
+        font-size: 20px;
+        line-height: 20px;
+      }
+    }
+  }
+
+  .search-submit {
+    width: auto;
+    min-width: 94px;
+    min-height: 40px !important;
+    height: 40px !important;
+    border-radius: $btn-radius !important;
+    font-size: 13px;
+    padding: 0 14px !important;
+    line-height: 40px;
+  }
+}
+
+.page-title {
+  font-size: 18px;
+  font-weight: 500;
+  color: $text-main;
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-self: end;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 4px 16px !important;
+  border-radius: 8px !important;
+  cursor: pointer;
+  transition: 0.2s;
+  border: $border;
+
+  .profile-info {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .user-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    line-height: 1.1;
+    min-width: 120px;
+  }
+
+  .name {
+    font-size: 13px;
+    font-weight: 600;
+    color: $text-main;
+  }
+
+  .status {
+    font-size: 11px;
+    color: $text-secondary;
+  }
+
+  &:hover {
+    background: $surface-hover;
+  }
+
+  span {
+    font-size: 14px;
+    font-weight: 400;
+  }
+}
+
+.user-profile mat-icon {
+  order: 2;
+  margin-left: 8px;
+}
+
+.avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.avatar-fallback {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: $info-bg;
+  color: $info-fg;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.profile-menu {
+  .mat-mdc-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: $text-main;
+  }
+}
+
+@media (max-width: 1024px) {
+  .header-toolbar {
+    padding: 0 12px;
+    gap: 10px;
+    grid-template-columns: minmax(80px, 1fr) auto auto;
+  }
+
+  .header-search .search-input-wrap {
+    input {
+      width: 130px;
+    }
+  }
+
+  .user-profile .user-meta {
+    min-width: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .company-name {
+    display: block;
+    font-size: 15px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .header-search {
+    min-width: 0;
+
+    .search-input-wrap input {
+      width: 96px;
+    }
+
+    .search-submit {
+      min-width: 60px;
+      padding: 0 8px;
+      height: 36px;
+      line-height: 36px;
+    }
+  }
+
+  .user-profile {
+    padding: 4px 10px !important;
+
+    .user-meta {
+      display: none;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .header-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    min-height: 56px;
+    height: auto;
+    padding: 8px 10px;
+    row-gap: 10px;
+  }
+
+  .left {
+    order: 1;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .right {
+    order: 2;
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+
+  /* Second row: full-width search (was display:none — unusable on mobile) */
+  .header-search {
+    order: 3;
+    display: flex;
+    flex: 1 1 100%;
+    width: 100%;
+    min-width: 0;
+    justify-self: stretch;
+    justify-content: stretch;
+    gap: 8px;
+
+    .search-input-wrap {
+      flex: 1 1 auto;
+      min-width: 0;
+
+      input {
+        width: 100%;
+        min-width: 0;
+      }
+    }
+
+    .search-submit {
+      flex-shrink: 0;
+      min-width: 72px;
+    }
+  }
+}

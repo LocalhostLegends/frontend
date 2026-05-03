@@ -28,7 +28,7 @@ html {
 body {
   margin: 0;
   height: 100%;
-  font-family: Roboto, sans-serif;
+  font-family: $font-family-base;
   transition: background 0.3s, color 0.3s;
 }
 
@@ -37,12 +37,86 @@ body {
 
   --app-bg: #{$light-bg};
   --app-text: #{$text-main};
+  --app-sidebar-start: #{$sidebar-start};
+  --app-sidebar-mid: #{$sidebar-mid};
+  --app-sidebar-end: #{$sidebar-end};
+  --app-btn-gradient: linear-gradient(
+    135deg,
+    var(--app-sidebar-start),
+    var(--app-sidebar-mid),
+    var(--app-sidebar-end)
+  );
+  --app-btn-radius: #{$btn-radius};
+  --app-btn-height: #{$btn-height};
+  --app-input-height: 48px;
+  --app-font-family: #{$font-family-base};
+  --app-surface: #{$surface};
+  --app-primary: #{$primary};
+  --app-primary-hover: #{$primary-hover};
+  --app-text-secondary: #{$text-secondary};
+  --app-border-light: #{$border-light};
+  --app-error: #{$error};
+  --app-success: #{$success};
 }
 
 .dark-theme {
   @include mat.all-component-colors($dark-theme);
-  --app-bg: #0b102a;
-  --app-text: #ffffff;
+  --app-bg: #{$text-main};
+  --app-text: #{$white};
+}
+
+
+.btn,
+.mat-mdc-button-base.btn {
+  border-radius: var(--app-btn-radius) !important;
+  min-height: var(--app-btn-height) !important;
+  height: var(--app-btn-height) !important;
+  padding-left: 20px !important;
+  padding-right: 20px !important;
+  font-size: 1rem !important;
+  font-weight: 500 !important;
+  line-height: 1 !important;
+  box-shadow: none !important;
+  --mdc-protected-button-container-elevation-shadow: none;
+  --mdc-protected-button-focus-container-elevation-shadow: none;
+  --mdc-protected-button-hover-container-elevation-shadow: none;
+}
+
+.btn.btn-primary,
+.mat-mdc-button-base.btn.btn-primary {
+  background-color: #{$primary} !important;
+  background-image: var(--app-btn-gradient) !important;
+  color: #{$white} !important;
+  border: none !important;
+}
+
+.btn.btn-primary:hover,
+.mat-mdc-button-base.btn.btn-primary:hover {
+  filter: brightness(1.06);
+}
+
+.btn.btn-secondary,
+.mat-mdc-button-base.btn.btn-secondary {
+  background: #{$surface} !important;
+  color: #{$primary} !important;
+  border: 1px solid #{$primary} !important;
+}
+
+.btn.btn-secondary:hover,
+.mat-mdc-button-base.btn.btn-secondary:hover {
+  background: #{$surface-tint} !important;
+}
+
+
+.mat-mdc-form-field {
+  --mat-form-field-container-height: var(--app-input-height);
+  --mat-form-field-container-vertical-padding: 12px;
+}
+
+
+.app-input-text-center .mat-mdc-input-element,
+.app-input-text-center .mat-mdc-select-value-text {
+  text-align: center;
 }
 
 

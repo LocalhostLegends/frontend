@@ -1,0 +1,74 @@
+<mat-toolbar class="header-toolbar">
+  <div class="left">
+    @if (layout.isMobile()) {
+      <button
+        mat-icon-button
+        type="button"
+        class="menu-button"
+        (click)="layout.toggleSidenav()"
+        aria-label="Open menu"
+      >
+        <mat-icon>menu</mat-icon>
+      </button>
+    }
+    <div class="company-name">{{ companyName() }}</div>
+  </div>
+
+  <form class="header-search" (ngSubmit)="submitSearch()">
+    <div class="search-input-wrap">
+      <mat-icon class="search-icon">search</mat-icon>
+      <input
+        type="text"
+        name="headerSearch"
+        [(ngModel)]="searchQuery"
+        placeholder="Search"
+        autocomplete="off"
+      />
+      @if (searchQuery.trim()) {
+        <button mat-icon-button type="button" (click)="clearSearch()" aria-label="Clear search">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </div>
+    <button mat-stroked-button type="submit" class="search-submit btn btn-secondary">Search</button>
+  </form>
+
+  <div class="right">
+    <button mat-icon-button>
+      <mat-icon>notifications</mat-icon>
+    </button>
+
+    <button mat-button [matMenuTriggerFor]="menu" class="user-profile">
+      <div class="profile-info">
+        @if (avatarUrl()) {
+          <img [appAuthenticatedImgSrc]="avatarUrl()" [authMeAvatar]="true" class="avatar" alt="" />
+        } @else {
+          <div class="avatar avatar-fallback">{{ avatarText() }}</div>
+        }
+        <div class="user-meta">
+          <span class="name">{{ userName() }}</span>
+        </div>
+      </div>
+      <mat-icon>expand_more</mat-icon>
+    </button>
+
+    <mat-menu #menu="matMenu" class="profile-menu">
+      <button mat-menu-item (click)="goToProfile()">
+        <mat-icon>person</mat-icon>
+        <span>Profile</span>
+      </button>
+
+      <button mat-menu-item (click)="goToSettings()">
+        <mat-icon>settings</mat-icon>
+        <span>Settings</span>
+      </button>
+
+      <mat-divider></mat-divider>
+
+      <button mat-menu-item (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        <span>Logout</span>
+      </button>
+    </mat-menu>
+  </div>
+</mat-toolbar>

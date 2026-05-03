@@ -1,10 +1,19 @@
-<div class="layout">
- <app-sidebar></app-sidebar>
+<mat-sidenav-container class="layout-shell" [autosize]="true">
+  <mat-sidenav
+    class="app-drawer"
+    [mode]="layout.isMobile() ? 'over' : 'side'"
+    [opened]="layout.drawerOpened()"
+    (openedChange)="layout.onDrawerOpenedChange($event)"
+    [fixedInViewport]="layout.isMobile()"
+    [disableClose]="!layout.isMobile()"
+  >
+    <app-sidebar />
+  </mat-sidenav>
 
-  <div class="main">
-    <app-header></app-header>
+  <mat-sidenav-content class="main-shell">
+    <app-header />
     <div class="content">
-      <router-outlet></router-outlet>
+      <router-outlet />
     </div>
-  </div>
-</div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

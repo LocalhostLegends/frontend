@@ -1,0 +1,49 @@
+<mat-toolbar class="landing-toolbar">
+  <div class="left">
+    <div class="logo-container" routerLink="/" (click)="closeMobileMenu()">
+      <img src="assets/logo.svg" alt="HR Tech" class="logo-img" />
+      <span class="brand-name">HR Tech</span>
+    </div>
+  </div>
+
+  <div class="center desktop-only">
+    <button class="btn nav-link-btn" type="button" routerLink="/" fragment="about" (click)="closeMobileMenu()">
+      About
+    </button>
+    <button class="btn nav-link-btn" type="button" routerLink="/" fragment="product" (click)="closeMobileMenu()">
+      Product
+    </button>
+    <button class="btn nav-link-btn" type="button" routerLink="/" fragment="contact" (click)="closeMobileMenu()">
+      Contact
+    </button>
+  </div>
+
+  <div class="right auth-buttons">
+    <a class="btn btn-secondary" routerLink="/auth/login" (click)="closeMobileMenu()">Sign In</a>
+    <a class="btn btn-primary" routerLink="/auth/register" (click)="closeMobileMenu()">Register Company</a>
+  </div>
+
+  <button
+    mat-icon-button
+    class="mobile-menu-toggle mobile-only"
+    type="button"
+    aria-label="Toggle menu"
+    (click)="toggleMobileMenu()"
+  >
+    <mat-icon>{{ isMobileMenuOpen() ? 'close' : 'menu' }}</mat-icon>
+  </button>
+</mat-toolbar>
+
+@if (isMobileMenuOpen()) {
+  <div class="mobile-menu">
+    <button class="btn nav-link-btn mobile-link" type="button" routerLink="/" fragment="about" (click)="closeMobileMenu()">
+      About
+    </button>
+    <button class="btn nav-link-btn mobile-link" type="button" routerLink="/" fragment="product" (click)="closeMobileMenu()">
+      Product
+    </button>
+    <button class="btn nav-link-btn mobile-link" type="button" routerLink="/" fragment="contact" (click)="closeMobileMenu()">
+      Contact
+    </button>
+  </div>
+}

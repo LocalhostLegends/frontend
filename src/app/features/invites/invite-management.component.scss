@@ -1,3 +1,5 @@
+@use 'variables' as *;
+
 .invite-management {
   padding: 24px;
   max-width: 1200px;
@@ -9,6 +11,14 @@
 
 .create-invite-card {
   margin-bottom: 24px;
+
+  mat-card-header {
+    margin-bottom: 12px;
+  }
+}
+
+.create-actions {
+  padding-top: 4px;
 }
 
 .create-form {
@@ -23,7 +33,7 @@
   }
 
   .create-button {
-    height: 56px;
+    height: 48px;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -37,7 +47,50 @@
 
   .invites-table {
     width: 100%;
-    min-width: 600px;
+    min-width: 880px;
+  }
+
+  .mat-column-email {
+    min-width: 200px;
+  }
+
+  .mat-column-status {
+    min-width: 100px;
+  }
+
+  .mat-column-invitedAt,
+  .mat-column-acceptedAt {
+    white-space: nowrap;
+  }
+
+  .mat-column-actions {
+    width: 88px;
+    text-align: right;
+  }
+
+  .status-text {
+    font-weight: 500;
+  }
+
+  .accepted-cell {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .accepted-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: $success;
+  }
+
+  .muted {
+    color: $text-subtle;
+  }
+
+  .no-actions {
+    font-size: 14px;
   }
 
   .no-invites {
@@ -46,7 +99,7 @@
     align-items: center;
     justify-content: center;
     padding: 48px;
-    color: #666;
+    color: $text-placeholder;
 
     mat-icon {
       font-size: 48px;
@@ -74,7 +127,7 @@
 
     p {
       margin: 0;
-      color: #666;
+      color: $text-placeholder;
     }
   }
 }

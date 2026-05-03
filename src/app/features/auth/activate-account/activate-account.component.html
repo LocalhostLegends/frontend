@@ -1,0 +1,116 @@
+<div class="activate-account">
+  <mat-card class="activate-card">
+    <mat-card-content>
+      @if (isInvalid()) {
+        <div class="invalid-state">
+          <mat-icon color="warn">error</mat-icon>
+          <h2>Invalid link</h2>
+          <p>The activation link is missing or invalid. Open the link from your email.</p>
+          <button mat-raised-button class="btn btn-primary" type="button" (click)="goToLogin()">
+            Go to login
+          </button>
+        </div>
+      }
+
+      @if (tokenNotUuid()) {
+        <div class="invalid-state">
+          <mat-icon color="warn">error</mat-icon>
+          <h2>Invalid invite code</h2>
+          <p>
+            This link does not contain a valid invite token (the server expects a UUID). If the email used a
+            placeholder instead of a real token, ask your admin to resend the invite or fix the email template.
+          </p>
+          <button mat-raised-button class="btn btn-primary" type="button" (click)="goToLogin()">
+            Go to login
+          </button>
+        </div>
+      }
+
+      @if (!isInvalid() && !tokenNotUuid()) {
+        <div class="activate-form">
+          <div class="header">
+            <mat-icon color="primary">person_add</mat-icon>
+            <h2>Create your account</h2>
+            <p>Set a password to finish activation.</p>
+          </div>
+
+          <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form">
+            <mat-form-field appearance="outline">
+              <mat-label>First name</mat-label>
+              <input matInput formControlName="firstName" autocomplete="given-name" />
+              @if (form.controls.firstName.invalid && form.controls.firstName.touched) {
+                <mat-error> First name is required </mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Last name</mat-label>
+              <input matInput formControlName="lastName" autocomplete="family-name" />
+              @if (form.controls.lastName.invalid && form.controls.lastName.touched) {
+                <mat-error> Last name is required </mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Password</mat-label>
+              <input
+                matInput
+                formControlName="password"
+                [type]="hidePassword() ? 'password' : 'text'"
+                autocomplete="new-password"
+                placeholder="At least 6 characters"
+              />
+              <button mat-icon-button matSuffix type="button" (click)="hidePassword.set(!hidePassword())">
+                <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+              </button>
+              @if (form.controls.password.invalid && form.controls.password.touched) {
+                <mat-error> Password must be at least 6 characters </mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Confirm password</mat-label>
+              <input
+                matInput
+                formControlName="confirmPassword"
+                [type]="hideConfirmPassword() ? 'password' : 'text'"
+                autocomplete="new-password"
+              />
+              <button
+                mat-icon-button
+                matSuffix
+                type="button"
+                (click)="hideConfirmPassword.set(!hideConfirmPassword())"
+              >
+                <mat-icon>{{ hideConfirmPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+              </button>
+              @if (form.hasError('mismatch') && form.controls.confirmPassword.touched) {
+                <mat-error> Passwords do not match </mat-error>
+              }
+            </mat-form-field>
+
+            <app-loading-button
+              type="submit"
+              color="primary"
+              [loading]="isSubmitting()"
+              [disabled]="form.invalid"
+              [spinnerDiameter]="20"
+              buttonClass="btn btn-primary submit-button"
+            >
+              <span>Activate account</span>
+            </app-loading-button>
+          </form>
+
+          <div class="login-link">
+            <p>
+              Already have an account?
+              <button mat-button class="btn btn-secondary" type="button" (click)="goToLogin()">
+                Sign in
+              </button>
+            </p>
+          </div>
+        </div>
+      }
+    </mat-card-content>
+  </mat-card>
+</div>

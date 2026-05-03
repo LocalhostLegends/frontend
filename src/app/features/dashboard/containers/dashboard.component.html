@@ -1,0 +1,620 @@
+<div class="dashboard-shell">
+  @if (isLoading()) {
+    <div class="loading-center">
+      <mat-spinner diameter="42"></mat-spinner>
+    </div>
+  } @else if (isHrDashboard()) {
+    <div class="hr-dashboard">
+      <header class="hr-hero">
+        <div class="hr-hero__text">
+          <p class="hr-hero__eyebrow">HR workspace</p>
+          <h1>{{ companyName() }}</h1>
+          <p class="hr-hero__sub">{{ statusLabel() }} · Team overview</p>
+        </div>
+      </header>
+
+      <div class="hr-columns">
+        <mat-card class="hr-card hr-card--absent">
+          <div class="hr-card__head">
+            <div class="hr-card__icon hr-card__icon--absent" aria-hidden="true">
+              <mat-icon>event_busy</mat-icon>
+            </div>
+            <div class="hr-card__titles">
+              <h3>Out today</h3>
+              <p class="hr-card-sub">Absent today</p>
+            </div>
+          </div>
+          <div class="hr-card__body">
+            @if (absentTodayUsers().length === 0) {
+              <p class="hr-empty">No absence recorded for today.</p>
+            } @else {
+              <ul class="hr-list">
+                @for (u of absentTodayUsers(); track u.id) {
+                  <li>
+                    <span class="hr-name">{{ displayName(u) }}</span>
+                    <span class="hr-meta">{{ u.department?.name || '—' }}</span>
+                  </li>
+                }
+              </ul>
+            }
+          </div>
+        </mat-card>
+
+        <mat-card class="hr-card hr-card--todo">
+          <div class="hr-card__head">
+            <div class="hr-card__icon hr-card__icon--todo" aria-hidden="true">
+              <mat-icon>mark_email_unread</mat-icon>
+            </div>
+            <div class="hr-card__titles">
+              <h3>To-do</h3>
+              <p class="hr-card-sub">Pending activations</p>
+            </div>
+          </div>
+          <div class="hr-card__body hr-card__body--todo">
+            <div class="hr-todo-stat">
+              <span class="hr-todo-num">{{ pendingInvitesCount() }}</span>
+              <p class="hr-todo-copy">
+                @if (pendingInvitesCount() === 1) {
+                  User waiting for activation
+                } @else {
+                  Users waiting for activation
+                }
+              </p>
+            </div>
+            <button mat-flat-button color="primary" type="button" class="hr-todo-btn" routerLink="/app/invites">
+              Open invites
+            </button>
+          </div>
+        </mat-card>
+
+        <mat-card class="hr-card hr-card--birthdays">
+          <div class="hr-card__head">
+            <div class="hr-card__icon hr-card__icon--cake" aria-hidden="true">
+              <mat-icon>cake</mat-icon>
+            </div>
+            <div class="hr-card__titles">
+              <h3>Birthdays</h3>
+              <p class="hr-card-sub">This week (Mon–Sun)</p>
+            </div>
+          </div>
+          <div class="hr-card__body">
+            @if (birthdaysWeekItems().length === 0) {
+              <p class="hr-empty">No birthdays this week.</p>
+            } @else {
+              <ul class="hr-list hr-list--birthdays">
+                @for (row of birthdaysWeekItems(); track row.user.id) {
+                  <li>
+                    <span class="hr-bday-date">{{ formatBirthdayRow(row) }}</span>
+                    <span class="hr-name">{{ displayName(row.user) }}</span>
+                  </li>
+                }
+              </ul>
+            }
+          </div>
+        </mat-card>
+      </div>
+
+      <mat-card class="hr-employees-card">
+        <div class="hr-employees-head">
+          <div>
+            <h3>All employees</h3>
+            <p class="hr-card-sub">Search and filter. Edit profiles on the full page.</p>
+          </div>
+          <div class="hr-employees-head__actions">
+            <span class="hr-badge-count">{{ filteredHrUsers().length }}</span>
+            <button mat-stroked-button type="button" class="hr-link-btn" (click)="goToEmployees()">
+              <mat-icon>open_in_new</mat-icon>
+              Employees app
+            </button>
+          </div>
+        </div>
+
+        <div class="hr-filters-bar">
+          <mat-form-field appearance="outline" class="hr-filter-field" subscriptSizing="dynamic">
+            <mat-label>Search</mat-label>
+            <input
+              matInput
+              [value]="hrSearch()"
+              (input)="hrSearch.set($any($event.target).value)"
+              placeholder="Name or email"
+            />
+            @if (hrSearch()) {
+              <button
+                mat-icon-button
+                matSuffix
+                type="button"
+                aria-label="Clear search"
+                (click)="hrSearch.set('')"
+              >
+                <mat-icon>close</mat-icon>
+              </button>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="hr-filter-field" subscriptSizing="dynamic">
+            <mat-label>Role</mat-label>
+            <mat-select
+              [value]="hrRoleFilter()"
+              (valueChange)="hrRoleFilter.set($event)"
+              placeholder="All"
+            >
+              <mat-option [value]="''">All roles</mat-option>
+              @for (r of hrRoleFilterOptions; track r) {
+                <mat-option [value]="r">{{ roleLabelSafe(r) }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="hr-filter-field" subscriptSizing="dynamic">
+            <mat-label>Status</mat-label>
+            <mat-select
+              [value]="hrStatusFilter()"
+              (valueChange)="hrStatusFilter.set($event)"
+              placeholder="All"
+            >
+              <mat-option [value]="''">All statuses</mat-option>
+              @for (s of hrStatusFilterOptions; track s) {
+                <mat-option [value]="s">{{ s | titlecase }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <button mat-button type="button" class="hr-reset-btn" (click)="clearHrFilters()">
+            <mat-icon>filter_alt_off</mat-icon>
+            Reset
+          </button>
+        </div>
+
+        <div class="hr-table-panel">
+          <table mat-table [dataSource]="filteredHrUsers()" class="hr-emp-table">
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef>Employee</th>
+              <td mat-cell *matCellDef="let user">
+                <span class="hr-cell-name">{{ displayName(user) }}</span>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="email">
+              <th mat-header-cell *matHeaderCellDef>Email</th>
+              <td mat-cell *matCellDef="let user">
+                <span class="hr-cell-email">{{ user.email }}</span>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="role">
+              <th mat-header-cell *matHeaderCellDef>Role</th>
+              <td mat-cell *matCellDef="let user">
+                <span class="hr-tag hr-tag--role">{{ roleLabelSafe(user.role) }}</span>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="department">
+              <th mat-header-cell *matHeaderCellDef>Department</th>
+              <td mat-cell *matCellDef="let user">{{ departmentLabel(user) }}</td>
+            </ng-container>
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>Status</th>
+              <td mat-cell *matCellDef="let user">
+                @if (hrStatusLabel(user) === '—') {
+                  <span class="hr-pill hr-pill--muted">—</span>
+                } @else {
+                  <span [class]="hrStatusPillClass(user)">{{ hrStatusLabel(user) | titlecase }}</span>
+                }
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="hrTableColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: hrTableColumns" class="hr-data-row"></tr>
+          </table>
+          @if (filteredHrUsers().length === 0) {
+            <div class="hr-table-empty">
+              <mat-icon>group_off</mat-icon>
+              <p>No employees match the filters.</p>
+            </div>
+          }
+        </div>
+      </mat-card>
+    </div>
+  } @else if (isEmployeeDashboard()) {
+    <div class="emp-dashboard">
+      <header class="emp-hero">
+        <div class="emp-hero__text">
+          <p class="emp-hero__eyebrow">Employee workspace</p>
+          <h1>Hi, {{ employeeHeroName() }}</h1>
+          <p class="emp-hero__sub">{{ companyName() }} · {{ departmentTitle() }}</p>
+        </div>
+        <nav class="emp-quick-links" aria-label="Shortcuts">
+          
+          <a mat-stroked-button routerLink="/app/team" class="emp-quick">Directory</a>
+          <a mat-stroked-button routerLink="/app/my-requests" class="emp-quick">Requests</a>
+          <a mat-stroked-button routerLink="/app/learning" class="emp-quick">Knowledge base</a>
+        </nav>
+      </header>
+
+      <div class="emp-columns">
+        <mat-card class="emp-card emp-card--tasks">
+          <div class="emp-card__head">
+            <div class="emp-card__icon emp-card__icon--tasks" aria-hidden="true">
+              <mat-icon>task_alt</mat-icon>
+            </div>
+            <div class="emp-card__titles">
+              <h3>My tasks today</h3>
+              <p class="emp-card-sub">Personal work & follow-ups</p>
+            </div>
+          </div>
+          <div class="emp-card__body">
+            @if (employeeTasksToday().length === 0) {
+              <p class="emp-empty">No tasks synced yet. Connect your task tool to see today’s list here.</p>
+            } @else {
+              <ul class="emp-list">
+                @for (t of employeeTasksToday(); track t.id) {
+                  <li><span class="emp-task-title">{{ t.title }}</span></li>
+                }
+              </ul>
+            }
+          </div>
+        </mat-card>
+
+        <mat-card class="emp-card emp-card--balance">
+          <div class="emp-card__head">
+            <div class="emp-card__icon emp-card__icon--balance" aria-hidden="true">
+              <mat-icon>beach_access</mat-icon>
+            </div>
+            <div class="emp-card__titles">
+              <h3>Time off balance</h3>
+              <p class="emp-card-sub">Vacation days remaining</p>
+            </div>
+          </div>
+          <div class="emp-card__body emp-card__body--center">
+            @if (vacationBalanceText() !== null) {
+              <span class="emp-balance-num">{{ vacationBalanceText() }}</span>
+              <p class="emp-balance-unit">days available</p>
+            } @else {
+              <span class="emp-balance-num emp-balance-num--muted">—</span>
+              <p class="emp-empty">
+                Balance will appear when HR enables it on your profile.
+              </p>
+            }
+            <p class="emp-achievements-hint">
+              <mat-icon class="emp-achievements-icon">workspace_premium</mat-icon>
+              Achievements & badges — coming soon
+            </p>
+          </div>
+        </mat-card>
+
+        <mat-card class="emp-card emp-card--news">
+          <div class="emp-card__head">
+            <div class="emp-card__icon emp-card__icon--news" aria-hidden="true">
+              <mat-icon>campaign</mat-icon>
+            </div>
+            <div class="emp-card__titles">
+              <h3>Company news</h3>
+              <p class="emp-card-sub">Announcements from HR & Admin</p>
+            </div>
+          </div>
+          <div class="emp-card__body">
+            @if (companyAnnouncements().length === 0) {
+              <p class="emp-empty">No announcements yet. HR and Admin posts will appear here.</p>
+            } @else {
+              <ul class="emp-news-list">
+                @for (a of companyAnnouncements(); track a.id) {
+                  <li class="emp-news-item">
+                    <div class="emp-news-title">{{ a.title }}</div>
+                    <div class="emp-news-meta">{{ a.authorRole }} · {{ a.date | date: 'mediumDate' }}</div>
+                    <p class="emp-news-excerpt">{{ a.excerpt }}</p>
+                  </li>
+                }
+              </ul>
+            }
+          </div>
+        </mat-card>
+      </div>
+
+      <mat-card class="emp-directory-card">
+        <div class="emp-directory-head">
+          <div>
+            <h3>People in your department</h3>
+            <p class="emp-card-sub">Read-only directory — same department as you</p>
+          </div>
+          <button mat-stroked-button type="button" routerLink="/app/team">
+            <mat-icon>groups</mat-icon>
+            Full directory
+          </button>
+        </div>
+
+        <div class="emp-table-panel">
+          <table mat-table [dataSource]="users()" class="emp-dir-table">
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef>Name</th>
+              <td mat-cell *matCellDef="let user">
+                <span class="emp-cell-name">{{ displayName(user) }}</span>
+                @if (isCurrentUserRow(user)) {
+                  <span class="emp-you-badge">You</span>
+                }
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="email">
+              <th mat-header-cell *matHeaderCellDef>Email</th>
+              <td mat-cell *matCellDef="let user">{{ user.email }}</td>
+            </ng-container>
+            <ng-container matColumnDef="role">
+              <th mat-header-cell *matHeaderCellDef>Role</th>
+              <td mat-cell *matCellDef="let user">
+                <span class="emp-tag">{{ roleLabelSafe(user.role) }}</span>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="empDirectoryColumns"></tr>
+            <tr
+              mat-row
+              *matRowDef="let row; columns: empDirectoryColumns"
+              class="emp-dir-row"
+              [class.emp-dir-row--me]="isCurrentUserRow(row)"
+            ></tr>
+          </table>
+          @if (users().length === 0) {
+            <div class="emp-table-empty">
+              <mat-icon>groups_off</mat-icon>
+              <p>No colleagues loaded. Check your network or permissions.</p>
+            </div>
+          }
+        </div>
+      </mat-card>
+    </div>
+  } @else if (isManagerDashboard()) {
+    <div class="mgr-dashboard">
+      <header class="mgr-hero">
+        <div class="mgr-hero__text">
+          <p class="mgr-hero__eyebrow">Manager workspace</p>
+          <h1>{{ employeeHeroName() }}</h1>
+          <p class="mgr-hero__sub">
+            {{ companyName() }} · {{ departmentTitle() }}
+            @if (managerTeamUsers().length > 0) {
+              <span> · {{ managerTeamUsers().length }} people in your scope</span>
+            }
+          </p>
+        </div>
+        <nav class="mgr-quick-links" aria-label="Manager shortcuts">
+          <a mat-stroked-button routerLink="/app/my-team" class="mgr-quick">My Team</a>
+          <a mat-stroked-button routerLink="/app/team-stats" class="mgr-quick">Team Stats</a>
+          <a mat-stroked-button routerLink="/app/time-off-requests" class="mgr-quick">Approvals</a>
+          <a mat-stroked-button routerLink="/app/tasks-goals" class="mgr-quick">Tasks / Goals</a>
+        </nav>
+      </header>
+
+      <div class="mgr-demo-alert" role="note">
+        <mat-icon>notifications_active</mat-icon>
+        <div class="mgr-demo-alert__text">
+          <span class="mgr-demo-alert__label">Notification</span>
+          Employee <strong>Ivanov</strong> missed a deadline on <em>Project Alpha</em>.
+        </div>
+        <span class="mgr-sample-pill">Example</span>
+      </div>
+
+      <mat-card class="mgr-goals-card">
+        <div class="mgr-goals-card__head">
+          <div class="mgr-goals-card__icon" aria-hidden="true">
+            <mat-icon>track_changes</mat-icon>
+          </div>
+          <div>
+            <h3>Department goals progress</h3>
+            <p class="mgr-card-sub">KPIs for your team (same department)</p>
+          </div>
+        </div>
+        <div class="mgr-goals-card__body">
+          <div class="mgr-goals-stats">
+            <span class="mgr-goals-pct">{{ goalsBarPercent() }}%</span>
+            @if (goalsBarIsDemo()) {
+              <span class="mgr-demo-caption">Illustrative — connect OKR / goals API for live data.</span>
+            }
+          </div>
+          <mat-progress-bar mode="determinate" [value]="goalsBarPercent()"></mat-progress-bar>
+        </div>
+      </mat-card>
+
+      <div class="mgr-columns">
+        <mat-card class="mgr-card mgr-card--activity">
+          <div class="mgr-card__head">
+            <div class="mgr-card__icon mgr-card__icon--activity" aria-hidden="true">
+              <mat-icon>history</mat-icon>
+            </div>
+            <div class="mgr-card__titles">
+              <h3>Latest team activity</h3>
+              <p class="mgr-card-sub">Teammates in your department (excl. you)</p>
+            </div>
+          </div>
+          <div class="mgr-card__body">
+            @if (teamActivityFeed().length === 0) {
+              <p class="mgr-empty">No recent logins or profile updates to show.</p>
+            } @else {
+              <ul class="mgr-activity-list">
+                @for (row of teamActivityFeed(); track row.user.id + row.date) {
+                  <li>
+                    <div class="mgr-act-line">
+                      <span class="mgr-act-name">{{ displayName(row.user) }}</span>
+                      <span class="mgr-act-when">{{ formatActivityWhen(row.date) }}</span>
+                    </div>
+                    <div class="mgr-act-label">{{ row.label }}</div>
+                  </li>
+                }
+              </ul>
+            }
+          </div>
+        </mat-card>
+
+        <mat-card class="mgr-card mgr-card--alerts">
+          <div class="mgr-card__head">
+            <div class="mgr-card__icon mgr-card__icon--alerts" aria-hidden="true">
+              <mat-icon>gavel</mat-icon>
+            </div>
+            <div class="mgr-card__titles">
+              <h3>Deadline &amp; task alerts</h3>
+              <p class="mgr-card-sub">From the task system when integrated</p>
+            </div>
+          </div>
+          <div class="mgr-card__body">
+            @if (managerDeadlineAlerts().length === 0) {
+              <p class="mgr-empty">
+                No live alerts yet. The <strong>example</strong> notification above shows the format (e.g. missed
+                deadline).
+              </p>
+            } @else {
+              <ul class="mgr-alert-list">
+                @for (a of managerDeadlineAlerts(); track a.id) {
+                  <li>
+                    <span class="mgr-alert-who">{{ a.employeeLabel }}</span>
+                    <span class="mgr-alert-msg">{{ a.message }}</span>
+                  </li>
+                }
+              </ul>
+            }
+          </div>
+        </mat-card>
+      </div>
+    </div>
+  } @else {
+    <div class="dashboard-overview">
+    <div class="welcome">
+      <h1>Welcome to {{ companyName() }}!</h1>
+      <p class="status">Your status: {{ statusLabel() }}</p>
+      <h2>You are just a few steps away from setting up your space</h2>
+    </div>
+
+    <div class="content-grid">
+      <div class="main-column">
+        <div class="stats-grid">
+          <mat-card class="stat-card">
+            <h3>Total Employees</h3>
+            <div class="value">{{ totalEmployees() }}</div>
+          </mat-card>
+
+          <mat-card class="stat-card">
+            <h3>Active Vacancies</h3>
+            <div class="value">{{ activeVacancies() }}</div>
+          </mat-card>
+
+          <mat-card class="stat-card">
+            <h3>Departments</h3>
+            <div class="value">{{ departmentsCount() }}</div>
+          </mat-card>
+        </div>
+
+        @if (showCreateDepartment()) {
+          <mat-card class="action-card">
+            <h3>Create First Department</h3>
+            <p>Structure your team and simplify management.</p>
+            <button mat-raised-button class="action-btn btn btn-primary" (click)="onCreateDepartment()">
+              CREATE DEPARTMENT
+            </button>
+          </mat-card>
+        }
+
+        @if (canInvite()) {
+          <mat-card class="action-card">
+            <h3>Invite</h3>
+            <p>
+              @if (isAdmin()) {
+                Invite an HR manager to continue onboarding your company.
+              } @else {
+                Invite managers or employees with department and role (Invites page).
+              }
+            </p>
+            <button mat-stroked-button class="action-btn btn btn-secondary" (click)="onInviteTeam()">
+              @if (isAdmin()) {
+                + INVITE HR
+              } @else {
+                + INVITE PERSON
+              }
+            </button>
+          </mat-card>
+        }
+
+        @if (isAdmin()) {
+          <mat-card class="admin-members-card">
+            <div class="admin-members-head">
+              <div>
+                <h3 class="admin-members-title">Team members</h3>
+                <p class="admin-members-sub">Everyone in your company</p>
+              </div>
+              <a mat-stroked-button routerLink="/app/employees" class="admin-members-link">
+                <mat-icon>open_in_new</mat-icon>
+                Full directory
+              </a>
+            </div>
+            <mat-card-content class="admin-members-content">
+              @if (users().length === 0) {
+                <p class="admin-members-empty">
+                  @if (hasDashboardDataError()) {
+                    Could not load users. Try again or open the directory page.
+                  } @else {
+                    No employees yet — invite your HR or team from the cards above.
+                  }
+                </p>
+              } @else {
+                <div class="admin-members-table-wrap">
+                  <table mat-table [dataSource]="adminMembersPagedUsers()" class="admin-members-table">
+                    <ng-container matColumnDef="name">
+                      <th mat-header-cell *matHeaderCellDef>Employee</th>
+                      <td mat-cell *matCellDef="let user">
+                        <span class="admin-cell-name">{{ displayName(user) }}</span>
+                      </td>
+                    </ng-container>
+                    <ng-container matColumnDef="email">
+                      <th mat-header-cell *matHeaderCellDef>Email</th>
+                      <td mat-cell *matCellDef="let user">{{ user.email }}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="role">
+                      <th mat-header-cell *matHeaderCellDef>Role</th>
+                      <td mat-cell *matCellDef="let user">
+                        <span class="hr-tag hr-tag--role">{{ roleLabelSafe(user.role) }}</span>
+                      </td>
+                    </ng-container>
+                    <ng-container matColumnDef="department">
+                      <th mat-header-cell *matHeaderCellDef>Department</th>
+                      <td mat-cell *matCellDef="let user">{{ departmentLabel(user) }}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="status">
+                      <th mat-header-cell *matHeaderCellDef>Status</th>
+                      <td mat-cell *matCellDef="let user">
+                        @if (hrStatusLabel(user) === '—') {
+                          <span class="hr-pill hr-pill--muted">—</span>
+                        } @else {
+                          <span [class]="hrStatusPillClass(user)">{{ hrStatusLabel(user) | titlecase }}</span>
+                        }
+                      </td>
+                    </ng-container>
+                    <tr mat-header-row *matHeaderRowDef="adminDashboardColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: adminDashboardColumns" class="admin-members-row"></tr>
+                  </table>
+                </div>
+                <app-pagination-controls
+                  class="admin-members-paginator"
+                  [page]="adminMembersPage()"
+                  [limit]="adminMembersLimit()"
+                  [total]="users().length"
+                  [itemsCount]="adminMembersPagedUsers().length"
+                  (prev)="adminMembersPrev()"
+                  (next)="adminMembersNext()"
+                />
+              }
+            </mat-card-content>
+          </mat-card>
+        }
+      </div>
+
+      <mat-card class="news-panel">
+        <h3>What's New</h3>
+        @if (recentActivities().length === 0) {
+          <p class="empty-news">No recent events. Actions from other users will appear here.</p>
+        } @else {
+          <div class="news-list">
+            @for (item of recentActivities(); track item.text + item.date) {
+              <div class="news-item">
+                <div class="text">{{ item.text }}</div>
+                <div class="date">{{ item.date | date: 'dd.MM.yyyy' }}</div>
+              </div>
+            }
+          </div>
+        }
+      </mat-card>
+    </div>
+    </div>
+  }
+</div>
