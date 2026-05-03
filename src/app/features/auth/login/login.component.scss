@@ -1,15 +1,15 @@
-@use '../../../../variables' as *;
+@use 'variables' as *;
 
 .login-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background-color: $auth-page-bg;
   padding: 20px;
 
   mat-icon {
-    color: $primary !important; /* Или любой контрастный цвет */
+    color: $primary !important; 
   }
 
   form {
@@ -18,7 +18,7 @@
     width: 100%;
     max-width: 400px;
     padding: 2.5rem;
-    background: white;
+    background: $surface;
     border-radius: 12px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
 
@@ -48,8 +48,8 @@
     }
 
     .error-text {
-      color: #f44336;
-      background: #ffebee;
+      color: $error;
+      background: $error-bg;
       padding: 10px;
       border-radius: 4px;
       margin-bottom: 1rem;
@@ -57,8 +57,8 @@
       text-align: center;
     }
     .server-error {
-      color: #f44336;
-      background: #ffebee;
+      color: $error;
+      background: $error-bg;
       padding: 10px;
       border-radius: 4px;
       margin-bottom: 1rem;
@@ -66,22 +66,21 @@
       text-align: center;
     }
 
-    button {
+    ::ng-deep .auth-submit-btn {
       margin-top: 1rem;
-      padding: 0.5rem;
-      font-size: 1rem;
       height: 48px;
-      color: #fff;
-      ::ng-deep .mat-mdc-progress-spinner {
-        --mdc-circular-progress-active-indicator-color: #ffffff;
-        display: inline-block;
-      }
+      color: $white;
+    }
+
+    ::ng-deep .auth-submit-btn .mat-mdc-progress-spinner {
+      --mdc-circular-progress-active-indicator-color: #{$white};
+      display: inline-block;
     }
 
     p {
       margin-top: 1.5rem;
       text-align: center;
-      color: #666;
+      color: $text-placeholder;
       font-size: 0.9rem;
 
       a {

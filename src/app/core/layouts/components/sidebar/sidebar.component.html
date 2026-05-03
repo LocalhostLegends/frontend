@@ -1,22 +1,17 @@
-<mat-sidenav-container [class.collapsed]="isSidebarCollapsed" class="sidenav-container">
-  <mat-sidenav
-    mode="side"
-    [opened]="true"
-    [style.width.px]="isSidebarCollapsed ? 80 : 240"
-    class="sidenav"
-  >
-    <div class="sidebar-content" [class.collapsed]="isSidebarCollapsed">
-      <div class="logo-container" routerLink="/">
-        <img src="assets/logo-dark.svg" alt="HR Tech" class="logo-img" />
-      </div>
+<div class="sidebar-root" [class.collapsed]="isCollapsed() && !shell.isMobile()">
+  <div class="sidebar-content">
+    <div class="logo-container" routerLink="/" (click)="onNavigate()">
+      <img src="assets/logo-dark.svg" alt="HR Tech" class="logo-img" />
+    </div>
 
+    @for (item of menuItems(); track item.route + item.label) {
       <a
         class="navText"
         mat-button
-        *ngFor="let item of menuItems()"
         [routerLink]="item.route"
         routerLinkActive="active-link"
         [routerLinkActiveOptions]="{ exact: item.exact }"
+        (click)="onNavigate()"
       >
         <div class="icon-text">
           <img
@@ -28,18 +23,21 @@
           <span>{{ item.label }}</span>
         </div>
       </a>
+    }
 
+    @if (!shell.isMobile()) {
       <div class="sidebar-header">
         <span></span>
         <button
           mat-button
+          type="button"
           class="icon-button"
-          [class.rotated]="isSidebarCollapsed"
+          [class.rotated]="isCollapsed()"
           (click)="onToggleClick()"
         >
-          <img src="assets/icons/sideBar/clouse.svg" alt="close" />
+          <img src="assets/icons/sideBar/clouse.svg" alt="" />
         </button>
       </div>
-    </div>
-  </mat-sidenav>
-</mat-sidenav-container>
+    }
+  </div>
+</div>

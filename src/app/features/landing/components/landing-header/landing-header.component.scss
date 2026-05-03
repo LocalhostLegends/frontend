@@ -1,4 +1,4 @@
-@use '../../../../../variables' as *;
+@use 'variables' as *;
 
 .landing-toolbar {
   background-color: $light-bg;
@@ -31,6 +31,12 @@
     line-height: 40px;
     padding: 0 16px;
   }
+}
+
+.nav-link-btn {
+  background: transparent;
+  border: none;
+  color: $primary;
 }
 
 .right {
@@ -118,8 +124,8 @@
     flex-direction: column;
     gap: 8px;
     padding: 12px 14px 16px;
-    border-bottom: 1px solid #e5e7eb;
-    background: #fff;
+    border-bottom: 1px solid $border-light;
+    background: $surface;
     box-shadow: 0 8px 18px rgba(17, 24, 39, 0.06);
 
     .mobile-link {

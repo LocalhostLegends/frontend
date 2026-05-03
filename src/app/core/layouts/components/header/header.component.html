@@ -1,5 +1,16 @@
 <mat-toolbar class="header-toolbar">
   <div class="left">
+    @if (layout.isMobile()) {
+      <button
+        mat-icon-button
+        type="button"
+        class="menu-button"
+        (click)="layout.toggleSidenav()"
+        aria-label="Open menu"
+      >
+        <mat-icon>menu</mat-icon>
+      </button>
+    }
     <div class="company-name">{{ companyName() }}</div>
   </div>
 
@@ -19,7 +30,7 @@
         </button>
       }
     </div>
-    <button mat-stroked-button type="submit" class="search-submit btn btn-secondary">SEARCH</button>
+    <button mat-stroked-button type="submit" class="search-submit btn btn-secondary">Search</button>
   </form>
 
   <div class="right">
@@ -30,7 +41,7 @@
     <button mat-button [matMenuTriggerFor]="menu" class="user-profile">
       <div class="profile-info">
         @if (avatarUrl()) {
-          <img [src]="avatarUrl()" class="avatar" />
+          <img [appAuthenticatedImgSrc]="avatarUrl()" [authMeAvatar]="true" class="avatar" alt="" />
         } @else {
           <div class="avatar avatar-fallback">{{ avatarText() }}</div>
         }

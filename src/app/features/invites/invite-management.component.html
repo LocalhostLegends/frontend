@@ -1,99 +1,32 @@
 <div class="invite-management">
   <mat-card class="create-invite-card">
     <mat-card-header>
-      <mat-card-title>
-        @switch (userRole()) {
-          @case ('admin') {
-            Invite HR
-          }
-          @case ('hr') {
-            Invite employee
-          }
-          @default {
-            Invite user
-          }
-        }
-      </mat-card-title>
+      <mat-card-title>New invite</mat-card-title>
       <mat-card-subtitle>
-        <!-- @if (shouldUseDepartmentAndPosition()) {
-          Обери відділ і посаду зі списків (дані з API). Якщо списки порожні — спочатку створи відділи та посади
-          на бекенді.
-        } @else {
-          Для запрошення HR достатньо email — відділ і посада не потрібні.
-        } -->
+        Same 3 steps for everyone who can invite: create department → create position → send invite (Admin invites HR;
+        HR invites managers and employees).
       </mat-card-subtitle>
     </mat-card-header>
-    <mat-card-content>
-      <form [formGroup]="createForm" (ngSubmit)="onCreateInvite()" class="create-form">
-        <mat-form-field appearance="outline">
-          <mat-label>Email Address</mat-label>
-          <input matInput formControlName="email" type="email" placeholder="user@example.com" />
-          @if (createForm.controls.email.invalid && createForm.controls.email.touched) {
-            <mat-error> Please enter a valid email address </mat-error>
-          }
-        </mat-form-field>
-
-        @if (shouldUseDepartmentAndPosition()) {
-          <mat-form-field appearance="outline">
-            <mat-label>Department</mat-label>
-            <mat-select formControlName="departmentId" [disabled]="isMetaLoading()">
-              @for (d of departments(); track d.id) {
-                <mat-option [value]="d.id">{{ departmentLabel(d) }}</mat-option>
-              }
-            </mat-select>
-            @if (isMetaLoading()) {
-              <mat-hint>Loading…</mat-hint>
-            } @else if (departments().length === 0) {
-              <mat-hint>No departments - check API or create records</mat-hint>
-            }
-            @if (createForm.controls.departmentId.hasError('required') && createForm.controls.departmentId.touched) {
-              <mat-error> Required </mat-error>
-            }
-          </mat-form-field>
-
-          <mat-form-field appearance="outline">
-            <mat-label>Position</mat-label>
-            <mat-select formControlName="positionId" [disabled]="isMetaLoading()">
-              @for (p of positions(); track p.id) {
-                <mat-option [value]="p.id">{{ positionLabel(p) }}</mat-option>
-              }
-            </mat-select>
-            @if (isMetaLoading()) {
-              <mat-hint>Loading…</mat-hint>
-            } @else if (positions().length === 0) {
-              <mat-hint>No positions - check API or create records</mat-hint>
-            }
-            @if (createForm.controls.positionId.hasError('required') && createForm.controls.positionId.touched) {
-              <mat-error> Required </mat-error>
-            }
-          </mat-form-field>
-        }
-
-        <app-loading-button
-          type="submit"
-          color="primary"
-          [loading]="isCreating()"
-          [disabled]="createForm.invalid || (shouldUseDepartmentAndPosition() && isMetaLoading())"
-          [spinnerDiameter]="20"
-          buttonClass="create-button"
-        >
-          <span>Send Invite</span>
-        </app-loading-button>
-      </form>
+    <mat-card-content class="create-actions">
+      <button mat-flat-button color="primary" class="btn btn-primary" type="button" (click)="openInviteWizard()">
+        Start invite setup
+      </button>
     </mat-card-content>
   </mat-card>
 
   <mat-card class="invites-list-card">
     <mat-card-header>
-      <mat-card-title>Company Invites</mat-card-title>
-      <mat-card-subtitle>Manage pending and sent invites</mat-card-subtitle>
+      <mat-card-title>Invitation list</mat-card-title>
+      <mat-card-subtitle>
+        Who was invited, whether they accepted, and actions (resend email or delete the invitation).
+      </mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
       @if (!isLoading()) {
         <div class="table-container">
           <table mat-table [dataSource]="invites()" class="invites-table">
             <ng-container matColumnDef="email">
-              <th mat-header-cell *matHeaderCellDef>Email</th>
+              <th mat-header-cell *matHeaderCellDef>Invitee (email)</th>
               <td mat-cell *matCellDef="let invite">{{ invite.email }}</td>
             </ng-container>
 
@@ -105,19 +38,40 @@
             <ng-container matColumnDef="status">
               <th mat-header-cell *matHeaderCellDef>Status</th>
               <td mat-cell *matCellDef="let invite">
-                <span [style.color]="getStatusColor(invite.status)">
-                  {{ invite.status | titlecase }}
+                <span class="status-text" [style.color]="getStatusColor(invite)">
+                  {{ statusLabel(invite) }}
                 </span>
               </td>
             </ng-container>
 
-            <ng-container matColumnDef="createdAt">
-              <th mat-header-cell *matHeaderCellDef>Date</th>
+            <ng-container matColumnDef="invitedAt">
+              <th mat-header-cell *matHeaderCellDef>Sent</th>
               <td mat-cell *matCellDef="let invite">
-                @if (getInviteDisplayDate(invite); as inviteDate) {
-                  {{ inviteDate | date: 'dd.MM.yyyy' }}
+                @if (invitedOn(invite); as d) {
+                  {{ d | date: 'dd.MM.yyyy, HH:mm' }}
                 } @else {
                   —
+                }
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="acceptedAt">
+              <th mat-header-cell *matHeaderCellDef>Accepted</th>
+              <td mat-cell *matCellDef="let invite">
+                @if (acceptedOn(invite); as ad) {
+                  <span class="accepted-cell">
+                    @if (isAccepted(invite)) {
+                      <mat-icon class="accepted-icon" inline aria-hidden="true">check_circle</mat-icon>
+                    }
+                    {{ ad | date: 'dd.MM.yyyy, HH:mm' }}
+                  </span>
+                } @else if (isAccepted(invite)) {
+                  <span class="accepted-cell">
+                    <mat-icon class="accepted-icon" inline aria-hidden="true">check_circle</mat-icon>
+                    Yes
+                  </span>
+                } @else {
+                  <span class="muted">—</span>
                 }
               </td>
             </ng-container>
@@ -125,29 +79,15 @@
             <ng-container matColumnDef="actions">
               <th mat-header-cell *matHeaderCellDef>Actions</th>
               <td mat-cell *matCellDef="let invite">
-                @if (invite.status === 'pending') {
-                  <app-loading-button
-                    variant="icon"
-                    [tooltip]="'Resend invite'"
-                    [loading]="isResending(invite.id)"
-                    [disabled]="isCancelling(invite.id)"
-                    [spinnerDiameter]="18"
-                    ariaLabel="Resend invite"
-                    (pressed)="onResendInvite(invite)"
-                  >
-                    <mat-icon>refresh</mat-icon>
-                  </app-loading-button>
-                  <app-loading-button
-                    variant="icon"
-                    [tooltip]="'Cancel invite'"
-                    [loading]="isCancelling(invite.id)"
-                    [disabled]="isResending(invite.id)"
-                    [spinnerDiameter]="18"
-                    ariaLabel="Cancel invite"
-                    (pressed)="onCancelInvite(invite)"
-                  >
-                    <mat-icon>cancel</mat-icon>
-                  </app-loading-button>
+                @if (canShowInviteActions(invite)) {
+                  <app-table-actions-menu
+                    [actions]="getActionsForInvite(invite)"
+                    triggerAriaLabel="Invite actions"
+                    [triggerDisabled]="isResending(invite.id) || isCancelling(invite.id)"
+                    (actionClick)="onInviteAction($event, invite)"
+                  />
+                } @else {
+                  <span class="muted no-actions">—</span>
                 }
               </td>
             </ng-container>
@@ -159,7 +99,7 @@
           @if (invites().length === 0) {
             <div class="no-invites">
               <mat-icon>person_add</mat-icon>
-              <p>No invites found. Create your first invite above!</p>
+              <p>No invites yet. Create one above.</p>
             </div>
           }
         </div>

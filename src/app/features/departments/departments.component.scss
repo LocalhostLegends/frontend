@@ -1,0 +1,78 @@
+@use 'variables' as *;
+
+.departments-page {
+  padding: 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.read-only-hint {
+  margin: 0;
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 0.9rem;
+}
+
+.form-card,
+.list-card {
+  mat-card-header {
+    margin-bottom: 12px;
+  }
+}
+
+.department-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-start;
+
+  mat-form-field {
+    min-width: 240px;
+    flex: 1;
+  }
+
+  .actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+}
+
+.departments-table {
+  width: 100%;
+}
+
+.actions-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.loading-state {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+}
+
+.empty-state {
+  color: $text-secondary;
+  padding: 16px 0 4px;
+}
+
+@media (max-width: 768px) {
+  .departments-page {
+    padding: 16px;
+  }
+
+  .department-form {
+    flex-direction: column;
+
+    mat-form-field,
+    .actions {
+      width: 100%;
+    }
+  }
+}

@@ -1,9 +1,7 @@
 import { CanDeactivateFn } from '@angular/router';
-
 export interface PendingChangesAware {
-  canDeactivate: () => boolean;
+    canDeactivate: () => boolean;
 }
-
 export const pendingChangesGuard: CanDeactivateFn<PendingChangesAware> = (component) => {
-  return component.canDeactivate();
+    return component.canDeactivate();
 };

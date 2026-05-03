@@ -1,10 +1,12 @@
+@use 'variables' as *;
+
 .activate-account {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
   padding: 24px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: $gradient-activate;
 }
 
 .activate-card {
@@ -31,16 +33,16 @@
     font-size: 48px;
     width: 48px;
     height: 48px;
-    color: #f44336;
+    color: $error;
   }
 
   h2 {
     margin: 16px 0 8px;
-    color: #f44336;
+    color: $error;
   }
 
   p {
-    color: #666;
+    color: $text-placeholder;
     margin: 0 0 24px;
   }
 }
@@ -62,12 +64,12 @@
 
     h2 {
       margin: 0;
-      color: #333;
+      color: $text-strong;
     }
 
     p {
       margin: 0;
-      color: #666;
+      color: $text-placeholder;
       font-size: 16px;
     }
   }
@@ -97,7 +99,7 @@
 
     p {
       margin: 0;
-      color: #666;
+      color: $text-placeholder;
     }
   }
 }

@@ -41,7 +41,7 @@
         <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
       </button>
       @if (registerForm.controls.password.invalid && registerForm.controls.password.touched) {
-        <mat-error>Minimum 8 characters</mat-error>
+        <mat-error>Minimum 6 characters</mat-error>
       }
     </mat-form-field>
 
@@ -78,7 +78,7 @@
       [loading]="isLoading()"
       [disabled]="registerForm.invalid"
       [spinnerDiameter]="24"
-      buttonClass="btn btn-primary"
+      buttonClass="btn btn-primary auth-submit-btn"
     >
       Register
     </app-loading-button>

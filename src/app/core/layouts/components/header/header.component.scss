@@ -1,18 +1,27 @@
-@use '../../../../../variables' as *;
+@use 'variables' as *;
 
 .header-toolbar {
-  background: #fff;
+  background: $surface;
   height: 64px;
   padding: 0 24px;
   display: grid;
   grid-template-columns: minmax(120px, 1fr) auto minmax(220px, 1fr);
   align-items: center;
   gap: 12px;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid $border-light;
 }
 
 .left {
   min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+}
+
+.menu-button {
+  flex-shrink: 0;
+  margin-left: -4px;
 }
 
 .company-name {
@@ -29,16 +38,16 @@
 
   .search-input-wrap {
     height: 40px;
-    border: 1px solid #e5e7eb;
+    border: 1px solid $border-light;
     border-radius: $btn-radius;
-    // background: #f8fafc;
+    background: $surface-slate;
     display: flex;
     align-items: center;
     gap: 8px;
     padding: 0 6px 0 10px;
 
     .search-icon {
-      color: #6b7280;
+      color: $text-secondary;
       font-size: 20px;
       width: 20px;
       height: 20px;
@@ -57,9 +66,19 @@
       width: 30px;
       height: 30px;
       min-width: 30px;
-      display: flex;
+      padding: 0;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
+      line-height: 1;
+
+      mat-icon {
+        margin: 0;
+        width: 20px;
+        height: 20px;
+        font-size: 20px;
+        line-height: 20px;
+      }
     }
   }
 
@@ -123,11 +142,11 @@
 
   .status {
     font-size: 11px;
-    color: #6b7280;
+    color: $text-secondary;
   }
 
   &:hover {
-    background: #f3f4f6;
+    background: $surface-hover;
   }
 
   span {
@@ -152,8 +171,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: #e8eef5;
-  color: #1f4c6b;
+  background: $info-bg;
+  color: $info-fg;
   font-size: 11px;
   font-weight: 700;
 }
@@ -188,7 +207,10 @@
 
 @media (max-width: 768px) {
   .company-name {
-    display: none;
+    display: block;
+    font-size: 15px;
+    flex: 1;
+    min-width: 0;
   }
 
   .header-search {
@@ -211,6 +233,59 @@
 
     .user-meta {
       display: none;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .header-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    min-height: 56px;
+    height: auto;
+    padding: 8px 10px;
+    row-gap: 10px;
+  }
+
+  .left {
+    order: 1;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .right {
+    order: 2;
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+
+  /* Second row: full-width search (was display:none — unusable on mobile) */
+  .header-search {
+    order: 3;
+    display: flex;
+    flex: 1 1 100%;
+    width: 100%;
+    min-width: 0;
+    justify-self: stretch;
+    justify-content: stretch;
+    gap: 8px;
+
+    .search-input-wrap {
+      flex: 1 1 auto;
+      min-width: 0;
+
+      input {
+        width: 100%;
+        min-width: 0;
+      }
+    }
+
+    .search-submit {
+      flex-shrink: 0;
+      min-width: 72px;
     }
   }
 }

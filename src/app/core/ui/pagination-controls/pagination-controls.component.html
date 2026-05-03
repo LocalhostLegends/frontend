@@ -1,0 +1,8 @@
+<div class="pagination-wrap">
+  <span>Showing {{ itemsCount }} of {{ total }}</span>
+  <div class="pager">
+    <button mat-button type="button" [disabled]="!canPrev()" (click)="prev.emit()">Prev</button>
+    <span>Page {{ page }}</span>
+    <button mat-button type="button" [disabled]="!canNext()" (click)="next.emit()">Next</button>
+  </div>
+</div>

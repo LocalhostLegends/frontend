@@ -1,81 +1,43 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, HostBinding, computed, inject, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
-import { MatListModule } from '@angular/material/list';
-import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatButtonModule } from '@angular/material/button';
-import { AuthService } from '../../../services/auth.service';
-
-interface MenuItem {
-  label: string;
-  icon: string;
-  route: string;
-  exact: boolean;
-}
+import { AuthService } from '@app/core/services/auth.service';
+import { getMenuItemsByRole } from '@app/core/constants/menu.constants';
+import { ShellLayoutService } from '@app/core/layouts/shell-layout.service';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [
-    CommonModule,
-    RouterModule,
-    MatIconModule,
-    MatListModule,
-    MatSidenavModule,
-    MatButtonModule,
-  ],
+  imports: [CommonModule, RouterModule, MatIconModule, MatButtonModule],
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss'],
 })
 export class SidebarComponent {
   private authService = inject(AuthService);
+  readonly shell = inject(ShellLayoutService);
 
-  isSidebarCollapsed = false;
+  isCollapsed = signal(false);
 
   menuItems = computed(() => {
     const role = this.authService.userRole();
-    const items: MenuItem[] = [];
-
-    if (role === 'admin') {
-      items.push(
-        { label: 'Dashboard', icon: 'dashboard.svg', route: '/app/dashboard', exact: true },
-        { label: 'Employees', icon: 'people.svg', route: '/app/employees', exact: false },
-        { label: 'Departments', icon: 'folder.svg', route: '/app/departments', exact: false },
-        { label: 'Payroll', icon: 'payroll.svg', route: '/app/payroll', exact: false },
-        { label: 'Analytics', icon: 'analytics.svg', route: '/app/analytics', exact: false },
-        { label: 'Recruitment', icon: 'recruitment.svg', route: '/app/recruitment', exact: false },
-        { label: 'Settings', icon: 'settings.svg', route: '/app/settings', exact: false },
-      );
-    } else if (role === 'hr') {
-      items.push(
-        { label: 'Dashboard', icon: 'dashboard.svg', route: '/app/dashboard', exact: true },
-        { label: 'Employees', icon: 'people.svg', route: '/app/employees', exact: false },
-        { label: 'Departments', icon: 'folder.svg', route: '/app/departments', exact: false },
-        {
-          label: 'Time Off Requests',
-          icon: 'time.svg',
-          route: '/app/time-off-requests',
-          exact: false,
-        },
-        { label: 'Candidates', icon: 'people.svg', route: '/app/candidates', exact: false },
-        { label: 'Onboarding', icon: 'onboarding.svg', route: '/app/onboarding', exact: false },
-      );
-    } else if (role === 'employee') {
-      items.push(
-        { label: 'My Profile', icon: 'profile.svg', route: '/app/profile', exact: false },
-        { label: 'My Requests', icon: 'requests.svg', route: '/app/my-requests', exact: false },
-        { label: 'Company Info', icon: 'info.svg', route: '/app/company-info', exact: false },
-        { label: 'My Time Off', icon: 'time.svg', route: '/app/my-time-off', exact: false },
-        { label: 'Learning', icon: 'learning.svg', route: '/app/learning', exact: false },
-        { label: 'Team', icon: 'team.svg', route: '/app/team', exact: false },
-      );
-    }
-
-    return items;
+    return getMenuItemsByRole(role);
   });
 
-  onToggleClick() {
-    this.isSidebarCollapsed = !this.isSidebarCollapsed;
+  @HostBinding('style.width.px')
+  get hostDrawerWidth(): number {
+    if (this.shell.isMobile()) {
+      return 256;
+    }
+    return this.isCollapsed() ? 72 : 216;
+  }
+
+  onToggleClick(): void {
+    this.isCollapsed.update((v) => !v);
+  }
+
+  onNavigate(): void {
+    this.shell.closeSidenavIfMobile();
   }
 }

@@ -7,13 +7,19 @@
   </div>
 
   <div class="center desktop-only">
-    <button class="btn btn-gradient-text" routerLink="/about" (click)="closeMobileMenu()">About</button>
-    <button class="btn btn-gradient-text" routerLink="/product" (click)="closeMobileMenu()">Product</button>
-    <button class="btn btn-gradient-text" routerLink="/contact" (click)="closeMobileMenu()">Contact</button>
+    <button class="btn nav-link-btn" type="button" routerLink="/" fragment="about" (click)="closeMobileMenu()">
+      About
+    </button>
+    <button class="btn nav-link-btn" type="button" routerLink="/" fragment="product" (click)="closeMobileMenu()">
+      Product
+    </button>
+    <button class="btn nav-link-btn" type="button" routerLink="/" fragment="contact" (click)="closeMobileMenu()">
+      Contact
+    </button>
   </div>
 
   <div class="right auth-buttons">
-    <a class="btn btn-secondary btn-gradient-text" routerLink="/auth/login" (click)="closeMobileMenu()">Sign In</a>
+    <a class="btn btn-secondary" routerLink="/auth/login" (click)="closeMobileMenu()">Sign In</a>
     <a class="btn btn-primary" routerLink="/auth/register" (click)="closeMobileMenu()">Register Company</a>
   </div>
 
@@ -30,11 +36,13 @@
 
 @if (isMobileMenuOpen()) {
   <div class="mobile-menu">
-    <button class="btn btn-gradient-text mobile-link" routerLink="/about" (click)="closeMobileMenu()">About</button>
-    <button class="btn btn-gradient-text mobile-link" routerLink="/product" (click)="closeMobileMenu()">
+    <button class="btn nav-link-btn mobile-link" type="button" routerLink="/" fragment="about" (click)="closeMobileMenu()">
+      About
+    </button>
+    <button class="btn nav-link-btn mobile-link" type="button" routerLink="/" fragment="product" (click)="closeMobileMenu()">
       Product
     </button>
-    <button class="btn btn-gradient-text mobile-link" routerLink="/contact" (click)="closeMobileMenu()">
+    <button class="btn nav-link-btn mobile-link" type="button" routerLink="/" fragment="contact" (click)="closeMobileMenu()">
       Contact
     </button>
   </div>

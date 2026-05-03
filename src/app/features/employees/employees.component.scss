@@ -1,0 +1,174 @@
+@use 'variables' as *;
+
+.employees-page {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.filters-card mat-card-header,
+.edit-card mat-card-header,
+.view-card mat-card-header {
+  margin-bottom: 10px;
+}
+
+.filters-form,
+.edit-form {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+
+  mat-form-field {
+    min-width: 190px;
+    flex: 1;
+  }
+}
+
+.filter-actions,
+.edit-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.empty-edit {
+  color: $text-secondary;
+  padding: 6px 0;
+}
+
+.loading-inline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.view-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 16px;
+
+  .k {
+    display: block;
+    color: $text-secondary;
+    font-size: 12px;
+    margin-bottom: 2px;
+  }
+
+  strong {
+    color: $text-emphasis;
+    font-weight: 600;
+  }
+}
+
+.table-card--primary {
+  box-shadow:
+    0 1px 3px rgba(15, 23, 42, 0.08),
+    0 4px 14px rgba(15, 23, 42, 0.06);
+}
+
+.table-card--primary mat-card-content {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.users-table {
+  width: 100%;
+  min-width: 720px;
+}
+
+.employees-detail-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  align-items: start;
+}
+
+@media (max-width: 960px) {
+  .employees-detail-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.loading-state {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+}
+
+@media (max-width: 768px) {
+  .employees-page {
+    padding: 16px;
+  }
+
+  .filters-form,
+  .edit-form {
+    flex-direction: column;
+
+    mat-form-field,
+    .filter-actions,
+    .edit-actions {
+      width: 100%;
+    }
+  }
+
+  .view-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 599px) {
+  .employees-page {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .filters-card mat-card-header,
+  .table-card--primary mat-card-header {
+    padding: 12px 12px 0;
+  }
+
+  .filters-card mat-card-title,
+  .table-card--primary mat-card-title {
+    font-size: 1.15rem;
+    line-height: 1.25;
+  }
+
+  .filters-card mat-card-subtitle,
+  .table-card--primary mat-card-subtitle {
+    font-size: 13px;
+    line-height: 1.35;
+    margin-top: 4px;
+  }
+
+  .filters-card mat-card-content,
+  .table-card--primary mat-card-content {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+    padding-bottom: 16px !important;
+  }
+
+  .table-card--primary mat-card-content {
+    padding-top: 8px !important;
+  }
+
+  .users-table {
+    min-width: 720px;
+  }
+
+  :host ::ng-deep .users-table.mat-mdc-table {
+    .mat-mdc-header-cell,
+    .mat-mdc-cell {
+      padding: 8px 10px !important;
+      font-size: 13px;
+    }
+
+    .mat-mdc-header-cell {
+      font-size: 11px;
+    }
+  }
+}

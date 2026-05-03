@@ -1,3 +1,5 @@
+@use 'variables' as *;
+
 .not-found {
   height: 100vh;
   display: flex;
@@ -11,7 +13,7 @@
     margin: 0;
     line-height: 1.1;
 
-    background: linear-gradient(90deg, #092265, #1c49c0);
+    background: linear-gradient(90deg, $primary, $primary-hover);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -19,6 +21,6 @@
 
   p {
     font-size: 20px;
-    color: #666;
+    color: $text-placeholder;
   }
 }

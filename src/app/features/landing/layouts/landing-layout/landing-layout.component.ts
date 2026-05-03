@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { LandingHeaderComponent } from '../../components/landing-header/landing-header.component';
-
+import { LandingHeaderComponent } from '@app/features/landing/components/landing-header/landing-header.component';
 @Component({
-  selector: 'app-landing-layout',
-  standalone: true,
-  imports: [RouterOutlet, LandingHeaderComponent],
-  templateUrl: './landing-layout.component.html',
-  styleUrl: './landing-layout.component.scss',
+    selector: 'app-landing-layout',
+    standalone: true,
+    imports: [RouterOutlet, LandingHeaderComponent],
+    templateUrl: './landing-layout.component.html',
+    styleUrl: './landing-layout.component.scss',
 })
-export class LandingLayoutComponent {}
+export class LandingLayoutComponent {
+}

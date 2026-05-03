@@ -37,7 +37,7 @@
           </button>
           <div class="avatar">
             @if (user.avatar) {
-              <img [src]="user.avatar" alt="Avatar" />
+              <img [appAuthenticatedImgSrc]="user.avatar" [authMeAvatar]="true" alt="Avatar" />
             } @else {
               <span>{{ avatarText() }}</span>
             }
@@ -73,16 +73,22 @@
           <form [formGroup]="editForm" class="edit-form">
             <mat-form-field appearance="outline">
               <mat-label>First Name</mat-label>
-              <input matInput formControlName="firstName" />
-              @if (editForm.controls.firstName.invalid && editForm.controls.firstName.touched) {
+              <input matInput formControlName="firstName" minlength="2" />
+              @if (editForm.controls.firstName.hasError('required') && editForm.controls.firstName.touched) {
                 <mat-error>Required</mat-error>
+              }
+              @if (editForm.controls.firstName.hasError('minlength') && editForm.controls.firstName.touched) {
+                <mat-error>At least 2 characters</mat-error>
               }
             </mat-form-field>
             <mat-form-field appearance="outline">
               <mat-label>Last Name</mat-label>
-              <input matInput formControlName="lastName" />
-              @if (editForm.controls.lastName.invalid && editForm.controls.lastName.touched) {
+              <input matInput formControlName="lastName" minlength="2" />
+              @if (editForm.controls.lastName.hasError('required') && editForm.controls.lastName.touched) {
                 <mat-error>Required</mat-error>
+              }
+              @if (editForm.controls.lastName.hasError('minlength') && editForm.controls.lastName.touched) {
+                <mat-error>At least 2 characters</mat-error>
               }
             </mat-form-field>
             <mat-form-field appearance="outline">
