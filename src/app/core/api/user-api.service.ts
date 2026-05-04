@@ -273,11 +273,6 @@ export class UserApiService {
         return this.http.get(resolved, { responseType: 'blob' });
     }
 
-    /** Current user avatar bytes (pair with POST/DELETE `/users/me/avatar`). */
-    getMyAvatarBlob(): Observable<Blob> {
-        return this.http.get(`${this.baseUrl}/users/me/avatar`, { responseType: 'blob' });
-    }
-
     private parseUsersResponseBody(body: unknown, queryFallback?: UsersQueryParams): UsersPagePayload {
         const fbPage = Number(queryFallback?.page ?? 1);
         const fbLimit = Number(queryFallback?.limit ?? 10);

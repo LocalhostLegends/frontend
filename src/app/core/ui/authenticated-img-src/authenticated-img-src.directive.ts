@@ -6,7 +6,7 @@ import {
     OnDestroy,
     inject,
 } from '@angular/core';
-import { catchError, Subscription, throwError } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { UserApiService } from '@app/core/api/user-api.service';
 
 /** Loads image URL via HttpClient so AuthInterceptor attaches Bearer token (fixes 403 on protected avatar URLs). */
@@ -25,9 +25,8 @@ export class AuthenticatedImgSrcDirective implements OnChanges, OnDestroy {
     appAuthenticatedImgSrc: string | null | undefined;
 
     /**
-     * Prefer GET `/users/me/avatar`, then the profile `avatar` URL with auth.
-     * If the API applies AUTH_5007 to GET `/users/me/avatar` (same as POST), the first call fails
-     * for every role — fallback avoids spamming 403 on each page.
+     * Load the profile `avatar` URL with auth instead of GET `/users/me/avatar`
+     * (which may not be implemented on all backends). Use AuthInterceptor to attach Bearer token.
      */
     @Input({ alias: 'authMeAvatar' }) authMeAvatar = false;
 
@@ -42,22 +41,17 @@ export class AuthenticatedImgSrcDirective implements OnChanges, OnDestroy {
                 img.removeAttribute('src');
                 return;
             }
-            this.fetchSub = this.userApi
-                .getMyAvatarBlob()
-                .pipe(
-                    catchError(() => {
-                        if (raw.startsWith('data:') || raw.startsWith('blob:')) {
-                            return throwError(() => new Error('no avatar fallback'));
-                        }
-                        return this.userApi.getAuthenticatedBlob(raw);
-                    }),
-                )
-                .subscribe({
-                    next: (blob) => this.applyImageBlob(img, blob),
-                    error: () => {
-                        img.removeAttribute('src');
-                    },
-                });
+            if (raw.startsWith('data:') || raw.startsWith('blob:')) {
+                img.src = raw;
+                return;
+            }
+            // Use the profile avatar URL with auth (no fallback to getMyAvatarBlob since that endpoint may not exist)
+            this.fetchSub = this.userApi.getAuthenticatedBlob(raw).subscribe({
+                next: (blob) => this.applyImageBlob(img, blob),
+                error: () => {
+                    img.removeAttribute('src');
+                },
+            });
             return;
         }
 
