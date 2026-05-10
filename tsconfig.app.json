@@ -3,14 +3,11 @@
   "compilerOptions": {
     "outDir": "./out-tsc/app",
     "rootDir": "./src",
-    "ignoreDeprecations": "6.0", 
-    "baseUrl": "./", 
-    "types": ["node"],
-    "paths": {
-      "@app/*": ["src/app/*"],
-      "@env/*": ["src/environments/*"]
-    }
+    "types": ["node"]
   },
+  "files": [
+    "src/main.ts"
+  ],
   "include": [
     "src/**/*.d.ts",
     "src/**/*.ts"
