@@ -6,7 +6,7 @@
         type="button"
         class="menu-button"
         (click)="layout.toggleSidenav()"
-        aria-label="Open menu"
+        [attr.aria-label]="'header.openMenu' | translate"
       >
         <mat-icon>menu</mat-icon>
       </button>
@@ -21,19 +21,36 @@
         type="text"
         name="headerSearch"
         [(ngModel)]="searchQuery"
-        placeholder="Search"
+        [placeholder]="'common.search' | translate"
         autocomplete="off"
       />
       @if (searchQuery.trim()) {
-        <button mat-icon-button type="button" (click)="clearSearch()" aria-label="Clear search">
+        <button mat-icon-button type="button" (click)="clearSearch()" [attr.aria-label]="'header.clearSearch' | translate">
           <mat-icon>close</mat-icon>
         </button>
       }
     </div>
-    <button mat-stroked-button type="submit" class="search-submit btn btn-secondary">Search</button>
+    <button mat-stroked-button type="submit" class="search-submit btn btn-secondary">{{ 'common.search' | translate }}</button>
   </form>
 
   <div class="right">
+    <button
+      mat-icon-button
+      [matMenuTriggerFor]="languageMenu"
+      [attr.aria-label]="'header.language' | translate"
+      class="lang-icon-btn"
+    >
+      <mat-icon>language</mat-icon>
+    </button>
+    <mat-menu #languageMenu="matMenu">
+      <button mat-menu-item type="button" (click)="switchLanguage('en')" translate="no" class="notranslate">
+        <span [class.active-lang]="currentLanguage() === 'en'" translate="no" class="notranslate" lang="en" ngNonBindable>EN</span>
+      </button>
+      <button mat-menu-item type="button" (click)="switchLanguage('uk')" translate="no" class="notranslate">
+        <span [class.active-lang]="currentLanguage() === 'uk'" translate="no" class="notranslate" lang="uk" ngNonBindable>UA</span>
+      </button>
+    </mat-menu>
+
     <button mat-icon-button>
       <mat-icon>notifications</mat-icon>
     </button>
@@ -55,19 +72,19 @@
     <mat-menu #menu="matMenu" class="profile-menu">
       <button mat-menu-item (click)="goToProfile()">
         <mat-icon>person</mat-icon>
-        <span>Profile</span>
+        <span>{{ 'header.profile' | translate }}</span>
       </button>
 
       <button mat-menu-item (click)="goToSettings()">
         <mat-icon>settings</mat-icon>
-        <span>Settings</span>
+        <span>{{ 'header.settings' | translate }}</span>
       </button>
 
       <mat-divider></mat-divider>
 
       <button mat-menu-item (click)="logout()">
         <mat-icon>logout</mat-icon>
-        <span>Logout</span>
+        <span>{{ 'header.logout' | translate }}</span>
       </button>
     </mat-menu>
   </div>

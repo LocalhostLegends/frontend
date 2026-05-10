@@ -1,26 +1,26 @@
 <div class="login-wrapper">
   <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
-    <h2>Login</h2>
+    <h2>{{ 'auth.login.title' | translate }}</h2>
     <mat-form-field appearance="outline">
-      <mat-label>Email</mat-label>
+      <mat-label>{{ 'auth.common.email' | translate }}</mat-label>
       <input matInput formControlName="email" type="email" />
       @if (loginForm.controls.email.invalid && loginForm.controls.email.touched) {
-        <mat-error>Please enter a valid email</mat-error>
+        <mat-error>{{ 'auth.common.emailInvalid' | translate }}</mat-error>
       }
     </mat-form-field>
 
     <mat-form-field appearance="outline">
-      <mat-label>Password</mat-label>
+      <mat-label>{{ 'auth.common.password' | translate }}</mat-label>
       <input matInput [type]="hidePassword() ? 'password' : 'text'" formControlName="password" />
       <button mat-icon-button matSuffix type="button" (click)="hidePassword.set(!hidePassword())">
         <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
       </button>
       @if (loginForm.controls.password.invalid && loginForm.controls.password.touched) {
-        <mat-error>Minimum 6 characters</mat-error>
+        <mat-error>{{ 'auth.common.passwordMin' | translate }}</mat-error>
       }
     </mat-form-field>
 
-    <a class="forgot-password-link" routerLink="/auth/forgot-password">Forgot password?</a>
+    <a class="forgot-password-link" routerLink="/auth/forgot-password">{{ 'auth.login.forgotPassword' | translate }}</a>
 
     @if (errorMessage()) {
       <p class="error-text">{{ errorMessage() }}</p>
@@ -38,9 +38,9 @@
       [spinnerDiameter]="24"
       buttonClass="btn btn-primary auth-submit-btn"
     >
-      Sign In
+      {{ 'auth.login.submit' | translate }}
     </app-loading-button>
 
-    <p>Don't have an account? <a class="" routerLink="/auth/register">Register</a></p>
+    <p>{{ 'auth.login.noAccount' | translate }} <a class="" routerLink="/auth/register">{{ 'auth.login.register' | translate }}</a></p>
   </form>
 </div>

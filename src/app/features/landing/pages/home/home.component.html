@@ -1,35 +1,33 @@
 <div class="home">
   <section class="hero">
     <div class="hero-inner">
-      <h1>HR operations in one place</h1>
+      <h1>{{ 'landing.home.hero.title' | translate }}</h1>
       <p class="lead">
-        Invite teams, manage roles, and keep employee data organized — built for growing companies.
+        {{ 'landing.home.hero.lead' | translate }}
       </p>
       <div class="hero-actions">
-        <a class="btn btn-primary" routerLink="/auth/register">Register company</a>
-        <a class="btn btn-secondary" routerLink="/auth/login">Sign in</a>
+        <a class="btn btn-primary" routerLink="/auth/register">{{ 'landing.home.hero.registerCompany' | translate }}</a>
+        <a class="btn btn-secondary" routerLink="/auth/login">{{ 'landing.home.hero.signIn' | translate }}</a>
       </div>
     </div>
   </section>
 
   <section id="about" class="section">
-    <h2>About</h2>
+    <h2>{{ 'landing.home.about.title' | translate }}</h2>
     <p>
-      HR Tech helps admins and HR coordinate onboarding, invites, and day-to-day people workflows from a
-      single dashboard.
+      {{ 'landing.home.about.description' | translate }}
     </p>
   </section>
 
   <section id="product" class="section alt">
-    <h2>Product</h2>
+    <h2>{{ 'landing.home.product.title' | translate }}</h2>
     <p>
-      Dashboard, departments, employees, invites, and profile settings — with role-based access so each
-      team member sees what they need.
+      {{ 'landing.home.product.description' | translate }}
     </p>
   </section>
 
   <section id="contact" class="section">
-    <h2>Contact</h2>
-    <p>Reach your administrator or support channel for tenant-specific questions and billing.</p>
+    <h2>{{ 'landing.home.contact.title' | translate }}</h2>
+    <p>{{ 'landing.home.contact.description' | translate }}</p>
   </section>
 </div>

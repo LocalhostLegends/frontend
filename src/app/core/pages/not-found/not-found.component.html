@@ -1,7 +1,7 @@
 <div class="not-found">
   <h1>404</h1>
-  <p>Page not found</p>
+  <p>{{ 'notFound.message' | translate }}</p>
 
-  <button mat-raised-button class="btn btn-primary" routerLink="/app/dashboard">Go to Dashboard</button>
-  <button mat-raised-button class="btn btn-secondary" routerLink="/auth/login">Go to Login</button>
+  <button mat-raised-button class="btn btn-primary" routerLink="/app/dashboard">{{ 'notFound.goDashboard' | translate }}</button>
+  <button mat-raised-button class="btn btn-secondary" routerLink="/auth/login">{{ 'notFound.goLogin' | translate }}</button>
 </div>

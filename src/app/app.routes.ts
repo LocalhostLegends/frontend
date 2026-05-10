@@ -92,8 +92,8 @@ export const routes: Routes = [
                 canActivate: [roleGuard],
                 data: {
                     roles: ROUTE_ACCESS['/app/companies'],
-                    title: 'Companies List',
-                    subtitle: 'All client companies, limits, and support access.',
+                    title: 'sidebar.companiesList',
+                    subtitle: 'placeholders.companiesSubtitle',
                 },
             },
             {
@@ -102,8 +102,8 @@ export const routes: Routes = [
                 canActivate: [roleGuard],
                 data: {
                     roles: ROUTE_ACCESS['/app/users'],
-                    title: 'Platform Users',
-                    subtitle: 'Cross-tenant user administration.',
+                    title: 'placeholders.platformUsersTitle',
+                    subtitle: 'placeholders.platformUsersSubtitle',
                 },
             },
             {
@@ -112,8 +112,8 @@ export const routes: Routes = [
                 canActivate: [roleGuard],
                 data: {
                     roles: ROUTE_ACCESS['/app/system-settings'],
-                    title: 'System Settings',
-                    subtitle: 'Global platform configuration.',
+                    title: 'sidebar.systemSettings',
+                    subtitle: 'placeholders.systemSettingsSubtitle',
                 },
             },
             {
@@ -122,8 +122,8 @@ export const routes: Routes = [
                 canActivate: [roleGuard],
                 data: {
                     roles: ROUTE_ACCESS['/app/billing'],
-                    title: 'Billing & Limits',
-                    subtitle: 'Plans, seat limits, and API keys.',
+                    title: 'sidebar.billingLimits',
+                    subtitle: 'placeholders.billingSubtitle',
                 },
             },
             {
@@ -132,8 +132,8 @@ export const routes: Routes = [
                 canActivate: [roleGuard],
                 data: {
                     roles: ROUTE_ACCESS['/app/system-logs'],
-                    title: 'System Logs',
-                    subtitle: 'Errors and audit trail.',
+                    title: 'sidebar.systemLogs',
+                    subtitle: 'placeholders.systemLogsSubtitle',
                 },
             },
             {
@@ -142,8 +142,8 @@ export const routes: Routes = [
                 canActivate: [roleGuard],
                 data: {
                     roles: ROUTE_ACCESS['/app/support-tickets'],
-                    title: 'Support Tickets',
-                    subtitle: 'Tickets from company admins.',
+                    title: 'sidebar.supportTickets',
+                    subtitle: 'placeholders.supportTicketsSubtitle',
                 },
             },
             {
@@ -152,8 +152,8 @@ export const routes: Routes = [
                 canActivate: [roleGuard],
                 data: {
                     roles: ROUTE_ACCESS['/app/subscription'],
-                    title: 'Subscription',
-                    subtitle: 'Current plan and billing.',
+                    title: 'sidebar.subscription',
+                    subtitle: 'placeholders.subscriptionSubtitle',
                 },
             },
             {
@@ -162,8 +162,8 @@ export const routes: Routes = [
                 canActivate: [roleGuard],
                 data: {
                     roles: ROUTE_ACCESS['/app/reports'],
-                    title: 'Reports',
-                    subtitle: 'Export and analytics for your company.',
+                    title: 'sidebar.reports',
+                    subtitle: 'placeholders.reportsSubtitle',
                 },
             },
             {
@@ -172,8 +172,8 @@ export const routes: Routes = [
                 canActivate: [roleGuard],
                 data: {
                     roles: ROUTE_ACCESS['/app/onboarding'],
-                    title: 'Onboarding',
-                    subtitle: 'New hire status and tasks.',
+                    title: 'sidebar.onboarding',
+                    subtitle: 'placeholders.onboardingSubtitle',
                 },
             },
             {
@@ -182,8 +182,8 @@ export const routes: Routes = [
                 canActivate: [roleGuard],
                 data: {
                     roles: ROUTE_ACCESS['/app/candidates'],
-                    title: 'Candidates',
-                    subtitle: 'Recruitment pipeline.',
+                    title: 'placeholders.candidatesTitle',
+                    subtitle: 'placeholders.candidatesSubtitle',
                 },
             },
             {
@@ -192,8 +192,8 @@ export const routes: Routes = [
                 canActivate: [roleGuard],
                 data: {
                     roles: ROUTE_ACCESS['/app/absence'],
-                    title: 'Absence / Vacation',
-                    subtitle: 'Leave calendar and absence overview.',
+                    title: 'sidebar.absenceVacation',
+                    subtitle: 'placeholders.absenceSubtitle',
                 },
             },
             {
@@ -202,8 +202,8 @@ export const routes: Routes = [
                 canActivate: [roleGuard],
                 data: {
                     roles: ROUTE_ACCESS['/app/my-team'],
-                    title: 'My Team',
-                    subtitle: 'People in your department.',
+                    title: 'sidebar.myTeam',
+                    subtitle: 'placeholders.myTeamSubtitle',
                 },
             },
             {
@@ -212,8 +212,8 @@ export const routes: Routes = [
                 canActivate: [roleGuard],
                 data: {
                     roles: ROUTE_ACCESS['/app/team-stats'],
-                    title: 'Team Stats',
-                    subtitle: 'KPIs for your direct reports.',
+                    title: 'sidebar.teamStats',
+                    subtitle: 'placeholders.teamStatsSubtitle',
                 },
             },
             {
@@ -222,8 +222,8 @@ export const routes: Routes = [
                 canActivate: [roleGuard],
                 data: {
                     roles: ROUTE_ACCESS['/app/time-off-requests'],
-                    title: 'Approvals',
-                    subtitle: 'Leave and time-off requests from your team.',
+                    title: 'sidebar.approvals',
+                    subtitle: 'placeholders.approvalsSubtitle',
                 },
             },
             {
@@ -232,8 +232,8 @@ export const routes: Routes = [
                 canActivate: [roleGuard],
                 data: {
                     roles: ROUTE_ACCESS['/app/tasks-goals'],
-                    title: 'Tasks / Goals',
-                    subtitle: 'Team objectives (when enabled).',
+                    title: 'sidebar.tasksGoals',
+                    subtitle: 'placeholders.tasksGoalsSubtitle',
                 },
             },
             {
@@ -242,8 +242,8 @@ export const routes: Routes = [
                 canActivate: [roleGuard],
                 data: {
                     roles: ROUTE_ACCESS['/app/company-info'],
-                    title: 'Company Info',
-                    subtitle: 'About your organization.',
+                    title: 'placeholders.companyInfoTitle',
+                    subtitle: 'placeholders.companyInfoSubtitle',
                 },
             },
             {
@@ -252,8 +252,8 @@ export const routes: Routes = [
                 canActivate: [roleGuard],
                 data: {
                     roles: ROUTE_ACCESS['/app/my-time-off'],
-                    title: 'My Time Off',
-                    subtitle: 'Your leave balance and requests.',
+                    title: 'placeholders.myTimeOffTitle',
+                    subtitle: 'placeholders.myTimeOffSubtitle',
                 },
             },
             {
@@ -262,8 +262,8 @@ export const routes: Routes = [
                 canActivate: [roleGuard],
                 data: {
                     roles: ROUTE_ACCESS['/app/learning'],
-                    title: 'Knowledge Base',
-                    subtitle: 'Policies and internal resources.',
+                    title: 'sidebar.knowledgeBase',
+                    subtitle: 'placeholders.learningSubtitle',
                 },
             },
             {
@@ -272,8 +272,8 @@ export const routes: Routes = [
                 canActivate: [roleGuard],
                 data: {
                     roles: ROUTE_ACCESS['/app/team'],
-                    title: 'Company Directory',
-                    subtitle: 'Colleague directory (read-only).',
+                    title: 'sidebar.companyDirectory',
+                    subtitle: 'placeholders.teamSubtitle',
                 },
             },
             {
@@ -282,8 +282,8 @@ export const routes: Routes = [
                 canActivate: [roleGuard],
                 data: {
                     roles: ROUTE_ACCESS['/app/my-requests'],
-                    title: 'My Requests',
-                    subtitle: 'Vacation, certificates, and HR requests.',
+                    title: 'sidebar.myRequests',
+                    subtitle: 'placeholders.myRequestsSubtitle',
                 },
             },
         ],

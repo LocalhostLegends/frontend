@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { catchError, map, Observable, throwError } from 'rxjs';
-import { environment } from '@environments/environment';
+import { environment } from '@env/environment';
 import { Invite, CreateInviteRequest } from '@app/core/models/invite.model';
 import { ApiResponse, SuccessResponse } from './api-types';
 import { LoginResponse } from './auth-api.service';

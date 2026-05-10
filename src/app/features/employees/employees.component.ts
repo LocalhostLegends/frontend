@@ -15,10 +15,11 @@ import { finalize } from 'rxjs';
 import { UserApiService } from '@app/core/api/user-api.service';
 import { User } from '@app/core/models/user.model';
 import { AuthService } from '@app/core/services/auth.service';
-import { UserRole, isAdminRole, getInvitableRoles, canHrModifyUser, } from '@app/core/constants/roles.constants';
+import { UserRole, isAdminRole, isHrRole, getInvitableRoles, canHrModifyUser, getOrganizationMemberRoles, DEFAULT_USER_ROLE, } from '@app/core/constants/roles.constants';
 import { LoadingButtonComponent } from '@app/core/ui/loading-button/loading-button.component';
 import { TableActionItem, TableActionsMenuComponent, } from '@app/core/ui/table-actions-menu/table-actions-menu.component';
 import { PaginationControlsComponent } from '@app/core/ui/pagination-controls/pagination-controls.component';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 @Component({
     selector: 'app-employees',
     standalone: true,
@@ -37,6 +38,7 @@ import { PaginationControlsComponent } from '@app/core/ui/pagination-controls/pa
         LoadingButtonComponent,
         TableActionsMenuComponent,
         PaginationControlsComponent,
+        TranslatePipe,
     ],
     templateUrl: './employees.component.html',
     styleUrls: ['./employees.component.scss'],
@@ -46,6 +48,7 @@ export class EmployeesComponent implements OnInit {
     private userApi = inject(UserApiService);
     private snackBar = inject(MatSnackBar);
     private auth = inject(AuthService);
+    private translate = inject(TranslateService);
     users = signal<User[]>([]);
     total = signal(0);
     page = signal(1);
@@ -58,14 +61,14 @@ export class EmployeesComponent implements OnInit {
     viewedUser = signal<User | null>(null);
     isViewLoading = signal(false);
     readonly displayedColumns = ['name', 'email', 'role', 'department', 'status', 'lastLogin', 'actions'];
-    readonly filterRoles: UserRole[] = ['admin', 'hr', 'manager', 'employee'];
+    readonly filterRoles: UserRole[] = getOrganizationMemberRoles();
     readonly filterStatuses = ['active', 'invited', 'blocked'];
     readonly editStatuses = ['active', 'invited', 'blocked', 'inactive'];
     readonly editRoleOptions = computed(() => {
         const v = this.auth.userRole();
-        if (v === 'hr')
+        if (isHrRole(v))
             return getInvitableRoles('hr');
-        return ['admin', 'hr', 'manager', 'employee'] as UserRole[];
+        return getOrganizationMemberRoles();
     });
     readonly isAdmin = computed(() => isAdminRole(this.auth.userRole()));
     filtersForm = this.fb.group({
@@ -77,7 +80,7 @@ export class EmployeesComponent implements OnInit {
         firstName: ['', [Validators.required]],
         lastName: ['', [Validators.required]],
         phone: [''],
-        role: ['employee'],
+        role: [DEFAULT_USER_ROLE],
         status: ['active'],
     });
     ngOnInit(): void {
@@ -106,7 +109,7 @@ export class EmployeesComponent implements OnInit {
                 this.limit.set(payload.limit ?? this.limit());
             },
             error: (error: HttpErrorResponse) => {
-                this.snackBar.open(this.describeError(error, 'Failed to load users'), 'Close', {
+                this.snackBar.open(this.describeError(error, this.t('messages.users.loadFailed')), this.t('common.close'), {
                     duration: 3500,
                 });
             },
@@ -137,7 +140,7 @@ export class EmployeesComponent implements OnInit {
     }
     startEdit(user: User): void {
         if (!canHrModifyUser(this.auth.userRole(), user.role)) {
-            this.snackBar.open('You cannot edit the company administrator.', 'Close', { duration: 4000 });
+            this.snackBar.open(this.t('messages.users.cannotEditAdmin'), this.t('common.close'), { duration: 4000 });
             return;
         }
         this.editingUserId.set(user.id);
@@ -152,12 +155,12 @@ export class EmployeesComponent implements OnInit {
                     firstName: fullUser.firstName ?? '',
                     lastName: fullUser.lastName ?? '',
                     phone: fullUser.phone ?? '',
-                    role: (fullUser.role ?? 'employee') as UserRole,
+                    role: (fullUser.role ?? DEFAULT_USER_ROLE) as UserRole,
                     status: this.normalizeStatusForForm(fullUser.status ?? 'active'),
                 });
             },
             error: (error: HttpErrorResponse) => {
-                this.snackBar.open(this.describeError(error, 'Failed to load user details'), 'Close', {
+                this.snackBar.open(this.describeError(error, this.t('messages.users.loadDetailsFailed')), this.t('common.close'), {
                     duration: 3500,
                 });
             },
@@ -175,7 +178,7 @@ export class EmployeesComponent implements OnInit {
             firstName: '',
             lastName: '',
             phone: '',
-            role: 'employee',
+            role: DEFAULT_USER_ROLE,
             status: 'active',
         });
     }
@@ -189,7 +192,7 @@ export class EmployeesComponent implements OnInit {
                 this.viewedUser.set(fullUser);
             },
             error: (error: HttpErrorResponse) => {
-                this.snackBar.open(this.describeError(error, 'Failed to load user details'), 'Close', {
+                this.snackBar.open(this.describeError(error, this.t('messages.users.loadDetailsFailed')), this.t('common.close'), {
                     duration: 3500,
                 });
             },
@@ -204,8 +207,8 @@ export class EmployeesComponent implements OnInit {
             return;
         }
         const raw = this.editForm.getRawValue();
-        if (this.auth.userRole() === 'hr' && raw.role === 'admin') {
-            this.snackBar.open('HR cannot assign the Administrator role.', 'Close', { duration: 4000 });
+        if (isHrRole(this.auth.userRole()) && raw.role === 'admin') {
+            this.snackBar.open(this.t('messages.users.hrCannotAssignAdmin'), this.t('common.close'), { duration: 4000 });
             return;
         }
         this.isSaving.set(true);
@@ -220,12 +223,12 @@ export class EmployeesComponent implements OnInit {
             .pipe(finalize(() => this.isSaving.set(false)))
             .subscribe({
             next: () => {
-                this.snackBar.open('User updated', 'Close', { duration: 2500 });
+                this.snackBar.open(this.t('messages.users.updated'), this.t('common.close'), { duration: 2500 });
                 this.cancelEdit();
                 this.loadUsers(this.page());
             },
             error: (error: HttpErrorResponse) => {
-                this.snackBar.open(this.describeError(error, 'Failed to update user'), 'Close', {
+                this.snackBar.open(this.describeError(error, this.t('messages.users.updateFailed')), this.t('common.close'), {
                     duration: 4000,
                 });
             },
@@ -289,11 +292,11 @@ export class EmployeesComponent implements OnInit {
         const request$ = block ? this.userApi.blockUser(user.id) : this.userApi.unblockUser(user.id);
         request$.pipe(finalize(() => this.setBusy(user.id, false))).subscribe({
             next: () => {
-                this.snackBar.open(block ? 'User blocked' : 'User unblocked', 'Close', { duration: 2500 });
+                this.snackBar.open(block ? this.t('messages.users.blocked') : this.t('messages.users.unblocked'), this.t('common.close'), { duration: 2500 });
                 this.loadUsers(this.page());
             },
             error: (error: HttpErrorResponse) => {
-                this.snackBar.open(this.describeError(error, block ? 'Failed to block user' : 'Failed to unblock user'), 'Close', { duration: 4000 });
+                this.snackBar.open(this.describeError(error, block ? this.t('messages.users.blockFailed') : this.t('messages.users.unblockFailed')), this.t('common.close'), { duration: 4000 });
             },
         });
     }
@@ -306,11 +309,11 @@ export class EmployeesComponent implements OnInit {
             .pipe(finalize(() => this.setBusy(user.id, false)))
             .subscribe({
             next: () => {
-                this.snackBar.open('User deleted', 'Close', { duration: 2500 });
+                this.snackBar.open(this.t('messages.users.deleted'), this.t('common.close'), { duration: 2500 });
                 this.loadUsers(this.page());
             },
             error: (error: HttpErrorResponse) => {
-                this.snackBar.open(this.describeError(error, 'Failed to delete user'), 'Close', {
+                this.snackBar.open(this.describeError(error, this.t('messages.users.deleteFailed')), this.t('common.close'), {
                     duration: 4000,
                 });
             },
@@ -350,5 +353,8 @@ export class EmployeesComponent implements OnInit {
         if (typeof payload === 'string' && payload.trim())
             return payload;
         return fallback;
+    }
+    private t(key: string): string {
+        return this.translate.instant(key);
     }
 }

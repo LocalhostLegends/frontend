@@ -2,13 +2,13 @@
   @if (isLoading()) {
     <div class="state-box">
       <mat-spinner diameter="40"></mat-spinner>
-      <p>Loading profile...</p>
+      <p>{{ 'profile.loading' | translate }}</p>
     </div>
   } @else if (loadError()) {
     <div class="state-box">
       <mat-icon color="warn">error</mat-icon>
       <p>{{ loadError() }}</p>
-      <button mat-stroked-button class="btn btn-secondary" (click)="loadProfile()">Retry</button>
+      <button mat-stroked-button class="btn btn-secondary" (click)="loadProfile()">{{ 'common.retry' | translate }}</button>
     </div>
   } @else if (profile(); as user) {
     <mat-card class="profile-card">
@@ -37,7 +37,7 @@
           </button>
           <div class="avatar">
             @if (user.avatar) {
-              <img [appAuthenticatedImgSrc]="user.avatar" [authMeAvatar]="true" alt="Avatar" />
+              <img [appAuthenticatedImgSrc]="user.avatar" [authMeAvatar]="true" [alt]="'profile.avatar' | translate" />
             } @else {
               <span>{{ avatarText() }}</span>
             }
@@ -51,69 +51,69 @@
             [spinnerDiameter]="16"
             (pressed)="removeAvatar()"
           >
-            Remove
+            {{ 'common.remove' | translate }}
           </app-loading-button>
         </div>
         <div class="meta">
           <h2>{{ displayName() }}</h2>
           <p class="email">{{ user.email }}</p>
-          <p class="role">{{ user.role | uppercase }} · {{ user.status || 'active' }}</p>
+          <p class="role">{{ roleText(user.role) }} · {{ statusText(user.status) }}</p>
         </div>
       </div>
     </mat-card>
 
     <div class="grid">
       <mat-card>
-        <h3>Personal Info</h3>
+        <h3>{{ 'profile.personalInfo' | translate }}</h3>
         @if (!isEditing()) {
-          <div class="row"><span>First Name</span><strong>{{ user.firstName || '—' }}</strong></div>
-          <div class="row"><span>Last Name</span><strong>{{ user.lastName || '—' }}</strong></div>
-          <div class="row"><span>Phone</span><strong>{{ user.phone || '—' }}</strong></div>
+          <div class="row"><span>{{ 'auth.common.firstName' | translate }}</span><strong>{{ user.firstName || '—' }}</strong></div>
+          <div class="row"><span>{{ 'auth.common.lastName' | translate }}</span><strong>{{ user.lastName || '—' }}</strong></div>
+          <div class="row"><span>{{ 'common.phone' | translate }}</span><strong>{{ user.phone || '—' }}</strong></div>
         } @else {
           <form [formGroup]="editForm" class="edit-form">
             <mat-form-field appearance="outline">
-              <mat-label>First Name</mat-label>
+              <mat-label>{{ 'auth.common.firstName' | translate }}</mat-label>
               <input matInput formControlName="firstName" minlength="2" />
               @if (editForm.controls.firstName.hasError('required') && editForm.controls.firstName.touched) {
-                <mat-error>Required</mat-error>
+                <mat-error>{{ 'common.required' | translate }}</mat-error>
               }
               @if (editForm.controls.firstName.hasError('minlength') && editForm.controls.firstName.touched) {
-                <mat-error>At least 2 characters</mat-error>
+                <mat-error>{{ 'common.minChars2' | translate }}</mat-error>
               }
             </mat-form-field>
             <mat-form-field appearance="outline">
-              <mat-label>Last Name</mat-label>
+              <mat-label>{{ 'auth.common.lastName' | translate }}</mat-label>
               <input matInput formControlName="lastName" minlength="2" />
               @if (editForm.controls.lastName.hasError('required') && editForm.controls.lastName.touched) {
-                <mat-error>Required</mat-error>
+                <mat-error>{{ 'common.required' | translate }}</mat-error>
               }
               @if (editForm.controls.lastName.hasError('minlength') && editForm.controls.lastName.touched) {
-                <mat-error>At least 2 characters</mat-error>
+                <mat-error>{{ 'common.minChars2' | translate }}</mat-error>
               }
             </mat-form-field>
             <mat-form-field appearance="outline">
-              <mat-label>Phone</mat-label>
+              <mat-label>{{ 'common.phone' | translate }}</mat-label>
               <input matInput formControlName="phone" (input)="onPhoneInput($event)" />
               @if (
                 editForm.controls.phone.hasError('pattern') &&
                 (editForm.controls.phone.touched || editForm.controls.phone.dirty)
               ) {
-                <mat-error>Phone must start with + and use digits/symbols ( ) -</mat-error>
+                <mat-error>{{ 'profile.phonePatternError' | translate }}</mat-error>
               }
               @if (
                 editForm.controls.phone.hasError('phoneDigitsRange') &&
                 (editForm.controls.phone.touched || editForm.controls.phone.dirty)
               ) {
-                <mat-error>Phone must contain 7 to 12 digits</mat-error>
+                <mat-error>{{ 'profile.phoneDigitsError' | translate }}</mat-error>
               }
             </mat-form-field>
           </form>
         }
-        <div class="row"><span>Last Login</span><strong>{{ user.lastLoginAt ? (user.lastLoginAt | date: 'dd.MM.yyyy HH:mm') : '—' }}</strong></div>
+        <div class="row"><span>{{ 'profile.lastLogin' | translate }}</span><strong>{{ user.lastLoginAt ? (user.lastLoginAt | date: 'dd.MM.yyyy HH:mm') : '—' }}</strong></div>
 
         <div class="edit-actions">
           @if (!isEditing()) {
-            <button mat-stroked-button class="btn btn-secondary" type="button" (click)="startEdit()">Edit profile</button>
+            <button mat-stroked-button class="btn btn-secondary" type="button" (click)="startEdit()">{{ 'profile.editProfile' | translate }}</button>
           } @else {
             <app-loading-button
               [loading]="isSaving()"
@@ -121,33 +121,33 @@
               [spinnerDiameter]="16"
               (pressed)="saveProfile()"
             >
-              Save
+              {{ 'common.save' | translate }}
             </app-loading-button>
-            <button mat-button class="btn btn-secondary" type="button" [disabled]="isSaving()" (click)="cancelEdit()">Cancel</button>
+            <button mat-button class="btn btn-secondary" type="button" [disabled]="isSaving()" (click)="cancelEdit()">{{ 'common.cancel' | translate }}</button>
           }
         </div>
       </mat-card>
 
       <mat-card>
-        <h3>Work Info</h3>
-        <div class="row"><span>Role</span><strong>{{ user.role | uppercase }}</strong></div>
+        <h3>{{ 'profile.workInfo' | translate }}</h3>
+        <div class="row"><span>{{ 'common.role' | translate }}</span><strong>{{ roleText(user.role) }}</strong></div>
         <div class="row">
-          <span>Department</span>
+          <span>{{ 'common.department' | translate }}</span>
           <strong>{{ user.department?.name || '—' }}</strong>
         </div>
         <div class="row">
-          <span>Position</span>
+          <span>{{ 'common.position' | translate }}</span>
           <strong>{{ user.position?.name || '—' }}</strong>
         </div>
-        <div class="row"><span>Status</span><strong>{{ user.status || 'active' }}</strong></div>
+        <div class="row"><span>{{ 'common.status' | translate }}</span><strong>{{ statusText(user.status) }}</strong></div>
       </mat-card>
 
       <mat-card>
-        <h3>Company</h3>
-        <div class="row"><span>Name</span><strong>{{ companyName() }}</strong></div>
-        <div class="row"><span>Plan</span><strong>{{ user.company?.subscriptionPlan || '—' }}</strong></div>
-        <div class="row"><span>Timezone</span><strong>{{ user.company?.timezone || '—' }}</strong></div>
-        <div class="row"><span>Company ID</span><strong>{{ user.company?.id || user.companyId || '—' }}</strong></div>
+        <h3>{{ 'common.company' | translate }}</h3>
+        <div class="row"><span>{{ 'common.name' | translate }}</span><strong>{{ companyName() }}</strong></div>
+        <div class="row"><span>{{ 'profile.plan' | translate }}</span><strong>{{ user.company?.subscriptionPlan || '—' }}</strong></div>
+        <div class="row"><span>{{ 'profile.timezone' | translate }}</span><strong>{{ user.company?.timezone || '—' }}</strong></div>
+        <div class="row"><span>{{ 'profile.companyId' | translate }}</span><strong>{{ user.company?.id || user.companyId || '—' }}</strong></div>
       </mat-card>
     </div>
   }

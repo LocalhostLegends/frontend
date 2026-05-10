@@ -6,11 +6,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { AuthService } from '@app/core/services/auth.service';
 import { getMenuItemsByRole } from '@app/core/constants/menu.constants';
 import { ShellLayoutService } from '@app/core/layouts/shell-layout.service';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [CommonModule, RouterModule, MatIconModule, MatButtonModule],
+  imports: [CommonModule, RouterModule, MatIconModule, MatButtonModule, TranslatePipe],
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss'],
 })

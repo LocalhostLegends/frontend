@@ -1,8 +1,8 @@
 <div class="pagination-wrap">
-  <span>Showing {{ itemsCount }} of {{ total }}</span>
+  <span>{{ 'pagination.showing' | translate }} {{ itemsCount }} {{ 'pagination.of' | translate }} {{ total }}</span>
   <div class="pager">
-    <button mat-button type="button" [disabled]="!canPrev()" (click)="prev.emit()">Prev</button>
-    <span>Page {{ page }}</span>
-    <button mat-button type="button" [disabled]="!canNext()" (click)="next.emit()">Next</button>
+    <button mat-button type="button" [disabled]="!canPrev()" (click)="prev.emit()">{{ 'pagination.prev' | translate }}</button>
+    <span>{{ 'pagination.page' | translate }} {{ page }}</span>
+    <button mat-button type="button" [disabled]="!canNext()" (click)="next.emit()">{{ 'pagination.next' | translate }}</button>
   </div>
 </div>

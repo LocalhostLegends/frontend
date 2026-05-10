@@ -16,7 +16,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { User } from '@app/core/models/user.model';
 import { Invite } from '@app/core/models/invite.model';
-import { getRoleLabel, UserRole, canSeeOrganizationData, isAdminRole, canSendInvites, canViewDepartments, } from '@app/core/constants/roles.constants';
+import { getRoleLabel, UserRole, canSeeOrganizationData, isAdminRole, isHrRole, isEmployeeRole, isManagerRole, canSendInvites, canViewDepartments, getOrganizationMemberRoles, DEFAULT_USER_ROLE, } from '@app/core/constants/roles.constants';
 import { AuthService } from '@app/core/services/auth.service';
 import { DashboardDataService, DashboardLoadResult } from '@app/features/dashboard/services/dashboard-data.service';
 import { CompanyApiService } from '@app/core/api/company-api.service';
@@ -24,6 +24,7 @@ import { UserApiService } from '@app/core/api/user-api.service';
 import { InviteSetupWizardDialogComponent, InviteSetupWizardDialogData, } from '@app/features/invites/invite-setup-wizard-dialog.component';
 import { birthdaysThisWeek, usersAbsentToday, type BirthdayWeekItem, } from '@app/features/dashboard/utils/hr-dashboard.helpers';
 import { PaginationControlsComponent } from '@app/core/ui/pagination-controls/pagination-controls.component';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 @Component({
     selector: 'app-dashboard',
     standalone: true,
@@ -40,6 +41,7 @@ import { PaginationControlsComponent } from '@app/core/ui/pagination-controls/pa
         PaginationControlsComponent,
         MatIconModule,
         MatProgressBarModule,
+        TranslatePipe,
     ],
     templateUrl: './dashboard.component.html',
     styleUrls: ['./dashboard.component.scss'],
@@ -52,6 +54,7 @@ export class DashboardComponent implements OnInit {
     private snackBar = inject(MatSnackBar);
     private router = inject(Router);
     private dialog = inject(MatDialog);
+    private translate = inject(TranslateService);
     users = signal<User[]>([]);
     invites = signal<Invite[]>([]);
     isLoading = signal(false);
@@ -64,7 +67,7 @@ export class DashboardComponent implements OnInit {
     });
     statusLabel = computed(() => getRoleLabel(this.userRole()));
     totalEmployees = computed(() => this.users().filter((user) => user.role !== 'admin').length);
-    hrCount = computed(() => this.users().filter((user) => user.role === 'hr').length);
+    hrCount = computed(() => this.users().filter((user) => isHrRole(user.role)).length);
     pendingInvitesCount = computed(() => this.invites().filter((i) => (i.status ?? '').trim().toLowerCase() === 'pending').length);
     departmentsCount = computed(() => {
         const ids = new Set(this.invites()
@@ -76,9 +79,9 @@ export class DashboardComponent implements OnInit {
     isAdmin = computed(() => isAdminRole(this.userRole()));
     canInvite = computed(() => canSendInvites(this.userRole()));
     showCreateDepartment = computed(() => canViewDepartments(this.userRole()));
-    isHrDashboard = computed(() => this.userRole() === 'hr');
-    isEmployeeDashboard = computed(() => this.userRole() === 'employee');
-    isManagerDashboard = computed(() => this.userRole() === 'manager');
+    isHrDashboard = computed(() => isHrRole(this.userRole()));
+    isEmployeeDashboard = computed(() => isEmployeeRole(this.userRole()));
+    isManagerDashboard = computed(() => isManagerRole(this.userRole()));
     currentUserId = computed(() => this.auth.currentUser()?.id ?? '');
     vacationBalanceText = computed(() => {
         const u = this.auth.currentUser();
@@ -172,7 +175,7 @@ export class DashboardComponent implements OnInit {
             return true;
         });
     });
-    hrRoleFilterOptions: UserRole[] = ['admin', 'hr', 'manager', 'employee'];
+    hrRoleFilterOptions: UserRole[] = getOrganizationMemberRoles();
     hrStatusFilterOptions = ['active', 'invited', 'blocked'];
     requests = [
         {
@@ -240,7 +243,7 @@ export class DashboardComponent implements OnInit {
     }
     load() {
         const role = this.userRole();
-        if (role === 'employee' || role === 'manager') {
+        if (isEmployeeRole(role) || isManagerRole(role)) {
             this.loadDepartmentPeerUsers();
             return;
         }
@@ -260,14 +263,14 @@ export class DashboardComponent implements OnInit {
                 if (usersError && invitesError) {
                     const usersStatus = this.describeError(usersError);
                     const invitesStatus = this.describeError(invitesError);
-                    this.notify(`Не вдалося завантажити користувачів (${usersStatus}) і інвайти (${invitesStatus})`, 'Close', 4500);
+                    this.notify(this.translate.instant('messages.dashboard.usersAndInvitesLoadFailed', { usersStatus, invitesStatus }), this.t('common.close'), 4500);
                     return;
                 }
                 if (usersError) {
-                    this.notify(`Не вдалося завантажити список користувачів (${this.describeError(usersError)})`, 'Close', 3500);
+                    this.notify(this.translate.instant('messages.dashboard.usersLoadFailed', { status: this.describeError(usersError) }), this.t('common.close'), 3500);
                 }
                 else if (invitesError) {
-                    this.notify(`Не вдалося завантажити список інвайтів (${this.describeError(invitesError)})`, 'Close', 3500);
+                    this.notify(this.translate.instant('messages.dashboard.invitesLoadFailed', { status: this.describeError(invitesError) }), this.t('common.close'), 3500);
                 }
             },
             error: () => {
@@ -275,7 +278,7 @@ export class DashboardComponent implements OnInit {
                 this.invites.set([]);
                 this.isLoading.set(false);
                 this.hasDashboardDataError.set(true);
-                this.notify('Unable to load dashboard data', 'Close', 3000);
+                this.notify(this.t('messages.dashboard.loadFailed'), this.t('common.close'), 3000);
             },
         });
     }
@@ -371,12 +374,12 @@ export class DashboardComponent implements OnInit {
                 }
                 if (this.hasDashboardDataError())
                     return;
-                this.notify('Не вдалося отримати назву компанії (порожня відповідь)', 'Close', 4500);
+                this.notify(this.t('messages.dashboard.companyNameEmpty'), this.t('common.close'), 4500);
             },
             error: (error: unknown) => {
                 if (this.hasDashboardDataError())
                     return;
-                this.notify(`Не вдалося отримати назву компанії (${this.describeError(error)})`, 'Close', 4500);
+                this.notify(this.translate.instant('messages.dashboard.companyNameFailed', { status: this.describeError(error) }), this.t('common.close'), 4500);
             },
         });
     }
@@ -404,7 +407,7 @@ export class DashboardComponent implements OnInit {
         this.openInviteWizard();
     }
     onInvitePerson() {
-        this.openInviteWizard({ presetRole: 'employee' });
+        this.openInviteWizard({ presetRole: DEFAULT_USER_ROLE });
     }
     onCreateDepartment() {
         this.router.navigate(['/app/departments']);
@@ -414,7 +417,7 @@ export class DashboardComponent implements OnInit {
             this.openInviteWizard();
             return;
         }
-        this.openInviteWizard({ presetRole: 'employee' });
+        this.openInviteWizard({ presetRole: DEFAULT_USER_ROLE });
     }
     displayName(user: User): string {
         const n = `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim();
@@ -456,12 +459,12 @@ export class DashboardComponent implements OnInit {
     }
     private activityLabel(u: User): string {
         if (u.lastLoginAt) {
-            return 'Signed in';
+            return this.t('messages.dashboard.activity.signedIn');
         }
         if (u.updatedAt) {
-            return 'Profile updated';
+            return this.t('messages.dashboard.activity.profileUpdated');
         }
-        return 'Activity';
+        return this.t('messages.dashboard.activity.activity');
     }
     formatActivityWhen(raw: string): string {
         if (!raw)
@@ -486,5 +489,8 @@ export class DashboardComponent implements OnInit {
     hrStatusLabel(user: User): string {
         const s = user.status?.trim();
         return s ? s : '—';
+    }
+    private t(key: string): string {
+        return this.translate.instant(key);
     }
 }

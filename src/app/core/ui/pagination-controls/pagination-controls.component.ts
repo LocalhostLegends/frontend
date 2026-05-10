@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output, computed } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { TranslatePipe } from '@ngx-translate/core';
 @Component({
     selector: 'app-pagination-controls',
     standalone: true,
-    imports: [CommonModule, MatButtonModule],
+    imports: [CommonModule, MatButtonModule, TranslatePipe],
     templateUrl: './pagination-controls.component.html',
     styleUrls: ['./pagination-controls.component.scss'],
 })
