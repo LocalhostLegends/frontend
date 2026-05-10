@@ -1,52 +1,52 @@
 <div class="register-wrapper">
   <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-    <h2>Register Company</h2>
+    <h2>{{ 'auth.register.title' | translate }}</h2>
 
     <mat-form-field appearance="outline">
-      <mat-label>Company Name</mat-label>
+      <mat-label>{{ 'auth.register.companyName' | translate }}</mat-label>
       <input matInput formControlName="companyName" />
       @if (registerForm.controls.companyName.invalid && registerForm.controls.companyName.touched) {
-        <mat-error>Company name is required</mat-error>
+        <mat-error>{{ 'auth.register.companyNameRequired' | translate }}</mat-error>
       }
     </mat-form-field>
 
     <mat-form-field appearance="outline">
-      <mat-label>First Name</mat-label>
+      <mat-label>{{ 'auth.common.firstName' | translate }}</mat-label>
       <input matInput formControlName="firstName" />
       @if (registerForm.controls.firstName.invalid && registerForm.controls.firstName.touched) {
-        <mat-error>First name is required</mat-error>
+        <mat-error>{{ 'auth.common.firstNameRequired' | translate }}</mat-error>
       }
     </mat-form-field>
 
     <mat-form-field appearance="outline">
-      <mat-label>Last Name</mat-label>
+      <mat-label>{{ 'auth.common.lastName' | translate }}</mat-label>
       <input matInput formControlName="lastName" />
       @if (registerForm.controls.lastName.invalid && registerForm.controls.lastName.touched) {
-        <mat-error>Last name is required</mat-error>
+        <mat-error>{{ 'auth.common.lastNameRequired' | translate }}</mat-error>
       }
     </mat-form-field>
 
     <mat-form-field appearance="outline">
-      <mat-label>Email Company</mat-label>
+      <mat-label>{{ 'auth.register.companyEmail' | translate }}</mat-label>
       <input matInput formControlName="email" type="email" />
       @if (registerForm.controls.email.invalid && registerForm.controls.email.touched) {
-        <mat-error>Please enter a valid email</mat-error>
+        <mat-error>{{ 'auth.common.emailInvalid' | translate }}</mat-error>
       }
     </mat-form-field>
 
     <mat-form-field appearance="outline">
-      <mat-label>Password</mat-label>
+      <mat-label>{{ 'auth.common.password' | translate }}</mat-label>
       <input matInput [type]="hidePassword() ? 'password' : 'text'" formControlName="password" />
       <button mat-icon-button matSuffix type="button" (click)="hidePassword.set(!hidePassword())">
         <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
       </button>
       @if (registerForm.controls.password.invalid && registerForm.controls.password.touched) {
-        <mat-error>Minimum 6 characters</mat-error>
+        <mat-error>{{ 'auth.common.passwordMin' | translate }}</mat-error>
       }
     </mat-form-field>
 
     <mat-form-field appearance="outline">
-      <mat-label>Confirm Password</mat-label>
+      <mat-label>{{ 'auth.common.confirmPassword' | translate }}</mat-label>
       <input
         matInput
         [type]="hideConfirmPassword() ? 'password' : 'text'"
@@ -63,13 +63,13 @@
       </button>
 
       @if (registerForm.controls.confirmPassword.hasError('required') && registerForm.controls.confirmPassword.touched) {
-        <mat-error>Confirm password is required</mat-error>
+        <mat-error>{{ 'auth.common.confirmPasswordRequired' | translate }}</mat-error>
       }
       @if (
         registerForm.controls.confirmPassword.hasError('mismatch')
         && (registerForm.controls.confirmPassword.touched || registerForm.controls.confirmPassword.dirty)
       ) {
-        <mat-error>Passwords do not match</mat-error>
+        <mat-error>{{ 'auth.common.passwordsMismatch' | translate }}</mat-error>
       }
     </mat-form-field>
 
@@ -80,7 +80,7 @@
       [spinnerDiameter]="24"
       buttonClass="btn btn-primary auth-submit-btn"
     >
-      Register
+      {{ 'auth.register.submit' | translate }}
     </app-loading-button>
 
     @if (errorMessage()) {
@@ -89,6 +89,6 @@
       </div>
     }
 
-    <p>Already have an account? <a routerLink="/auth/login">Sign In</a></p>
+    <p>{{ 'auth.register.hasAccount' | translate }} <a routerLink="/auth/login">{{ 'auth.register.signIn' | translate }}</a></p>
   </form>
 </div>

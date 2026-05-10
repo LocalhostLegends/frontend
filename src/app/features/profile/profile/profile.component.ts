@@ -11,11 +11,16 @@ import { User } from '@app/core/models/user.model';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { LoadingButtonComponent } from '@app/core/ui/loading-button/loading-button.component';
 import { AuthenticatedImgSrcDirective } from '@app/core/ui/authenticated-img-src/authenticated-img-src.directive';
 import { PendingChangesAware } from '@app/core/guards/pending-changes.guard';
 import { AuthService } from '@app/core/services/auth.service';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { ConfirmDialogComponent } from '@app/core/ui/confirm-dialog/confirm-dialog.component';
 const PHONE_ALLOWED_PATTERN = /^\+[0-9 ()-]*$/;
 const PHONE_MIN_DIGITS = 7;
 const PHONE_MAX_DIGITS = 12;
@@ -34,6 +39,7 @@ const NAME_MIN_LENGTH = 2;
         MatInputModule,
         LoadingButtonComponent,
         AuthenticatedImgSrcDirective,
+        TranslatePipe,
     ],
     templateUrl: './profile.component.html',
     styleUrls: ['./profile.component.scss'],
@@ -42,7 +48,9 @@ export class ProfileComponent implements OnInit, PendingChangesAware {
     private userApi = inject(UserApiService);
     private fb = inject(FormBuilder);
     private snackBar = inject(MatSnackBar);
+    private dialog = inject(MatDialog);
     private auth = inject(AuthService);
+    private translate = inject(TranslateService);
     profile = signal<User | null>(null);
     isLoading = signal(false);
     loadError = signal<string | null>(null);
@@ -96,7 +104,7 @@ export class ProfileComponent implements OnInit, PendingChangesAware {
                 message?: string;
             }) => {
                 this.profile.set(null);
-                this.loadError.set(error?.message || 'Unable to load profile');
+                this.loadError.set(error?.message || this.t('messages.profile.loadFailed'));
             },
         });
     }
@@ -139,12 +147,12 @@ export class ProfileComponent implements OnInit, PendingChangesAware {
                 this.auth.syncCurrentUser(merged);
                 this.syncFormFromProfile(merged);
                 this.isEditing.set(false);
-                this.snackBar.open('Profile updated', 'Close', { duration: 2500 });
+                this.snackBar.open(this.t('messages.profile.updated'), this.t('common.close'), { duration: 2500 });
             },
             error: (error: unknown) => {
                 const message = this.describeProfileSaveError(error);
                 const duration = message.length > 120 ? 8000 : 4000;
-                this.snackBar.open(message, 'Close', { duration });
+                this.snackBar.open(message, this.t('common.close'), { duration });
             },
         });
     }
@@ -159,14 +167,14 @@ export class ProfileComponent implements OnInit, PendingChangesAware {
             .pipe(finalize(() => this.isUploadingAvatar.set(false)))
             .subscribe({
             next: () => {
-                this.snackBar.open('Avatar updated', 'Close', { duration: 2500 });
+                this.snackBar.open(this.t('messages.profile.avatarUpdated'), this.t('common.close'), { duration: 2500 });
                 this.loadProfile();
                 if (input)
                     input.value = '';
             },
             error: (error: unknown) => {
-                const message = this.avatarHttpMessage(error, 'Failed to upload avatar');
-                this.snackBar.open(message, 'Close', { duration: 5500 });
+                const message = this.avatarHttpMessage(error, this.t('messages.profile.avatarUploadFailed'));
+                this.snackBar.open(message, this.t('common.close'), { duration: 5500 });
                 if (input)
                     input.value = '';
             },
@@ -183,11 +191,11 @@ export class ProfileComponent implements OnInit, PendingChangesAware {
             next: () => {
                 this.profile.update((prev) => (prev ? { ...prev, avatar: undefined } : prev));
                 this.auth.patchCurrentUser({ avatar: undefined });
-                this.snackBar.open('Avatar removed', 'Close', { duration: 2500 });
+                this.snackBar.open(this.t('messages.profile.avatarRemoved'), this.t('common.close'), { duration: 2500 });
             },
             error: (error: unknown) => {
-                const message = this.avatarHttpMessage(error, 'Failed to delete avatar');
-                this.snackBar.open(message, 'Close', { duration: 5500 });
+                const message = this.avatarHttpMessage(error, this.t('messages.profile.avatarDeleteFailed'));
+                this.snackBar.open(message, this.t('common.close'), { duration: 5500 });
             },
         });
     }
@@ -199,9 +207,9 @@ export class ProfileComponent implements OnInit, PendingChangesAware {
                 ? String((payload as { code?: string }).code ?? '')
                 : '';
         if (httpErr?.status === 403 && code === 'AUTH_5007') {
-            return 'Cannot save profile (AUTH_5007): the server rejected PATCH on your user for this role. Fix the backend guard so self-update allows firstName, lastName, phone when JWT sub matches :id, or add PATCH /users/me in OpenAPI.';
+            return this.t('messages.profile.auth5007Patch');
         }
-        return this.extractApiMessage(payload) || 'Failed to update profile';
+        return this.extractApiMessage(payload) || this.t('messages.profile.updateFailed');
     }
     /** Nest/class-validator often returns `message` as a string[] */
     private extractApiMessage(payload: unknown): string {
@@ -224,7 +232,7 @@ export class ProfileComponent implements OnInit, PendingChangesAware {
             ? String((payload as { code?: string }).code ?? '')
             : '';
         if (code === 'AUTH_5007') {
-            return 'Avatar is blocked by server policy for your role (AUTH_5007). Allow POST /users/me/avatar for self-service on the backend—the same request fails in Swagger.';
+            return this.t('messages.profile.auth5007Avatar');
         }
         const msg = this.extractApiMessage(payload);
         return msg || fallback;
@@ -241,10 +249,18 @@ export class ProfileComponent implements OnInit, PendingChangesAware {
         this.editForm.controls.phone.markAsTouched();
         this.editForm.controls.phone.updateValueAndValidity({ emitEvent: false });
     }
-    canDeactivate(): boolean {
+    canDeactivate(): boolean | Observable<boolean> {
         if (!this.isEditing() || !this.editForm.dirty || this.isSaving())
             return true;
-        return confirm('You have unsaved profile changes. Leave this page?');
+        return this.dialog
+            .open(ConfirmDialogComponent, {
+            width: '420px',
+            data: {
+                message: this.t('messages.profile.unsavedConfirm'),
+            },
+        })
+            .afterClosed()
+            .pipe(map((confirmed: boolean) => !!confirmed));
     }
     @HostListener('window:beforeunload', ['$event'])
     beforeUnload(event: BeforeUnloadEvent): void {
@@ -297,5 +313,16 @@ export class ProfileComponent implements OnInit, PendingChangesAware {
             result += ch;
         }
         return result;
+    }
+    roleText(role: string | null | undefined): string {
+        const normalized = String(role ?? 'employee').trim().toLowerCase();
+        return this.t(`roles.${normalized}`);
+    }
+    statusText(status: string | null | undefined): string {
+        const normalized = String(status ?? 'active').trim().toLowerCase();
+        return this.t(`statuses.${normalized}`);
+    }
+    private t(key: string): string {
+        return this.translate.instant(key);
     }
 }

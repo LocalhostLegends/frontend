@@ -1,49 +1,93 @@
-<mat-toolbar class="landing-toolbar">
-  <div class="left">
-    <div class="logo-container" routerLink="/" (click)="closeMobileMenu()">
-      <img src="assets/logo.svg" alt="HR Tech" class="logo-img" />
-      <span class="brand-name">HR Tech</span>
+@if (isAuthPage()) {
+  <mat-toolbar class="landing-toolbar auth-header">
+    <div class="left">
+      <div class="logo-container" routerLink="/" (click)="closeMobileMenu()">
+        <img src="assets/logo.svg" alt="HR Tech" class="logo-img" />
+      </div>
     </div>
-  </div>
+  </mat-toolbar>
+} @else {
+  <mat-toolbar class="landing-toolbar">
+    <div class="left">
+      <div class="logo-container" routerLink="/" (click)="closeMobileMenu()">
+        <img src="assets/logo.svg" alt="HR Tech" class="logo-img" />
+      </div>
+    </div>
 
-  <div class="center desktop-only">
-    <button class="btn nav-link-btn" type="button" routerLink="/" fragment="about" (click)="closeMobileMenu()">
-      About
-    </button>
-    <button class="btn nav-link-btn" type="button" routerLink="/" fragment="product" (click)="closeMobileMenu()">
-      Product
-    </button>
-    <button class="btn nav-link-btn" type="button" routerLink="/" fragment="contact" (click)="closeMobileMenu()">
-      Contact
-    </button>
-  </div>
+    <div class="center desktop-only">
+      <button class="btn nav-link-btn" type="button" routerLink="/" fragment="about" (click)="closeMobileMenu()">
+        {{ 'landing.header.about' | translate }}
+      </button>
+      <button class="btn nav-link-btn" type="button" routerLink="/" fragment="product" (click)="closeMobileMenu()">
+        {{ 'landing.header.product' | translate }}
+      </button>
+      <button class="btn nav-link-btn" type="button" routerLink="/" fragment="contact" (click)="closeMobileMenu()">
+        {{ 'landing.header.contact' | translate }}
+      </button>
+    </div>
 
-  <div class="right auth-buttons">
-    <a class="btn btn-secondary" routerLink="/auth/login" (click)="closeMobileMenu()">Sign In</a>
-    <a class="btn btn-primary" routerLink="/auth/register" (click)="closeMobileMenu()">Register Company</a>
-  </div>
+    <div class="right auth-buttons desktop-auth">
+      <button
+        mat-icon-button
+        [matMenuTriggerFor]="landingLanguageMenu"
+        [attr.aria-label]="'header.language' | translate"
+        class="lang-icon-btn"
+      >
+        <mat-icon>language</mat-icon>
+      </button>
+      <mat-menu #landingLanguageMenu="matMenu">
+        <button mat-menu-item type="button" (click)="switchLanguage('en')" translate="no" class="notranslate">
+          <span [class.active-lang]="currentLanguage() === 'en'" translate="no" class="notranslate" lang="en" ngNonBindable>EN</span>
+        </button>
+        <button mat-menu-item type="button" (click)="switchLanguage('uk')" translate="no" class="notranslate">
+          <span [class.active-lang]="currentLanguage() === 'uk'" translate="no" class="notranslate" lang="uk" ngNonBindable>UA</span>
+        </button>
+      </mat-menu>
+      <a class="btn btn-secondary" routerLink="/auth/login" (click)="closeMobileMenu()">{{ 'landing.header.signIn' | translate }}</a>
+      <a class="btn btn-primary" routerLink="/auth/register" (click)="closeMobileMenu()">{{ 'landing.header.registerCompany' | translate }}</a>
+    </div>
 
-  <button
-    mat-icon-button
-    class="mobile-menu-toggle mobile-only"
-    type="button"
-    aria-label="Toggle menu"
-    (click)="toggleMobileMenu()"
-  >
-    <mat-icon>{{ isMobileMenuOpen() ? 'close' : 'menu' }}</mat-icon>
-  </button>
-</mat-toolbar>
+    <button
+      mat-icon-button
+      class="mobile-menu-toggle mobile-only"
+      type="button"
+      aria-label="Toggle menu"
+      (click)="toggleMobileMenu()"
+    >
+      <mat-icon>{{ isMobileMenuOpen() ? 'close' : 'menu' }}</mat-icon>
+    </button>
+  </mat-toolbar>
 
-@if (isMobileMenuOpen()) {
-  <div class="mobile-menu">
-    <button class="btn nav-link-btn mobile-link" type="button" routerLink="/" fragment="about" (click)="closeMobileMenu()">
-      About
-    </button>
-    <button class="btn nav-link-btn mobile-link" type="button" routerLink="/" fragment="product" (click)="closeMobileMenu()">
-      Product
-    </button>
-    <button class="btn nav-link-btn mobile-link" type="button" routerLink="/" fragment="contact" (click)="closeMobileMenu()">
-      Contact
-    </button>
-  </div>
+  @if (isMobileMenuOpen()) {
+    <div class="mobile-menu">
+      <button
+        mat-icon-button
+        [matMenuTriggerFor]="landingLanguageMenuMobile"
+        [attr.aria-label]="'header.language' | translate"
+        class="lang-icon-btn mobile-lang-btn"
+        type="button"
+      >
+        <mat-icon>language</mat-icon>
+      </button>
+      <button class="btn nav-link-btn mobile-link" type="button" routerLink="/" fragment="about" (click)="closeMobileMenu()">
+        {{ 'landing.header.about' | translate }}
+      </button>
+      <button class="btn nav-link-btn mobile-link" type="button" routerLink="/" fragment="product" (click)="closeMobileMenu()">
+        {{ 'landing.header.product' | translate }}
+      </button>
+      <button class="btn nav-link-btn mobile-link" type="button" routerLink="/" fragment="contact" (click)="closeMobileMenu()">
+        {{ 'landing.header.contact' | translate }}
+      </button>
+      <a class="btn btn-secondary mobile-link" routerLink="/auth/login" (click)="closeMobileMenu()">{{ 'landing.header.signIn' | translate }}</a>
+      <a class="btn btn-primary mobile-link" routerLink="/auth/register" (click)="closeMobileMenu()">{{ 'landing.header.registerCompany' | translate }}</a>
+    </div>
+    <mat-menu #landingLanguageMenuMobile="matMenu">
+      <button mat-menu-item type="button" (click)="switchLanguage('en')" translate="no" class="notranslate">
+        <span [class.active-lang]="currentLanguage() === 'en'" translate="no" class="notranslate" lang="en" ngNonBindable>EN</span>
+      </button>
+      <button mat-menu-item type="button" (click)="switchLanguage('uk')" translate="no" class="notranslate">
+        <span [class.active-lang]="currentLanguage() === 'uk'" translate="no" class="notranslate" lang="uk" ngNonBindable>UA</span>
+      </button>
+    </mat-menu>
+  }
 }

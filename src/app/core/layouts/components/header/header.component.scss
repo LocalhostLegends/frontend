@@ -107,6 +107,11 @@
   justify-self: end;
 }
 
+.active-lang {
+  color: $primary;
+  font-weight: 700;
+}
+
 .user-profile {
   display: flex;
   align-items: center;

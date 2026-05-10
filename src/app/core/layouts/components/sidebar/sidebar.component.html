@@ -4,7 +4,7 @@
       <img src="assets/logo-dark.svg" alt="HR Tech" class="logo-img" />
     </div>
 
-    @for (item of menuItems(); track item.route + item.label) {
+    @for (item of menuItems(); track item.route + item.labelKey) {
       <a
         class="navText"
         mat-button
@@ -16,11 +16,11 @@
         <div class="icon-text">
           <img
             [src]="'assets/icons/sideBar/' + item.icon"
-            [alt]="item.label"
+            [alt]="item.labelKey | translate"
             width="24"
             height="24"
           />
-          <span>{{ item.label }}</span>
+          <span>{{ item.labelKey | translate }}</span>
         </div>
       </a>
     }

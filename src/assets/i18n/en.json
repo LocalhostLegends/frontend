@@ -1,0 +1,457 @@
+{
+  "common": {
+    "search": "Search",
+    "name": "Name",
+    "email": "Email",
+    "role": "Role",
+    "status": "Status",
+    "actions": "Actions",
+    "department": "Department",
+    "position": "Position",
+    "company": "Company",
+    "phone": "Phone",
+    "created": "Created",
+    "all": "All",
+    "apply": "Apply",
+    "reset": "Reset",
+    "save": "Save",
+    "cancel": "Cancel",
+    "create": "Create",
+    "update": "Update",
+    "required": "Required",
+    "minChars2": "At least 2 characters",
+    "descriptionOptional": "Description (optional)",
+    "fromList": "From list",
+    "createNew": "Create new",
+    "nameOrEmail": "Name or email",
+    "yes": "Yes",
+    "confirm": "Confirm action",
+    "retry": "Retry",
+    "remove": "Remove"
+    ,
+    "close": "Close"
+  },
+  "messages": {
+    "auth": {
+      "loginFailed": "Error during login",
+      "registerFailed": "Error during registration"
+    },
+    "activate": {
+      "successRedirect": "Account activated. Redirecting to dashboard...",
+      "openAppFailed": "Could not open the app. Please sign in with your new password.",
+      "failed": "Activation failed. Check the link or request a new invite.",
+      "inviteAlreadyAccepted": "This invite has already been accepted. Please sign in."
+    },
+    "users": {
+      "loadFailed": "Failed to load users",
+      "cannotEditAdmin": "You cannot edit the company administrator.",
+      "loadDetailsFailed": "Failed to load user details",
+      "hrCannotAssignAdmin": "HR cannot assign the Administrator role.",
+      "updated": "User updated",
+      "updateFailed": "Failed to update user",
+      "blocked": "User blocked",
+      "unblocked": "User unblocked",
+      "blockFailed": "Failed to block user",
+      "unblockFailed": "Failed to unblock user",
+      "deleted": "User deleted",
+      "deleteFailed": "Failed to delete user"
+    },
+    "departments": {
+      "loadFailed": "Failed to load departments",
+      "updated": "Department updated",
+      "created": "Department created",
+      "requestFailed": "Department request failed",
+      "deleteConfirm": "Delete \"{{name}}\"?",
+      "deleted": "Department deleted",
+      "deleteFailed": "Failed to delete department"
+    },
+    "invites": {
+      "loadFailed": "Error loading invites",
+      "resent": "Invite resent successfully",
+      "resendFailed": "Error resending invite",
+      "deleted": "Invitation deleted",
+      "cancelFailed": "Error cancelling invite",
+      "deleteConfirm": "Delete invitation for {{email}}? This cannot be undone.",
+      "roleCannotSend": "Your role cannot send invites.",
+      "loadMetaFailed": "Could not load departments or positions. You can still create new ones.",
+      "departmentNoId": "Department created but no id returned",
+      "departmentCreateFailed": "Failed to create department",
+      "positionNoId": "Position created but no id returned",
+      "positionCreateFailed": "Failed to create position",
+      "missingDepartmentOrPosition": "Missing department or position. Start over.",
+      "sendFailed": "Failed to send invite"
+    },
+    "profile": {
+      "loadFailed": "Unable to load profile",
+      "updated": "Profile updated",
+      "avatarUpdated": "Avatar updated",
+      "avatarUploadFailed": "Failed to upload avatar",
+      "avatarRemoved": "Avatar removed",
+      "avatarDeleteFailed": "Failed to delete avatar",
+      "auth5007Patch": "Cannot save profile (AUTH_5007): the server rejected PATCH on your user for this role. Fix backend self-update permissions.",
+      "updateFailed": "Failed to update profile",
+      "auth5007Avatar": "Avatar upload is blocked by server policy for your role (AUTH_5007).",
+      "unsavedConfirm": "You have unsaved profile changes. Leave this page?"
+    },
+    "dashboard": {
+      "usersAndInvitesLoadFailed": "Failed to load users ({{usersStatus}}) and invites ({{invitesStatus}})",
+      "usersLoadFailed": "Failed to load users list ({{status}})",
+      "invitesLoadFailed": "Failed to load invites list ({{status}})",
+      "loadFailed": "Unable to load dashboard data",
+      "companyNameEmpty": "Failed to load company name (empty response)",
+      "companyNameFailed": "Failed to load company name ({{status}})",
+      "activity": {
+        "signedIn": "Signed in",
+        "profileUpdated": "Profile updated",
+        "activity": "Activity"
+      }
+    }
+  },
+  "auth": {
+    "common": {
+      "email": "Email",
+      "emailInvalid": "Please enter a valid email",
+      "password": "Password",
+      "passwordMin": "Minimum 6 characters",
+      "passwordMinHint": "At least 6 characters",
+      "confirmPassword": "Confirm password",
+      "confirmPasswordRequired": "Confirm password is required",
+      "passwordsMismatch": "Passwords do not match",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "firstNameRequired": "First name is required",
+      "lastNameRequired": "Last name is required"
+    },
+    "login": {
+      "title": "Login",
+      "forgotPassword": "Forgot password?",
+      "submit": "Sign In",
+      "noAccount": "Don't have an account?",
+      "register": "Register"
+    },
+    "register": {
+      "title": "Register Company",
+      "companyName": "Company Name",
+      "companyNameRequired": "Company name is required",
+      "companyEmail": "Email Company",
+      "submit": "Register",
+      "hasAccount": "Already have an account?",
+      "signIn": "Sign In"
+    },
+    "activate": {
+      "invalidLinkTitle": "Invalid link",
+      "invalidLinkDesc": "The activation link is missing or invalid. Open the link from your email.",
+      "invalidCodeTitle": "Invalid invite code",
+      "invalidCodeDesc": "This link does not contain a valid invite token (the server expects a UUID). If the email used a placeholder instead of a real token, ask your admin to resend the invite or fix the email template.",
+      "validatingInvite": "Validating invite...",
+      "goToLogin": "Go to login",
+      "createAccountTitle": "Create your account",
+      "createAccountDesc": "Set a password to finish activation.",
+      "submit": "Activate account",
+      "hasAccount": "Already have an account?",
+      "signIn": "Sign in"
+    },
+    "forgot": {
+      "title": "Forgot Password",
+      "description": "Password recovery flow can be connected here. For now, contact your administrator to reset access.",
+      "backToSignIn": "Back to Sign In"
+    }
+  },
+  "header": {
+    "openMenu": "Open menu",
+    "clearSearch": "Clear search",
+    "language": "Change language",
+    "profile": "Profile",
+    "settings": "Settings",
+    "logout": "Logout"
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "companiesList": "Companies List",
+    "billingLimits": "Billing & Limits",
+    "systemLogs": "System Logs",
+    "supportTickets": "Support Tickets",
+    "users": "Users",
+    "systemSettings": "System Settings",
+    "departments": "Departments",
+    "companySettings": "Company Settings",
+    "subscription": "Subscription",
+    "reports": "Reports",
+    "staffManagement": "Staff Management",
+    "invites": "Invites",
+    "orgStructure": "Org Structure",
+    "onboarding": "Onboarding",
+    "absenceVacation": "Absence / Vacation",
+    "myTeam": "My Team",
+    "teamStats": "Team Stats",
+    "approvals": "Approvals",
+    "tasksGoals": "Tasks / Goals",
+    "companyDirectory": "Company Directory",
+    "myRequests": "My Requests",
+    "knowledgeBase": "Knowledge Base"
+  },
+  "roles": {
+    "super_admin": "Super Admin",
+    "admin": "Administrator",
+    "manager": "Manager",
+    "hr": "HR Manager",
+    "employee": "Employee"
+  },
+  "statuses": {
+    "active": "Active",
+    "invited": "Invited",
+    "blocked": "Blocked",
+    "inactive": "Inactive"
+  },
+  "placeholders": {
+    "companiesSubtitle": "All client companies, limits, and support access.",
+    "platformUsersTitle": "Platform Users",
+    "platformUsersSubtitle": "Cross-tenant user administration.",
+    "systemSettingsSubtitle": "Global platform configuration.",
+    "billingSubtitle": "Plans, seat limits, and API keys.",
+    "systemLogsSubtitle": "Errors and audit trail.",
+    "supportTicketsSubtitle": "Tickets from company admins.",
+    "subscriptionSubtitle": "Current plan and billing.",
+    "reportsSubtitle": "Export and analytics for your company.",
+    "onboardingSubtitle": "New hire status and tasks.",
+    "candidatesTitle": "Candidates",
+    "candidatesSubtitle": "Recruitment pipeline.",
+    "absenceSubtitle": "Leave calendar and absence overview.",
+    "myTeamSubtitle": "People in your department.",
+    "teamStatsSubtitle": "KPIs for your direct reports.",
+    "approvalsSubtitle": "Leave and time-off requests from your team.",
+    "tasksGoalsSubtitle": "Team objectives (when enabled).",
+    "companyInfoTitle": "Company Info",
+    "companyInfoSubtitle": "About your organization.",
+    "myTimeOffTitle": "My Time Off",
+    "myTimeOffSubtitle": "Your leave balance and requests.",
+    "learningSubtitle": "Policies and internal resources.",
+    "teamSubtitle": "Colleague directory (read-only).",
+    "myRequestsSubtitle": "Vacation, certificates, and HR requests."
+  },
+  "pagination": {
+    "showing": "Showing",
+    "of": "of",
+    "page": "Page",
+    "prev": "Prev",
+    "next": "Next"
+  },
+  "notFound": {
+    "message": "Page not found",
+    "goDashboard": "Go to Dashboard",
+    "goLogin": "Go to Login"
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage your account and application preferences.",
+    "description": "Settings page is ready. You can add profile, security and notification preferences here."
+  },
+  "platformAdmin": {
+    "backToDashboard": "Back to Dashboard"
+  },
+  "departments": {
+    "title": "Departments",
+    "readOnlyHint": "You can view the org structure. Only HR can add or edit departments.",
+    "editTitle": "Edit Department",
+    "createTitle": "Create Department",
+    "name": "Department name",
+    "namePlaceholder": "Engineering",
+    "nameMin": "Name must be at least 2 characters",
+    "loading": "Loading departments...",
+    "empty": "No departments yet. Create your first department."
+  },
+  "employees": {
+    "title": "Employees",
+    "subtitle": "Search and filter the list below.",
+    "teamMembers": "Team members",
+    "teamMembersSubtitle": "Everyone in your company (paginated).",
+    "loading": "Loading users...",
+    "lastLogin": "Last login",
+    "editUser": "Edit User",
+    "selectEdit": "Select user action \"Edit\" to load details.",
+    "loadingUser": "Loading user...",
+    "viewUser": "View User",
+    "loadingDetails": "Loading details...",
+    "selectView": "Select user action \"View details\" to preview profile data."
+  },
+  "invites": {
+    "newInviteTitle": "New invite",
+    "newInviteSubtitle": "Same 3 steps for everyone who can invite: create department → create position → send invite (Admin invites HR; HR invites managers and employees).",
+    "startSetup": "Start invite setup",
+    "listTitle": "Invitation list",
+    "listSubtitle": "Who was invited, whether they accepted, and actions (resend email or delete the invitation).",
+    "inviteeEmail": "Invitee (email)",
+    "sent": "Sent",
+    "accepted": "Accepted",
+    "empty": "No invites yet. Create one above.",
+    "loading": "Loading invites...",
+    "actions": {
+      "resend": "Resend",
+      "deleteInvite": "Delete invite"
+    },
+    "status": {
+      "pending": "Pending",
+      "accepted": "Accepted",
+      "expired": "Expired",
+      "cancelled": "Cancelled"
+    },
+    "wizard": {
+      "title": "Send invite - setup",
+      "loadingDepartments": "Loading departments...",
+      "selectDepartment": "Select department",
+      "selectPosition": "Select position",
+      "positionTitle": "Position title",
+      "positionTitleMin": "Title is required (min 2 characters)",
+      "stepDepartment": "Step 1: Department",
+      "stepPosition": "Step 2: Position",
+      "stepInvitation": "Step 3: Invitation (email, role, links)",
+      "nextCreatePosition": "Next: Create position",
+      "nextSendInvite": "Next: Send invite",
+      "confirmSend": "Confirm and send invite"
+    },
+    "successDialog": {
+      "title": "Invitation Sent Successfully!",
+      "backToDashboard": "Back to Dashboard"
+    }
+  },
+  "profile": {
+    "loading": "Loading profile...",
+    "avatar": "Avatar",
+    "personalInfo": "Personal Info",
+    "lastLogin": "Last Login",
+    "editProfile": "Edit profile",
+    "workInfo": "Work Info",
+    "plan": "Plan",
+    "timezone": "Timezone",
+    "companyId": "Company ID",
+    "phonePatternError": "Phone must start with + and use digits/symbols ( ) -",
+    "phoneDigitsError": "Phone must contain 7 to 12 digits"
+  },
+  "dashboard": {
+    "hr": {
+      "workspace": "HR workspace",
+      "teamOverview": "Team overview",
+      "outToday": "Out today",
+      "absentToday": "Absent today",
+      "noAbsenceToday": "No absence recorded for today.",
+      "todo": "To-do",
+      "pendingActivations": "Pending activations",
+      "userWaiting": "User waiting for activation",
+      "usersWaiting": "Users waiting for activation",
+      "openInvites": "Open invites",
+      "birthdays": "Birthdays",
+      "thisWeek": "This week (Mon-Sun)",
+      "noBirthdays": "No birthdays this week.",
+      "allEmployees": "All employees",
+      "searchFilterHint": "Search and filter. Edit profiles on the full page.",
+      "employeesApp": "Employees app",
+      "allRoles": "All roles",
+      "allStatuses": "All statuses",
+      "employee": "Employee",
+      "noEmployeesMatch": "No employees match the filters."
+    },
+    "employee": {
+      "workspace": "Employee workspace",
+      "hi": "Hi",
+      "shortcuts": "Shortcuts",
+      "directory": "Directory",
+      "requests": "Requests",
+      "knowledgeBase": "Knowledge base",
+      "myTasksToday": "My tasks today",
+      "personalWork": "Personal work & follow-ups",
+      "noTasks": "No tasks synced yet. Connect your task tool to see today's list here.",
+      "timeOffBalance": "Time off balance",
+      "vacationDaysRemaining": "Vacation days remaining",
+      "daysAvailable": "days available",
+      "balanceWillAppear": "Balance will appear when HR enables it on your profile.",
+      "achievementsSoon": "Achievements & badges - coming soon",
+      "companyNews": "Company news",
+      "announcements": "Announcements from HR & Admin",
+      "noAnnouncements": "No announcements yet. HR and Admin posts will appear here.",
+      "peopleInDepartment": "People in your department",
+      "readOnlyDirectory": "Read-only directory - same department as you",
+      "fullDirectory": "Full directory",
+      "you": "You",
+      "noColleagues": "No colleagues loaded. Check your network or permissions."
+    },
+    "manager": {
+      "workspace": "Manager workspace",
+      "peopleInScope": "people in your scope",
+      "shortcuts": "Manager shortcuts",
+      "myTeam": "My Team",
+      "teamStats": "Team Stats",
+      "approvals": "Approvals",
+      "tasksGoals": "Tasks / Goals",
+      "notification": "Notification",
+      "exampleAlertPrefix": "Employee",
+      "exampleAlertMiddle": "missed a deadline on",
+      "example": "Example",
+      "departmentGoals": "Department goals progress",
+      "kpiHint": "KPIs for your team (same department)",
+      "demoCaption": "Illustrative - connect OKR / goals API for live data.",
+      "latestActivity": "Latest team activity",
+      "teammatesHint": "Teammates in your department (excl. you)",
+      "noRecentActivity": "No recent logins or profile updates to show.",
+      "deadlineAlerts": "Deadline & task alerts",
+      "fromTaskSystem": "From the task system when integrated",
+      "noLiveAlertsPrefix": "No live alerts yet. The",
+      "noLiveAlertsSuffix": "notification above shows the format (e.g. missed deadline)."
+    },
+    "admin": {
+      "welcomeTo": "Welcome to",
+      "yourStatus": "Your status",
+      "fewSteps": "You are just a few steps away from setting up your space",
+      "totalEmployees": "Total Employees",
+      "activeVacancies": "Active Vacancies",
+      "departments": "Departments",
+      "createFirstDepartment": "Create First Department",
+      "structureTeam": "Structure your team and simplify management.",
+      "createDepartment": "CREATE DEPARTMENT",
+      "invite": "Invite",
+      "inviteHrManager": "Invite an HR manager to continue onboarding your company.",
+      "inviteManagersEmployees": "Invite managers or employees with department and role (Invites page).",
+      "inviteHrButton": "+ INVITE HR",
+      "invitePersonButton": "+ INVITE PERSON",
+      "teamMembers": "Team members",
+      "everyoneInCompany": "Everyone in your company",
+      "fullDirectory": "Full directory",
+      "couldNotLoadUsers": "Could not load users. Try again or open the directory page.",
+      "noEmployeesYet": "No employees yet - invite your HR or team from the cards above.",
+      "whatsNew": "What's New",
+      "noRecentEvents": "No recent events. Actions from other users will appear here."
+    }
+  },
+  "landing": {
+    "header": {
+      "about": "About",
+      "product": "Product",
+      "contact": "Contact",
+      "signIn": "Sign In",
+      "registerCompany": "Register Company"
+    },
+    "home": {
+      "hero": {
+        "title": "HR operations in one place",
+        "lead": "Invite teams, manage roles, and keep employee data organized - built for growing companies.",
+        "registerCompany": "Register company",
+        "signIn": "Sign in"
+      },
+      "about": {
+        "title": "About",
+        "description": "HR Tech helps admins and HR coordinate onboarding, invites, and day-to-day people workflows from a single dashboard."
+      },
+      "product": {
+        "title": "Product",
+        "description": "Dashboard, departments, employees, invites, and profile settings - with role-based access so each team member sees what they need."
+      },
+      "contact": {
+        "title": "Contact",
+        "description": "Reach your administrator or support channel for tenant-specific questions and billing."
+      }
+    }
+    ,
+    "footer": {
+      "company": "HR Tech System"
+    }
+  }
+}

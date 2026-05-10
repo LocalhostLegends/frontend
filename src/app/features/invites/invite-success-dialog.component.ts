@@ -2,16 +2,19 @@ import { Component } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule, MatDialogRef, } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { TranslatePipe } from '@ngx-translate/core';
 @Component({
     selector: 'app-invite-success-dialog',
     standalone: true,
-    imports: [MatDialogModule, MatButtonModule, MatIconModule],
+    imports: [MatDialogModule, MatButtonModule, MatIconModule, TranslatePipe],
     template: `
     <div class="dialog-body">
       <mat-icon class="ok" aria-hidden="true">check_circle</mat-icon>
-      <h2 class="title">Invitation Sent Successfully!</h2>
+      <h2 class="title">{{ 'invites.successDialog.title' | translate }}</h2>
       <mat-dialog-actions align="center">
-        <button mat-flat-button color="primary" (click)="close()">Back to Dashboard</button>
+        <button mat-flat-button color="primary" (click)="close()">
+          {{ 'invites.successDialog.backToDashboard' | translate }}
+        </button>
       </mat-dialog-actions>
     </div>
   `,

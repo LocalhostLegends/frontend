@@ -1,7 +1,7 @@
 @use 'variables' as *;
 
 .home {
-  width: 100%;
+
   max-width: 960px;
   margin: 0 auto;
   padding: 0 20px 48px;
@@ -95,12 +95,53 @@ h1 {
 }
 
 @media (max-width: 600px) {
+  .home {
+    padding: 0 16px 32px;
+  }
+
   .hero {
-    padding-top: 28px;
+    padding: 24px 0 28px;
+  }
+
+  .hero-inner {
+    max-width: 100%;
+  }
+
+  h1 {
+    font-size: 1.75rem;
+  }
+
+  .lead {
+    font-size: 1rem;
+    margin-bottom: 20px;
   }
 
   .hero-actions {
     flex-direction: column;
-    align-items: stretch;
+    align-items: center;
+  }
+
+  .btn {
+    width: min(100%, 320px);
+    height: 44px;
+    font-size: 15px;
+  }
+
+  .section {
+    padding: 20px 16px;
+
+    h2 {
+      font-size: 1.15rem;
+    }
+  }
+}
+
+@media (max-width: 420px) {
+  h1 {
+    font-size: 1.6rem;
+  }
+
+  .lead {
+    font-size: 0.95rem;
   }
 }

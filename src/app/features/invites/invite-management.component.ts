@@ -16,6 +16,7 @@ import { TableActionItem, TableActionsMenuComponent, } from '@app/core/ui/table-
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { InviteSetupWizardDialogComponent, InviteSetupWizardDialogData, } from './invite-setup-wizard-dialog.component';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 @Component({
     selector: 'app-invite-management',
     standalone: true,
@@ -29,6 +30,7 @@ import { InviteSetupWizardDialogComponent, InviteSetupWizardDialogData, } from '
         MatCardModule,
         MatTooltipModule,
         TableActionsMenuComponent,
+        TranslatePipe,
     ],
     templateUrl: './invite-management.component.html',
     styleUrls: ['./invite-management.component.scss'],
@@ -39,6 +41,7 @@ export class InviteManagementComponent implements OnInit {
     private router = inject(Router);
     private route = inject(ActivatedRoute);
     private dialog = inject(MatDialog);
+    private translate = inject(TranslateService);
     readonly auth = inject(AuthService);
     invites = signal<Invite[]>([]);
     isLoading = signal(false);
@@ -87,7 +90,7 @@ export class InviteManagementComponent implements OnInit {
                 this.invites.set(sorted);
             },
             error: () => {
-                this.snackBar.open('Error loading invites', 'Close', { duration: 3000 });
+                this.snackBar.open(this.t('messages.invites.loadFailed'), this.t('common.close'), { duration: 3000 });
             },
         });
     }
@@ -104,10 +107,10 @@ export class InviteManagementComponent implements OnInit {
         })))
             .subscribe({
             next: () => {
-                this.snackBar.open('Invite resent successfully', 'Close', { duration: 3000 });
+                this.snackBar.open(this.t('messages.invites.resent'), this.t('common.close'), { duration: 3000 });
             },
             error: () => {
-                this.snackBar.open('Error resending invite', 'Close', { duration: 3000 });
+                this.snackBar.open(this.t('messages.invites.resendFailed'), this.t('common.close'), { duration: 3000 });
             },
         });
     }
@@ -124,11 +127,11 @@ export class InviteManagementComponent implements OnInit {
         })))
             .subscribe({
             next: () => {
-                this.snackBar.open('Invitation deleted', 'Close', { duration: 3000 });
+                this.snackBar.open(this.t('messages.invites.deleted'), this.t('common.close'), { duration: 3000 });
                 this.loadInvites();
             },
             error: () => {
-                this.snackBar.open('Error cancelling invite', 'Close', { duration: 3000 });
+                this.snackBar.open(this.t('messages.invites.cancelFailed'), this.t('common.close'), { duration: 3000 });
             },
         });
     }
@@ -141,16 +144,16 @@ export class InviteManagementComponent implements OnInit {
         return [
             {
                 id: 'resend',
-                label: 'Resend',
+                label: this.t('invites.actions.resend'),
                 icon: 'refresh',
                 disabled,
             },
             {
                 id: 'cancel',
-                label: 'Delete invite',
+                label: this.t('invites.actions.deleteInvite'),
                 icon: 'delete_outline',
                 disabled,
-                confirmMessage: `Delete invitation for ${invite.email}? This cannot be undone.`,
+                confirmMessage: this.translate.instant('messages.invites.deleteConfirm', { email: invite.email }),
             },
         ];
     }
@@ -161,13 +164,13 @@ export class InviteManagementComponent implements OnInit {
         const s = this.normalizeStatus(invite.status);
         switch (s) {
             case 'pending':
-                return 'Pending';
+                return this.t('invites.status.pending');
             case 'accepted':
-                return 'Accepted';
+                return this.t('invites.status.accepted');
             case 'expired':
-                return 'Expired';
+                return this.t('invites.status.expired');
             case 'cancelled':
-                return 'Cancelled';
+                return this.t('invites.status.cancelled');
             default:
                 return invite.status ? invite.status : '—';
         }
@@ -212,5 +215,8 @@ export class InviteManagementComponent implements OnInit {
             default:
                 return 'rgba(0,0,0,0.87)';
         }
+    }
+    private t(key: string): string {
+        return this.translate.instant(key);
     }
 }

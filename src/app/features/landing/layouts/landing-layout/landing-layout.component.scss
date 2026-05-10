@@ -1,0 +1,26 @@
+@use 'variables' as *;
+
+:host {
+  display: block;
+  min-height: 100%;
+}
+
+.landing-wrapper {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: $light-bg;
+}
+
+.landing-main {
+  width: 100%;
+  flex: 1;
+}
+
+.simple-footer {
+  padding: 16px 20px 20px;
+  text-align: center;
+  font-size: 13px;
+  color: $text-label;
+}

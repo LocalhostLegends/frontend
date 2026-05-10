@@ -1,15 +1,16 @@
 import { Component, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
+import { TranslatePipe } from '@ngx-translate/core';
 @Component({
     selector: 'app-section-placeholder',
     standalone: true,
-    imports: [MatButtonModule, RouterLink],
+    imports: [MatButtonModule, RouterLink, TranslatePipe],
     template: `
     <section class="wrap">
-      <h1>{{ title }}</h1>
-      <p class="muted">{{ subtitle }}</p>
-      <a mat-stroked-button routerLink="/app/dashboard">Back to Dashboard</a>
+      <h1>{{ title | translate }}</h1>
+      <p class="muted">{{ subtitle | translate }}</p>
+      <a mat-stroked-button routerLink="/app/dashboard">{{ 'notFound.goDashboard' | translate }}</a>
     </section>
   `,
     styles: [

@@ -9,6 +9,8 @@ import { MatDividerModule } from '@angular/material/divider';
 import { AuthService } from '@app/core/services/auth.service';
 import { ShellLayoutService } from '@app/core/layouts/shell-layout.service';
 import { AuthenticatedImgSrcDirective } from '@app/core/ui/authenticated-img-src/authenticated-img-src.directive';
+import { LanguageService } from '@app/core/services/language.service';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-header',
@@ -21,6 +23,7 @@ import { AuthenticatedImgSrcDirective } from '@app/core/ui/authenticated-img-src
         MatMenuModule,
         MatDividerModule,
         AuthenticatedImgSrcDirective,
+        TranslatePipe,
     ],
     templateUrl: './header.component.html',
     styleUrls: ['./header.component.scss'],
@@ -29,7 +32,9 @@ export class HeaderComponent {
     public auth = inject(AuthService);
     readonly layout = inject(ShellLayoutService);
     private router = inject(Router);
+    private languageService = inject(LanguageService);
     searchQuery = '';
+    currentLanguage = this.languageService.currentLanguage;
     isAuth = computed(() => this.auth.isAuthenticated());
     companyName = computed(() => {
         const user = this.auth.currentUser();
@@ -77,5 +82,8 @@ export class HeaderComponent {
     clearSearch(): void {
         this.searchQuery = '';
         this.submitSearch();
+    }
+    switchLanguage(language: 'en' | 'uk'): void {
+        this.languageService.setLanguage(language);
     }
 }

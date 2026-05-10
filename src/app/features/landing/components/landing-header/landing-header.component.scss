@@ -11,6 +11,13 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+.landing-toolbar.auth-header {
+  height: 60px;
+  padding: 0 20px;
+  justify-content: flex-start;
+  box-shadow: none;
+}
+
 .mobile-only {
   display: none;
 }
@@ -52,6 +59,11 @@
   }
 }
 
+.active-lang {
+  color: $primary;
+  font-weight: 700;
+}
+
 .logo-container {
   display: flex;
   align-items: center;
@@ -66,13 +78,6 @@
     width: 38px;
     height: 38px;
   }
-
-  .brand-name {
-    font-weight: 700;
-    font-size: 22px;
-    letter-spacing: 0.5px;
-    color: $primary-dark;
-  }
 }
 
 .mobile-menu {
@@ -84,6 +89,15 @@
     height: 64px;
     padding: 0 10px;
     gap: 6px;
+  }
+
+  .landing-toolbar.auth-header {
+    height: 56px;
+    padding: 0 14px;
+  }
+
+  .desktop-auth {
+    display: none;
   }
 
   .desktop-only {
@@ -101,7 +115,7 @@
       height: 34px;
       line-height: 34px;
       padding: 0 10px;
-      font-size: 12px;
+      font-size: 13px;
       white-space: nowrap;
     }
   }
@@ -131,11 +145,17 @@
     .mobile-link {
       width: 100%;
       text-align: left;
+      display: inline-flex;
+      align-items: center;
       justify-content: flex-start;
       height: 40px;
       line-height: 40px;
       padding: 0 10px;
       border-radius: 8px;
     }
+  }
+
+  .mobile-lang-btn {
+    align-self: flex-start;
   }
 }

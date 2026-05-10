@@ -1,6 +1,7 @@
+import { Observable } from 'rxjs';
 import { CanDeactivateFn } from '@angular/router';
 export interface PendingChangesAware {
-    canDeactivate: () => boolean;
+    canDeactivate: () => boolean | Observable<boolean> | Promise<boolean>;
 }
 export const pendingChangesGuard: CanDeactivateFn<PendingChangesAware> = (component) => {
     return component.canDeactivate();

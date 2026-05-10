@@ -12,6 +12,7 @@ import { getRegistrationRoles } from '@app/core/constants/roles.constants';
 import { finalize } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { LoadingButtonComponent } from '@app/core/ui/loading-button/loading-button.component';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 @Component({
     selector: 'app-register',
     standalone: true,
@@ -25,6 +26,7 @@ import { LoadingButtonComponent } from '@app/core/ui/loading-button/loading-butt
         RouterLink,
         MatProgressSpinnerModule,
         LoadingButtonComponent,
+        TranslatePipe,
     ],
     templateUrl: './register.component.html',
     styleUrls: ['./register.component.scss'],
@@ -33,6 +35,7 @@ export class RegisterComponent {
     private fb = inject(NonNullableFormBuilder);
     private authService = inject(AuthService);
     private router = inject(Router);
+    private translate = inject(TranslateService);
     hidePassword = signal(true);
     hideConfirmPassword = signal(true);
     errorMessage = signal<string | null>(null);
@@ -84,7 +87,7 @@ export class RegisterComponent {
                 this.router.navigate(['/app/dashboard']);
             },
             error: (error: HttpErrorResponse) => {
-                this.errorMessage.set(error?.error?.message || 'Error during registration');
+                this.errorMessage.set(error?.error?.message || this.translate.instant('messages.auth.registerFailed'));
             },
         });
     }

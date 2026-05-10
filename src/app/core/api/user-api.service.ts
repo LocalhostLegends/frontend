@@ -3,7 +3,7 @@ import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http'
 import { catchError, map, Observable, of, switchMap, throwError } from 'rxjs';
 import { environment } from '@environments/environment';
 import { User } from '@app/core/models/user.model';
-import { UserRole } from '@app/core/constants/roles.constants';
+import { UserRole, normalizeUserRole } from '@app/core/constants/roles.constants';
 import { ApiResponse, SuccessResponse } from './api-types';
 export interface UsersQueryParams {
   page?: number;
@@ -141,17 +141,17 @@ export class UserApiService {
   getProfile(): Observable<User> {
     return this.http
       .get<ApiResponse<User>>(`${this.baseUrl}/users/me`)
-      .pipe(map((res) => res.data));
+      .pipe(map((res) => this.normalizeUserRecord(res.data)));
   }
   getUserById(id: string): Observable<User> {
     return this.http
       .get<ApiResponse<User>>(`${this.baseUrl}/users/${id}`)
-      .pipe(map((res) => res.data));
+      .pipe(map((res) => this.normalizeUserRecord(res.data)));
   }
   updateUser(id: string, body: Partial<User>): Observable<User> {
     return this.http
       .patch<ApiResponse<User>>(`${this.baseUrl}/users/${id}`, body)
-      .pipe(map((res) => res.data));
+      .pipe(map((res) => this.normalizeUserRecord(res.data)));
   }
 
   /**
@@ -289,11 +289,12 @@ export class UserApiService {
     const fbPage = Number(queryFallback?.page ?? 1);
     const fbLimit = Number(queryFallback?.limit ?? 10);
     if (Array.isArray(body)) {
+      const users = (body as unknown[]).map((item) => this.normalizeUserRecord(item as User));
       return {
-        users: body as User[],
-        total: body.length,
+        users,
+        total: users.length,
         page: fbPage,
-        limit: fbLimit || body.length || 10,
+        limit: fbLimit || users.length || 10,
       };
     }
     if (!body || typeof body !== 'object') {
@@ -304,7 +305,7 @@ export class UserApiService {
     const nestedMeta = o['meta'];
     if (Array.isArray(nestedData) && nestedMeta && typeof nestedMeta === 'object') {
       const meta = nestedMeta as UsersListMeta;
-      const users = nestedData as User[];
+      const users = (nestedData as unknown[]).map((item) => this.normalizeUserRecord(item as User));
       return {
         users,
         total: typeof meta.totalItems === 'number' ? meta.totalItems : users.length,
@@ -313,7 +314,7 @@ export class UserApiService {
       };
     }
     if (Array.isArray(nestedData)) {
-      const users = nestedData as User[];
+      const users = (nestedData as unknown[]).map((item) => this.normalizeUserRecord(item as User));
       return {
         users,
         total: users.length,
@@ -322,7 +323,7 @@ export class UserApiService {
       };
     }
     if (Array.isArray(o['users'])) {
-      const users = o['users'] as User[];
+      const users = (o['users'] as unknown[]).map((item) => this.normalizeUserRecord(item as User));
       return {
         users,
         total: typeof o['total'] === 'number' ? o['total'] : users.length,
@@ -331,9 +332,21 @@ export class UserApiService {
       };
     }
     if (Array.isArray(o['items'])) {
-      const users = o['items'] as User[];
+      const users = (o['items'] as unknown[]).map((item) => this.normalizeUserRecord(item as User));
       return { users, total: users.length, page: fbPage, limit: fbLimit };
     }
     return { users: [], total: 0, page: fbPage, limit: fbLimit };
+  }
+
+  private normalizeUserRecord(user: User): User {
+    const rolesRaw = (user as unknown as { roles?: unknown }).roles;
+    const rolesList = Array.isArray(rolesRaw) ? rolesRaw.map((r) => String(r)) : [];
+    const effectiveRoleRaw = user.role || rolesList[0] || null;
+    const normalizedRole = normalizeUserRole(effectiveRoleRaw);
+    return {
+      ...user,
+      role: normalizedRole,
+      roles: rolesList.map((r) => normalizeUserRole(r)),
+    };
   }
 }

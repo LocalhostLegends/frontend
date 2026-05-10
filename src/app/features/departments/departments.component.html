@@ -1,20 +1,20 @@
 <div class="departments-page">
   @if (!canEditStructure()) {
-    <p class="read-only-hint">You can view the org structure. Only HR can add or edit departments.</p>
+    <p class="read-only-hint">{{ 'departments.readOnlyHint' | translate }}</p>
   }
 
   @if (canEditStructure()) {
     <mat-card class="form-card">
       <mat-card-header>
-        <mat-card-title>{{ editingDepartmentId() ? 'Edit Department' : 'Create Department' }}</mat-card-title>
+        <mat-card-title>{{ (editingDepartmentId() ? 'departments.editTitle' : 'departments.createTitle') | translate }}</mat-card-title>
       </mat-card-header>
       <mat-card-content>
         <form [formGroup]="form" (ngSubmit)="onSubmit()" class="department-form">
           <mat-form-field appearance="outline">
-            <mat-label>Department name</mat-label>
-            <input matInput formControlName="name" placeholder="Engineering" />
+            <mat-label>{{ 'departments.name' | translate }}</mat-label>
+            <input matInput formControlName="name" [placeholder]="'departments.namePlaceholder' | translate" />
             @if (form.controls.name.invalid && form.controls.name.touched) {
-              <mat-error>Name must be at least 2 characters</mat-error>
+              <mat-error>{{ 'departments.nameMin' | translate }}</mat-error>
             }
           </mat-form-field>
 
@@ -25,12 +25,12 @@
               [disabled]="form.invalid"
               buttonClass="btn btn-primary"
             >
-              {{ editingDepartmentId() ? 'Update' : 'Create' }}
+              {{ (editingDepartmentId() ? 'common.update' : 'common.create') | translate }}
             </app-loading-button>
 
             @if (editingDepartmentId()) {
               <button mat-stroked-button type="button" class="btn btn-secondary" (click)="cancelEdit()">
-                Cancel
+                {{ 'common.cancel' | translate }}
               </button>
             }
           </div>
@@ -41,30 +41,30 @@
 
   <mat-card class="list-card">
     <mat-card-header>
-      <mat-card-title>Departments</mat-card-title>
+      <mat-card-title>{{ 'departments.title' | translate }}</mat-card-title>
     </mat-card-header>
     <mat-card-content>
       @if (isLoading()) {
         <div class="loading-state">
           <mat-spinner diameter="38"></mat-spinner>
-          <span>Loading departments...</span>
+          <span>{{ 'departments.loading' | translate }}</span>
         </div>
       } @else {
         <table mat-table [dataSource]="departments()" class="departments-table">
           <ng-container matColumnDef="name">
-            <th mat-header-cell *matHeaderCellDef>Name</th>
+            <th mat-header-cell *matHeaderCellDef>{{ 'common.name' | translate }}</th>
             <td mat-cell *matCellDef="let department">{{ displayDepartmentName(department) }}</td>
           </ng-container>
 
           <ng-container matColumnDef="createdAt">
-            <th mat-header-cell *matHeaderCellDef>Created</th>
+            <th mat-header-cell *matHeaderCellDef>{{ 'common.created' | translate }}</th>
             <td mat-cell *matCellDef="let department">
               {{ department.createdAt ? (department.createdAt | date: 'dd.MM.yyyy') : '—' }}
             </td>
           </ng-container>
 
           <ng-container matColumnDef="actions">
-            <th mat-header-cell *matHeaderCellDef>Actions</th>
+            <th mat-header-cell *matHeaderCellDef>{{ 'common.actions' | translate }}</th>
             <td mat-cell *matCellDef="let department" class="actions-cell">
               @if (canEditStructure()) {
                 <button mat-icon-button type="button" aria-label="Edit department" (click)="startEdit(department)">
@@ -90,7 +90,7 @@
         </table>
 
         @if (departments().length === 0) {
-          <div class="empty-state">No departments yet. Create your first department.</div>
+          <div class="empty-state">{{ 'departments.empty' | translate }}</div>
         }
       }
     </mat-card-content>
