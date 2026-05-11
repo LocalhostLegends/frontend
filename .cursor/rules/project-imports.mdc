@@ -1,0 +1,43 @@
+---
+description: TypeScript and SCSS imports — use @app/* and @use 'variables', no deep ../
+globs: "**/*.{ts,scss}"
+alwaysApply: false
+---
+
+# Импорты без «длинных» `../../`
+
+## TypeScript (`*.ts`)
+
+В корневом `tsconfig.json` настроены алиасы:
+
+- `@app/*` → `src/app/*`
+- `@environments/*` → `src/environments/*`
+
+**Примеры:**
+
+```ts
+import { AuthService } from '@app/core/services/auth.service';
+import { User } from '@app/core/models/user.model';
+import { environment } from '@environments/environment';
+import { InviteService } from '@app/features/invites/services/invite.service';
+```
+
+**Не используй** в импортах два и более уровня `../` подряд (`../../`, `../../../`, …). Для соседних файлов внутри одной фичи допустим один уровень: `from './ sibling'` или `from '../models/foo'` в пределах одной папки фичи.
+
+Общий код из `core/` и другие фичи импортируй только через `@app/...`.
+
+Проверка: `npm run lint` / `npm run lint:import-paths` (скрипт `scripts/check-import-paths.mjs`).
+
+## SCSS (`*.scss`)
+
+В `angular.json`: `stylePreprocessorOptions.includePaths: ["src"]`.
+
+```scss
+@use 'variables' as *;
+```
+
+**Не используй** `@use` / `@forward` с `../` в пути к общим файлам.
+
+## Почему
+
+Длинные относительные пути хрупкие при переезде файлов и плохо читаются в ревью. Алиасы задаются один раз в `tsconfig.json` и в препроцессоре SCSS.

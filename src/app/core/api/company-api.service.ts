@@ -1,9 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
-import { environment } from '@env/environment';
+import { environment } from '@environments/environment';
 import { Company } from '@app/core/models/company.model';
 import { ApiResponse } from './api-types';
+import id from '@angular/common/locales/extra/id';
 export type CompanySubscriptionPayload = Record<string, unknown>;
 export type CompanyStats = Record<string, unknown>;
 @Injectable({ providedIn: 'root' })
@@ -22,7 +23,7 @@ export class CompanyApiService {
     }
     getMyCompany(): Observable<Company> {
         return this.http
-            .get<Company | ApiResponse<Company>>(`${this.baseUrl}/my-company`)
+            .get<Company | ApiResponse<Company>>(`${this.baseUrl}/${id}`)
             .pipe(map((b) => this.unwrapOne(b)));
     }
     getCompanyStats(): Observable<CompanyStats> {

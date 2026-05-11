@@ -1,4 +1,4 @@
-import { Injectable, inject, signal, computed } from '@angular/core';
+import { Injectable, inject, Injector, signal, computed } from '@angular/core';
 import { AuthApiService, LoginResponse } from '../api/auth-api.service';
 import { CompanyApiService } from '@app/core/api/company-api.service';
 import { UserApiService } from '@app/core/api/user-api.service';
@@ -10,13 +10,17 @@ import { of, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { InviteApiService } from '@app/core/api/invite-api.service';
 import { canSeeOrganizationData, normalizeUserRole } from '@app/core/constants/roles.constants';
+
+
 @Injectable({ providedIn: 'root' })
+
 export class AuthService {
+  private injector = inject(Injector);
   private api = inject(AuthApiService);
   private inviteApi = inject(InviteApiService);
   private companyApi = inject(CompanyApiService);
   private userApi = inject(UserApiService);
-  private router = inject(Router);
+
   currentUser = signal<User | null>(null);
   accessToken = signal<string | null>(null);
   isAuthenticated = computed(() => !!this.accessToken());
@@ -39,17 +43,29 @@ export class AuthService {
       this.syncCurrentUserFromProfile();
     }
   }
-  private decodeJWT(token: string): JwtPayload | null {
-    try {
-      const payload = token.split('.')[1];
-      return JSON.parse(atob(payload));
-    } catch {
-      return null;
-    }
+private decodeJWT(token: string): JwtPayload | null {
+
+  if (!token || typeof token !== 'string' || !token.includes('.')) {
+    return null;
   }
-  private userFromToken(token: string): User | null {
-    const payload = this.decodeJWT(token);
-    if (!payload) return null;
+
+  try {
+    const parts = token.split('.');
+    if (parts.length < 2) return null;
+
+    const payload = parts[1];
+    const decoded = atob(payload.replace(/-/g, '+').replace(/_/g, '/'));
+    return JSON.parse(decoded);
+  } catch (e) {
+    console.error('AuthService: Failed to decode JWT', e);
+    return null;
+  }
+}
+private userFromToken(token: string): User | null {
+  const payload = this.decodeJWT(token);
+  if (!payload || !payload.sub || !payload.email) {
+    return null; 
+  }
     const tokenRoles = Array.isArray(payload.roles)
       ? (payload.roles as unknown[]).filter((item): item is string => typeof item === 'string')
       : undefined;
@@ -154,7 +170,8 @@ export class AuthService {
       this.syncCompanyNameFromProfile();
       return;
     }
-    this.companyApi.getMyCompany().subscribe({
+    this.companyApi.getCompany(this.currentUser()?.companyId ?? '').subscribe({
+      
       next: (company) => {
         const companyRecord = company as unknown as Record<string, unknown>;
         const name =
@@ -257,6 +274,7 @@ export class AuthService {
     return this.api.createEmployee({ email });
   }
   logout() {
+    const router = this.injector.get(Router);
     return this.api.logout().pipe(
       catchError(() => of(void 0)),
       tap(() => {
@@ -264,7 +282,7 @@ export class AuthService {
         this.currentUser.set(null);
         localStorage.removeItem('token');
         localStorage.removeItem('user');
-        void this.router.navigate(['/auth/login'], { replaceUrl: true });
+       void router.navigate(['/auth/login'], { replaceUrl: true });
       }),
     );
   }
