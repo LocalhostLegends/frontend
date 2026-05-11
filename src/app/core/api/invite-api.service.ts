@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { catchError, map, Observable, throwError } from 'rxjs';
-import { environment } from '@env/environment';
+import { environment } from '@environments/environment';
 import { Invite, CreateInviteRequest } from '@app/core/models/invite.model';
 import { ApiResponse, SuccessResponse } from './api-types';
 import { LoginResponse } from './auth-api.service';
@@ -41,9 +41,18 @@ export class InviteApiService {
             return throwError(() => err);
         }));
     }
-    acceptInvite(data: AcceptInviteRequest): Observable<LoginResponse | null> {
-        return this.http.post<unknown>(`${this.baseUrl}/invites/accept`, data).pipe(map((body) => this.unwrapLoginBody(body)));
-    }
+  acceptInvite(data: AcceptInviteRequest): Observable<LoginResponse | null> {
+    return this.http.post<unknown>(`${this.baseUrl}/invites/accept`, data).pipe(
+        map((body) => this.unwrapLoginBody(body)),
+        catchError((err: HttpErrorResponse) => {
+            if (err.status === 500 && err.error?.message?.includes('unique constraint')) {
+                // Если база ругается на дубликат
+                return throwError(() => new Error('A user with this email already exists. Please log in instead or use a different email.'));
+            }
+            return throwError(() => err);
+        })
+    );
+}
     private unwrapLoginBody(body: unknown, depth = 0): LoginResponse | null {
         if (!body || typeof body !== 'object' || depth > 4) {
             return null;
@@ -89,12 +98,12 @@ export class InviteApiService {
     }
     getPendingInvites(): Observable<Invite[]> {
         return this.http
-            .get<Invite[] | ApiResponse<Invite[]>>(`${this.baseUrl}/invites/pending`)
+            .get<Invite[] | ApiResponse<Invite[]>>(`${this.baseUrl}/invites`)
             .pipe(map((body) => this.unwrapInviteArray(body)));
     }
     getCompanyInvites(): Observable<Invite[]> {
         return this.http
-            .get<Invite[] | ApiResponse<Invite[]>>(`${this.baseUrl}/invites/company`)
+            .get<Invite[] | ApiResponse<Invite[]>>(`${this.baseUrl}/invites`)
             .pipe(map((body) => this.unwrapInviteArray(body)));
     }
     createInvite(data: CreateInviteRequest): Observable<Invite> {
