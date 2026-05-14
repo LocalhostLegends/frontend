@@ -5,6 +5,7 @@ import { environment } from '@environments/environment';
 import { User } from '@app/core/models/user.model';
 import { UserRole, normalizeUserRole } from '@app/core/constants/roles.constants';
 import { ApiResponse, SuccessResponse } from './api-types';
+
 export interface UsersQueryParams {
   page?: number;
   limit?: number;
