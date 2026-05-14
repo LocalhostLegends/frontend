@@ -24,6 +24,17 @@ export interface RefreshTokenResponse {
   accessToken: string;
   refreshToken?: string;
 }
+export interface ForgotPasswordResponse {
+  success: boolean;
+  message?: string;
+}
+export interface ResetPasswordRequest {
+  token: string;
+  newPassword: string;
+}
+
+
+
 @Injectable({ providedIn: 'root' })
 export class AuthApiService {
   private http = inject(HttpClient);
@@ -52,6 +63,12 @@ export class AuthApiService {
     return this.http
       .post<ApiResponse<RefreshTokenResponse>>(`${this.baseUrl}/auth/refresh`, body)
       .pipe(map((res) => res.data));
+  }
+ forgotPassword(email: string): Observable<ForgotPasswordResponse> {
+  return this.http.post<ForgotPasswordResponse>(`${this.baseUrl}/auth/forgot-password`, { email });
+}
+  resetPassword(data: ResetPasswordRequest): Observable<{ success: boolean; message?: string }> {
+    return this.http.post<{ success: boolean; message?: string }>(`${this.baseUrl}/auth/reset-password`, data);
   }
   logout(): Observable<void> {
     return this.http.post<void>(`${this.baseUrl}/auth/logout`, {});

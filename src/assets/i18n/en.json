@@ -27,8 +27,7 @@
     "yes": "Yes",
     "confirm": "Confirm action",
     "retry": "Retry",
-    "remove": "Remove"
-    ,
+    "remove": "Remove",
     "close": "Close"
   },
   "messages": {
@@ -152,11 +151,36 @@
       "signIn": "Sign in"
     },
     "forgot": {
-      "title": "Forgot Password",
-      "description": "Password recovery flow can be connected here. For now, contact your administrator to reset access.",
-      "backToSignIn": "Back to Sign In"
+      "title": "Password Recovery",
+      "description": "Enter your email and we'll send you a reset link.",
+      "placeholder": "your@email.com",
+      "sendButton": "Send link",
+      "sending": "Sending...",
+      "backToSignIn": "Return to login",
+      "successTitle": "Check your email!",
+      "successDescription": "If an account with {{email}} exists, the link is already on its way."
+    },
+    "reset": {
+      "title": "New Password",
+      "description": "Please create a strong password for your account.",
+      "newPassword": "New Password",
+      "confirmPassword": "Confirm Password",
+      "passwordMinLength": "Password must be at least 8 characters",
+      "confirmPasswordMismatch": "Passwords do not match",
+      "submit": "Update Password",
+      "processing": "Updating...",
+      "successTitle": "Password changed!",
+      "successText": "Your password has been successfully updated. You can now log in.",
+      "goToLogin": "Go to login",
+      "expiredTitle": "Link expired",
+      "expiredDescription": "This password reset link has already been used or is no longer valid.",
+      "requestNewLink": "Request a new link"
+    },
+    "errors": {
+      "tokenUsed": "This link has already been used. Please request a new password reset.",
+      "generic": "Something went wrong. Please try again later."
     }
-  },
+},
   "header": {
     "openMenu": "Open menu",
     "clearSearch": "Clear search",
@@ -448,8 +472,7 @@
         "title": "Contact",
         "description": "Reach your administrator or support channel for tenant-specific questions and billing."
       }
-    }
-    ,
+    },
     "footer": {
       "company": "HR Tech System"
     }
